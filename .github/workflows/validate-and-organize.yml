@@ -51,10 +51,10 @@ jobs:
             mkdir -p dependencies
             cp -r Own_Pieces/dependencies/* dependencies/ || true
           fi
-          # If repository-level .domino exists under Own_Pieces, copy it
+          # If repository-level .domino exists under Own_Pieces, copy the entire folder
           if [ -d Own_Pieces/.domino ]; then
-            mkdir -p .domino
-            cp -r Own_Pieces/.domino/* .domino/ || true
+            rm -rf .domino || true
+            cp -r Own_Pieces/.domino .domino || true
           fi
 
       - name: Debug show repo layout
