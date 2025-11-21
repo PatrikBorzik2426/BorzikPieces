@@ -34,8 +34,12 @@ class GenerativeShapesPiece(BasePiece):
             else:  # triangle
                 draw.polygon([(x, y + size), (x + size / 2, y), (x + size, y + size)], fill=col)
 
-        os.makedirs(self.results_path, exist_ok=True)
-        out_path = os.path.join(self.results_path, "shapes.png")
+        # results_path may not be set in some runtime/testing environments;
+        # fall back to a safe temporary directory to avoid raising an exception
+        # which would cause the HTTP server to return 500.
+        results_dir = getattr(self, "results_path", None) or os.environ.get("RESULTS_PATH") or "/tmp"
+        os.makedirs(results_dir, exist_ok=True)
+        out_path = os.path.join(results_dir, "shapes.png")
         im.save(out_path, format="PNG")
 
         # Tell Domino how to display the artifact
