@@ -1,1 +1,0 @@
-"""GenerativeShapesPiece package."""
