@@ -1,6 +1,6 @@
 {
-    "name": "ExampleShapeDrawing",
-    "description": "Generates simple geometric shapes image (PNG) using Pillow.",
+    "name": "ExampleSineWavePiece",
+    "description": "This is an example of a piece that uses Dockerfile for dependencies.",
     "dependency": {
         "dockerfile": "Dockerfile_1"
     },
@@ -15,12 +15,10 @@
         }
     },
     "tags": [
-        "Example",
-        "Image",
-        "Shapes"
+        "Example"
     ],
     "style": {
-        "node_label": "Example Shapes Piece",
-        "icon_class_name": "fa-solid:paint-brush"
+        "node_label": "Example Sine Piece",
+        "icon_class_name": "fa-solid:database"
     }
 }

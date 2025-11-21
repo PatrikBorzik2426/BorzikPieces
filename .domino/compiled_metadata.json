@@ -1,101 +1,110 @@
 {
-	"ExampleShapeDrawing": {
-		"name": "ExampleShapeDrawing",
-		"dependency": {
-			"dockerfile": "../dependencies/Dockerfile_1",
-			"requirements_file": "requirements_0.txt"
-		},
-		"tags": [
-			"Example",
-			"Image",
-			"Shapes"
-		],
-		"style": {
-			"node_label": "Example Shapes Piece",
-			"node_type": "default",
-			"node_style": {
-				"backgroundColor": "#ebebeb"
-			},
-			"useIcon": true,
-			"icon_class_name": "fa-solid:paint-brush"
-		},
-		"description": "Generates simple geometric shapes image (PNG) using Pillow.",
-		"container_resources": {
-			"requests": {
-				"cpu": "100m",
-				"memory": "128Mi"
-			},
-			"limits": {
-				"cpu": "500m",
-				"memory": "512Mi"
-			}
-		},
-		"input_schema": {
-			"title": "InputModel",
-			"type": "object",
-			"properties": {
-				"width": {
-					"description": "Image width in pixels",
-					"type": "integer",
-					"default": 400
-				},
-				"height": {
-					"description": "Image height in pixels",
-					"type": "integer",
-					"default": 200
-				},
-				"background_color": {
-					"description": "Background color (name or hex)",
-					"type": "string",
-					"default": "white"
-				},
-				"shape": {
-					"description": "Shape to draw: circle, square, triangle or random",
-					"type": "string",
-					"default": "circle"
-				},
-				"count": {
-					"description": "Number of shapes to draw",
-					"type": "integer",
-					"default": 6
-				},
-				"shape_size": {
-					"description": "Size of each shape in pixels",
-					"type": "integer",
-					"default": 40
-				},
-				"color": {
-					"description": "Fill color for shapes (name or hex)",
-					"type": "string",
-					"default": "blue"
-				},
-				"cols": {
-					"description": "Number of columns to arrange shapes in",
-					"type": "integer",
-					"default": 3
-				}
-			},
-			"required": []
-		},
-		"output_schema": {
-			"title": "OutputModel",
-			"type": "object",
-			"properties": {
-				"message": {
-					"title": "Message",
-					"description": "Human readable message about the run",
-					"type": "string"
-				},
-				"image_path": {
-					"title": "Image Path",
-					"description": "Path to the generated image file",
-					"type": "string"
-				}
-			},
-			"required": [
-				"message",
-				"image_path"
-			]
-		}
-	}
+    "ExampleSimplePiece": {
+        "name": "ExampleSimplePiece",
+        "dependency": {
+            "dockerfile": null,
+            "requirements_file": "requirements_0.txt"
+        },
+        "tags": [
+            "Example"
+        ],
+        "style": {
+            "node_label": "Simple Piece",
+            "node_type": "default",
+            "node_style": {
+                "backgroundColor": "#ebebeb"
+            },
+            "useIcon": true,
+            "icon_class_name": "fas fa-database",
+            "iconStyle": {
+                "cursor": "pointer"
+            }
+        },
+        "description": "This is an example of a simple Domino Piece",
+        "container_resources": {
+            "requests": {
+                "cpu": "100m",
+                "memory": "128Mi"
+            },
+            "limits": {
+                "cpu": "500m",
+                "memory": "512Mi"
+            }
+        },
+        "input_schema": {
+            "title": "InputModel",
+            "type": "object",
+            "properties": {
+                "distribution_name": {
+                    "description": "Name of the distribution to sample from",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/DistributionType"
+                        }
+                    ]
+                },
+                "distribution_mean": {
+                    "title": "Distribution Mean",
+                    "description": "Distribution mean",
+                    "type": "number"
+                },
+                "distribution_sd": {
+                    "title": "Distribution Sd",
+                    "description": "Distribution standard deviation",
+                    "default": 1.0,
+                    "exclusiveMinimum": 0.0,
+                    "type": "number"
+                }
+            },
+            "required": [
+                "distribution_name",
+                "distribution_mean"
+            ],
+            "definitions": {
+                "DistributionType": {
+                    "title": "DistributionType",
+                    "description": "An enumeration.",
+                    "enum": [
+                        "gaussian",
+                        "poisson"
+                    ],
+                    "type": "string"
+                }
+            }
+        },
+        "output_schema": {
+            "title": "OutputModel",
+            "type": "object",
+            "properties": {
+                "message": {
+                    "title": "Message",
+                    "description": "Output message to log",
+                    "type": "string"
+                },
+                "sample_result": {
+                    "title": "Sample Result",
+                    "description": "The result of this Piece's processing",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "message",
+                "sample_result"
+            ]
+        },
+        "secrets_schema": {
+            "title": "SecretsModel",
+            "type": "object",
+            "properties": {
+                "EXAMPLE_OPERATOR_SECRET_1": {
+                    "title": "Example Operator Secret 1",
+                    "description": "A secret necessary to run this Piece",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "EXAMPLE_OPERATOR_SECRET_1"
+            ]
+        }
+    }
 }

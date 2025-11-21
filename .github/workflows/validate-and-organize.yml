@@ -3,12 +3,9 @@ name: Validate and organize repo, build and publish Docker images
 on:
   push:
     branches:
-      - master
-  pull_request:
-    branches:
-      - master
-  # Allow manual runs from the Actions UI
-  workflow_dispatch: {}
+      - main
+    paths:
+      - 'config.toml'
 
 jobs:
   validate-and-organize:
@@ -20,10 +17,10 @@ jobs:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
           fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
 
-      - name: Set up Python 3.10
+      - name: Set up Python 3.11
         uses: actions/setup-python@v3
         with:
-          python-version: "3.10"
+          python-version: "3.11"
 
       - name: Pip install packages
         run: |
@@ -39,32 +36,6 @@ jobs:
 
       - name: pip list
         run: pip list | grep domino
-
-      - name: Prepare pieces layout (copy Own_Pieces into expected locations)
-        run: |
-          # Ensure workspace has top-level pieces/ and dependencies/ for domino CLI
-          mkdir -p pieces
-          if [ -d Own_Pieces/pieces ]; then
-            cp -r Own_Pieces/pieces/* pieces/ || true
-          fi
-          if [ -d Own_Pieces/dependencies ]; then
-            mkdir -p dependencies
-            cp -r Own_Pieces/dependencies/* dependencies/ || true
-          fi
-          # If repository-level .domino exists under Own_Pieces, copy the entire folder
-          if [ -d Own_Pieces/.domino ]; then
-            rm -rf .domino || true
-            cp -r Own_Pieces/.domino .domino || true
-          fi
-
-      - name: Debug show repo layout
-        run: |
-          echo "PWD: $(pwd)"
-          echo "Top-level files:" && ls -la
-          echo "pieces/ contents:" && ls -la pieces || true
-          echo "dependencies/ contents:" && ls -la dependencies || true
-          echo ".domino/ contents:" && ls -la .domino || true
-          echo "Find piece metadata files:" && find . -name metadata.json -maxdepth 4 -print || true
 
       - name: Run organize and build images
         run: |

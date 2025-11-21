@@ -1,11 +1,11 @@
 [repository]
 # The name of the github organization / person owner, e.g. tauffer-consulting.
 # Must be in lower-case letters
-REGISTRY_NAME = "ExampleShapesPiece"
+REGISTRY_NAME = "BorzikPieces"
 
 # The name of this Pieces repository
-REPOSITORY_NAME = "ExampleShapesPiece"
-REPOSITORY_LABEL = "development"
+REPOSITORY_NAME = "BorzikPieces"
+REPOSITORY_LABEL = "dev"
 
 # The version of this Pieces release
 # Attention: changing this will create a new release
