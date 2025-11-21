@@ -1,0 +1,8 @@
+{
+  "name": "GenerativeShapesPiece",
+  "title": "Generative Shapes Piece",
+  "description": "Generates a PNG image containing simple geometric shapes (circles, squares, triangles).",
+  "tags": ["generation", "image", "shapes"],
+  "dockerfile": "../dependencies/Dockerfile_1",
+  "container_resources": { "cpu": 0.5, "memory": "512Mi" }
+}

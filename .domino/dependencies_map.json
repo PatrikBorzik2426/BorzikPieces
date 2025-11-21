@@ -20,5 +20,16 @@
         ],
         "secrets": [],
         "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.0-group1"
+    },
+    "group2": {
+        "dependency": {
+            "dockerfile": null,
+            "requirements_file": null
+        },
+        "pieces": [
+            "GenerativeShapesPiece"
+        ],
+        "secrets": [],
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.0-group2"
     }
 }

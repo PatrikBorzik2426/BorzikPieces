@@ -136,5 +136,119 @@
         },
         "secrets_schema": null,
         "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/ExampleSineWavePiece"
+    },
+    "GenerativeShapesPiece": {
+        "name": "GenerativeShapesPiece",
+        "dependency": {
+            "dockerfile": null,
+            "requirements_file": null
+        },
+        "tags": [
+            "generation",
+            "image",
+            "shapes"
+        ],
+        "style": {
+            "node_label": "Piece",
+            "node_type": "default",
+            "node_style": {
+                "backgroundColor": "#ebebeb"
+            },
+            "useIcon": true,
+            "icon_class_name": "fa-solid fa-circle",
+            "iconStyle": {
+                "cursor": "pointer"
+            }
+        },
+        "title": "Generative Shapes Piece",
+        "description": "Generates a PNG image containing simple geometric shapes (circles, squares, triangles).",
+        "dockerfile": "../dependencies/Dockerfile_1",
+        "container_resources": {
+            "cpu": 0.5,
+            "memory": "512Mi"
+        },
+        "input_schema": {
+            "properties": {
+                "width": {
+                    "default": 256,
+                    "minimum": 1,
+                    "title": "Width",
+                    "type": "integer"
+                },
+                "height": {
+                    "default": 256,
+                    "minimum": 1,
+                    "title": "Height",
+                    "type": "integer"
+                },
+                "background_color": {
+                    "default": "#FFFFFF",
+                    "title": "Background Color",
+                    "type": "string"
+                },
+                "shape": {
+                    "default": "circle",
+                    "enum": [
+                        "circle",
+                        "square",
+                        "triangle"
+                    ],
+                    "title": "Shape",
+                    "type": "string"
+                },
+                "count": {
+                    "default": 5,
+                    "maximum": 200,
+                    "minimum": 1,
+                    "title": "Count",
+                    "type": "integer"
+                },
+                "shape_size": {
+                    "default": 30,
+                    "minimum": 1,
+                    "title": "Shape Size",
+                    "type": "integer"
+                },
+                "color": {
+                    "default": "#FF0000",
+                    "title": "Color",
+                    "type": "string"
+                },
+                "seed": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": 42,
+                    "title": "Seed"
+                }
+            },
+            "title": "InputModel",
+            "type": "object"
+        },
+        "output_schema": {
+            "properties": {
+                "message": {
+                    "title": "Message",
+                    "type": "string"
+                },
+                "file_path": {
+                    "title": "File Path",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "message",
+                "file_path"
+            ],
+            "title": "OutputModel",
+            "type": "object"
+        },
+        "secrets_schema": null,
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/GenerativeShapesPiece"
     }
 }

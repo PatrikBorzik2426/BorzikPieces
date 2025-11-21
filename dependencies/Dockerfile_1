@@ -1,3 +1,17 @@
+FROM python:3.11-slim
+
+# Install minimal build tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Avoid relying on a repo-level requirements.txt during image build in CI.
+# Install Pillow directly which is the only runtime dependency for the sample piece.
+RUN pip install --no-cache-dir pillow
+
+CMD ["bash"]
 FROM ghcr.io/tauffer-consulting/domino-base-piece:latest
 # Install specific requirements to run OpenCV
 RUN apt-get update
