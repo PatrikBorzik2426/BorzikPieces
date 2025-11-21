@@ -1,9 +1,9 @@
 {
-  "name": "ExampleShapesPiece",
+  "name": "ExampleShapeDrawing",
   "description": "Generates simple geometric shapes image (PNG) using Pillow.",
   "entrypoint": {
     "module": "piece",
-    "class": "ExampleShapesPiece",
+  "class": "ExampleShapesPiece",
     "function": "piece_function"
   },
   "dockerfile": "../dependencies/Dockerfile_1",

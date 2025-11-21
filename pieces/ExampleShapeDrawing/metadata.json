@@ -1,5 +1,5 @@
 {
-    "name": "ExampleShapesPiece",
+    "name": "ExampleShapeDrawing",
     "description": "Generates simple geometric shapes image (PNG) using Pillow.",
     "dependency": {
         "dockerfile": "Dockerfile_1"
