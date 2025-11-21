@@ -4,8 +4,10 @@ on:
   push:
     branches:
       - master
-    paths:
-      - 'config.toml'
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch: {}
 
 jobs:
   validate-and-organize:
