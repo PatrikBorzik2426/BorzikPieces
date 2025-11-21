@@ -1,5 +1,8 @@
 name: Validate and organize repo, build and publish Docker images
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:
@@ -16,7 +19,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
+          persist-credentials: true # allow the runner to use the GITHUB_TOKEN for git operations
           fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
 
       - name: Set up Python 3.11
