@@ -59,10 +59,11 @@ class ExampleShapesPiece(BasePiece):
         out_path = Path(self.results_path) / "shapes.png"
         img.save(out_path)
 
-        # Provide a simple UI hint for the platform
+        # Provide a UI hint for the platform. Use a path relative to results root
+        # and a specific MIME-like type to maximize compatibility with different UIs.
         self.display_result = {
-            "file_type": "image",
-            "file_path": str(out_path)
+            "file_type": "image/png",
+            "file_path": "shapes.png"
         }
 
         return OutputModel(message="Shapes image generated.", image_path=str(out_path))
