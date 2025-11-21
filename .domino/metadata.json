@@ -1,0 +1,32 @@
+{
+  "name": "ExampleShapesPiece",
+  "description": "Generates simple geometric shapes image (PNG) using Pillow.",
+  "entrypoint": {
+    "module": "piece",
+    "class": "ExampleShapesPiece",
+    "function": "piece_function"
+  },
+  "dockerfile": "../dependencies/Dockerfile_1",
+  "inputs": {
+    "width": { "type": "int", "default": 400, "description": "Image width in pixels" },
+    "height": { "type": "int", "default": 200, "description": "Image height in pixels" },
+    "background_color": { "type": "str", "default": "white", "description": "Background color (name or hex)" },
+    "shape": { "type": "str", "default": "circle", "description": "Shape to draw: circle, square, triangle or random" },
+    "count": { "type": "int", "default": 6, "description": "Number of shapes to draw" },
+    "shape_size": { "type": "int", "default": 40, "description": "Size of each shape in pixels" },
+    "color": { "type": "str", "default": "blue", "description": "Fill color for shapes (name or hex)" },
+    "cols": { "type": "int", "default": 3, "description": "Number of columns to arrange shapes in" }
+  },
+  "outputs": {
+    "message": { "type": "str", "description": "Human readable message about the run" },
+    "image_path": { "type": "str", "description": "Path to the generated image file" }
+  },
+  "container_resources": {
+    "requests": { "cpu": 100, "memory": 128 },
+    "limits": { "cpu": 500, "memory": 512 }
+  },
+  "tags": ["Example", "Image", "Shapes"],
+  "style": { "node_label": "Example Shapes Piece", "icon_class_name": "fa-solid:paint-brush" },
+  "generated_by": "local-scaffold",
+  "notes": "This file is a computed metadata summary for local packaging; Domino platform may generate its own .domino metadata during deployment."
+}

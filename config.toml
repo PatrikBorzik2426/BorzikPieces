@@ -1,0 +1,12 @@
+[repository]
+# The name of the github organization / person owner, e.g. tauffer-consulting.
+# Must be in lower-case letters
+REGISTRY_NAME = "ExampleShapesPiece"
+
+# The name of this Pieces repository
+REPOSITORY_NAME = "ExampleShapesPiece"
+REPOSITORY_LABEL = "development"
+
+# The version of this Pieces release
+# Attention: changing this will create a new release
+VERSION = "0.2"
