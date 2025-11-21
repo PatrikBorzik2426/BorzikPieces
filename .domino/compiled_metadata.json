@@ -1,46 +1,101 @@
 {
-  "ExampleShapeDrawing": {
-    "name": "ExampleShapeDrawing",
-    "dependency": {
-      "dockerfile": "../dependencies/Dockerfile_1",
-      "requirements_file": "requirements_0.txt"
-    },
-    "tags": ["Example", "Image", "Shapes"],
-    "style": {
-      "node_label": "Example Shapes Piece",
-      "node_type": "default",
-      "node_style": { "backgroundColor": "#ebebeb" },
-      "useIcon": true,
-      "icon_class_name": "fa-solid:paint-brush"
-    },
-    "description": "Generates simple geometric shapes image (PNG) using Pillow.",
-    "container_resources": {
-      "requests": { "cpu": "100m", "memory": "128Mi" },
-      "limits": { "cpu": "500m", "memory": "512Mi" }
-    },
-    "input_schema": {
-      "title": "InputModel",
-      "type": "object",
-      "properties": {
-        "width": { "description": "Image width in pixels", "type": "integer", "default": 400 },
-        "height": { "description": "Image height in pixels", "type": "integer", "default": 200 },
-        "background_color": { "description": "Background color (name or hex)", "type": "string", "default": "white" },
-        "shape": { "description": "Shape to draw: circle, square, triangle or random", "type": "string", "default": "circle" },
-        "count": { "description": "Number of shapes to draw", "type": "integer", "default": 6 },
-        "shape_size": { "description": "Size of each shape in pixels", "type": "integer", "default": 40 },
-        "color": { "description": "Fill color for shapes (name or hex)", "type": "string", "default": "blue" },
-        "cols": { "description": "Number of columns to arrange shapes in", "type": "integer", "default": 3 }
-      },
-      "required": []
-    },
-    "output_schema": {
-      "title": "OutputModel",
-      "type": "object",
-      "properties": {
-        "message": { "title": "Message", "description": "Human readable message about the run", "type": "string" },
-        "image_path": { "title": "Image Path", "description": "Path to the generated image file", "type": "string" }
-      },
-      "required": ["message", "image_path"]
-    }
-  }
+	"ExampleShapeDrawing": {
+		"name": "ExampleShapeDrawing",
+		"dependency": {
+			"dockerfile": "../dependencies/Dockerfile_1",
+			"requirements_file": "requirements_0.txt"
+		},
+		"tags": [
+			"Example",
+			"Image",
+			"Shapes"
+		],
+		"style": {
+			"node_label": "Example Shapes Piece",
+			"node_type": "default",
+			"node_style": {
+				"backgroundColor": "#ebebeb"
+			},
+			"useIcon": true,
+			"icon_class_name": "fa-solid:paint-brush"
+		},
+		"description": "Generates simple geometric shapes image (PNG) using Pillow.",
+		"container_resources": {
+			"requests": {
+				"cpu": "100m",
+				"memory": "128Mi"
+			},
+			"limits": {
+				"cpu": "500m",
+				"memory": "512Mi"
+			}
+		},
+		"input_schema": {
+			"title": "InputModel",
+			"type": "object",
+			"properties": {
+				"width": {
+					"description": "Image width in pixels",
+					"type": "integer",
+					"default": 400
+				},
+				"height": {
+					"description": "Image height in pixels",
+					"type": "integer",
+					"default": 200
+				},
+				"background_color": {
+					"description": "Background color (name or hex)",
+					"type": "string",
+					"default": "white"
+				},
+				"shape": {
+					"description": "Shape to draw: circle, square, triangle or random",
+					"type": "string",
+					"default": "circle"
+				},
+				"count": {
+					"description": "Number of shapes to draw",
+					"type": "integer",
+					"default": 6
+				},
+				"shape_size": {
+					"description": "Size of each shape in pixels",
+					"type": "integer",
+					"default": 40
+				},
+				"color": {
+					"description": "Fill color for shapes (name or hex)",
+					"type": "string",
+					"default": "blue"
+				},
+				"cols": {
+					"description": "Number of columns to arrange shapes in",
+					"type": "integer",
+					"default": 3
+				}
+			},
+			"required": []
+		},
+		"output_schema": {
+			"title": "OutputModel",
+			"type": "object",
+			"properties": {
+				"message": {
+					"title": "Message",
+					"description": "Human readable message about the run",
+					"type": "string"
+				},
+				"image_path": {
+					"title": "Image Path",
+					"description": "Path to the generated image file",
+					"type": "string"
+				}
+			},
+			"required": [
+				"message",
+				"image_path"
+			]
+		}
+	}
 }

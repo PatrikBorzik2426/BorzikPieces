@@ -1,7 +1,7 @@
 {
   "group0": {
     "dependency": {
-      "dockerfile": "../dependencies/Dockerfile_1",
+      "dockerfile": "Dockerfile_1",
       "requirements_file": "requirements_0.txt"
     },
     "pieces": [
