@@ -4,8 +4,11 @@ on:
   push:
     branches:
       - master
-    paths:
-      - 'config.toml'
+  pull_request:
+    branches:
+      - master
+  # Allow manual runs from the Actions UI
+  workflow_dispatch: {}
 
 jobs:
   validate-and-organize:
