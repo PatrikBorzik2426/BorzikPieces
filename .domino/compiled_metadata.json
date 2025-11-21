@@ -1,4 +1,67 @@
 {
+    "ExampleSleepPiece": {
+        "name": "ExampleSleepPiece",
+        "dependency": {
+            "dockerfile": null,
+            "requirements_file": "requirements_0.txt"
+        },
+        "tags": [
+            "Example"
+        ],
+        "style": {
+            "node_label": "Example Sleep Piece",
+            "node_type": "default",
+            "node_style": {
+                "backgroundColor": "#ebebeb"
+            },
+            "useIcon": true,
+            "icon_class_name": "fa-solid:database",
+            "iconStyle": {
+                "cursor": "pointer"
+            }
+        },
+        "description": "This is an example of a simple Domino Piece that sleep for N seconds",
+        "container_resources": {
+            "requests": {
+                "cpu": 100,
+                "memory": 128
+            },
+            "limits": {
+                "cpu": 500,
+                "memory": 512
+            }
+        },
+        "input_schema": {
+            "description": "Sleep Piece Input Model",
+            "properties": {
+                "sleep_time": {
+                    "default": 1,
+                    "description": "Number of seconds to sleep",
+                    "title": "Sleep Time",
+                    "type": "number"
+                }
+            },
+            "title": "InputModel",
+            "type": "object"
+        },
+        "output_schema": {
+            "description": "Sleep Piece Output Model",
+            "properties": {
+                "message": {
+                    "description": "Sleep piece executed",
+                    "title": "Message",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "message"
+            ],
+            "title": "OutputModel",
+            "type": "object"
+        },
+        "secrets_schema": null,
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/ExampleSleepPiece"
+    },
     "ExampleSineWavePiece": {
         "name": "ExampleSineWavePiece",
         "dependency": {
@@ -74,7 +137,6 @@
         "secrets_schema": null,
         "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/ExampleSineWavePiece"
     },
-<<<<<<< HEAD
     "GenerativeShapesPiece": {
         "name": "GenerativeShapesPiece",
         "dependency": {
@@ -88,34 +150,16 @@
         ],
         "style": {
             "node_label": "Piece",
-=======
-    "ExampleSleepPiece": {
-        "name": "ExampleSleepPiece",
-        "dependency": {
-            "dockerfile": null,
-            "requirements_file": "requirements_0.txt"
-        },
-        "tags": [
-            "Example"
-        ],
-        "style": {
-            "node_label": "Example Sleep Piece",
->>>>>>> BorzikPieces/master
             "node_type": "default",
             "node_style": {
                 "backgroundColor": "#ebebeb"
             },
             "useIcon": true,
-<<<<<<< HEAD
             "icon_class_name": "fa-solid fa-circle",
-=======
-            "icon_class_name": "fa-solid:database",
->>>>>>> BorzikPieces/master
             "iconStyle": {
                 "cursor": "pointer"
             }
         },
-<<<<<<< HEAD
         "title": "Generative Shapes Piece",
         "description": "Generates a PNG image containing simple geometric shapes (circles, squares, triangles).",
         "dockerfile": "../dependencies/Dockerfile_1",
@@ -181,34 +225,12 @@
                     ],
                     "default": 42,
                     "title": "Seed"
-=======
-        "description": "This is an example of a simple Domino Piece that sleep for N seconds",
-        "container_resources": {
-            "requests": {
-                "cpu": 100,
-                "memory": 128
-            },
-            "limits": {
-                "cpu": 500,
-                "memory": 512
-            }
-        },
-        "input_schema": {
-            "description": "Sleep Piece Input Model",
-            "properties": {
-                "sleep_time": {
-                    "default": 1,
-                    "description": "Number of seconds to sleep",
-                    "title": "Sleep Time",
-                    "type": "number"
->>>>>>> BorzikPieces/master
                 }
             },
             "title": "InputModel",
             "type": "object"
         },
         "output_schema": {
-<<<<<<< HEAD
             "properties": {
                 "message": {
                     "title": "Message",
@@ -222,27 +244,11 @@
             "required": [
                 "message",
                 "file_path"
-=======
-            "description": "Sleep Piece Output Model",
-            "properties": {
-                "message": {
-                    "description": "Sleep piece executed",
-                    "title": "Message",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "message"
->>>>>>> BorzikPieces/master
             ],
             "title": "OutputModel",
             "type": "object"
         },
         "secrets_schema": null,
-<<<<<<< HEAD
         "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/GenerativeShapesPiece"
-=======
-        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/ExampleSleepPiece"
->>>>>>> BorzikPieces/master
     }
 }

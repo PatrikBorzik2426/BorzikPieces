@@ -1,5 +1,5 @@
 from domino.testing import piece_dry_run
-from .models import InputModel
+from pieces.GenerativeShapesPiece.models import InputModel
 
 
 def test_generate_shapes():
