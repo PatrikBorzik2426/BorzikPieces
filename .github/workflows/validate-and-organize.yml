@@ -57,7 +57,7 @@ jobs:
             cp -r Own_Pieces/.domino/* .domino/ || true
           fi
 
-      - name: Debug: show repo layout
+      - name: Debug show repo layout
         run: |
           echo "PWD: $(pwd)"
           echo "Top-level files:" && ls -la
