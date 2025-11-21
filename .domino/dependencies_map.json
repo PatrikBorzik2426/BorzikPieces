@@ -1,22 +1,22 @@
 {
     "group0": {
         "dependency": {
-            "dockerfile": null,
-            "requirements_file": "requirements_0.txt"
+            "dockerfile": "Dockerfile_1",
+            "requirements_file": null
         },
         "pieces": [
-            "ExampleSleepPiece"
+            "ExampleSineWavePiece"
         ],
         "secrets": [],
         "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.0-group0"
     },
     "group1": {
         "dependency": {
-            "dockerfile": "Dockerfile_1",
-            "requirements_file": null
+            "dockerfile": null,
+            "requirements_file": "requirements_0.txt"
         },
         "pieces": [
-            "ExampleSineWavePiece"
+            "ExampleSleepPiece"
         ],
         "secrets": [],
         "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.0-group1"
