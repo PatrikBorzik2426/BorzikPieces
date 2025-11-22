@@ -3,7 +3,7 @@
     "title": "Hello World Piece",
     "description": "A simple piece that generates greeting messages.",
     "dependency": {
-        "requirements_file": "requirements_0.txt"
+        "requirements_file": "requirements.txt"
     },
     "container_resources": {
         "cpu": 100,

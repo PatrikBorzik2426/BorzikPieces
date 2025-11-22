@@ -1,37 +1,26 @@
 {
     "group0": {
         "dependency": {
-            "dockerfile": "Dockerfile_1",
-            "requirements_file": null
-        },
-        "pieces": [
-            "ExampleSineWavePiece",
-            "HelloWorldPiece"
-        ],
-        "secrets": [],
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.2-group0"
-    },
-    "group1": {
-        "dependency": {
             "dockerfile": null,
-            "requirements_file": "requirements_0.txt"
+            "requirements_file": "requirements.txt"
         },
         "pieces": [
             "ExampleSleepPiece",
             "HelloWorldPiece"
         ],
         "secrets": [],
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.2-group1"
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.4-group0"
     },
-    "group2": {
+    "group1": {
         "dependency": {
-            "dockerfile": "Dockerfile_GenerativeShapesPiece",
-            "requirements_file": "requirements_1.txt"
+            "dockerfile": "Dockerfile",
+            "requirements_file": null
         },
         "pieces": [
+            "ExampleSineWavePiece",
             "GenerativeShapesPiece"
         ],
         "secrets": [],
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.2-group2"
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.4-group1"
     }
 }

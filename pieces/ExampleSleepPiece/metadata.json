@@ -2,7 +2,7 @@
     "name": "ExampleSleepPiece",
     "description": "This is an example of a simple Domino Piece that sleep for N seconds",
     "dependency": {
-        "requirements_file": "requirements_0.txt"
+        "requirements_file": "requirements.txt"
     },
     "container_resources": {
         "requests": {
