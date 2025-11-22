@@ -1,0 +1,21 @@
+{
+    "name": "HelloWorldPiece",
+    "title": "Hello World Piece",
+    "description": "A simple piece that generates greeting messages.",
+    "dependency": {
+        "dockerfile": "Dockerfile_1"
+    },
+    "container_resources": {
+        "cpu": 100,
+        "memory": "128Mi"
+    },
+    "tags": [
+        "example",
+        "text",
+        "hello-world"
+    ],
+    "style": {
+        "node_label": "Hello World",
+        "icon_class_name": "fa-solid:hand-wave"
+    }
+}
