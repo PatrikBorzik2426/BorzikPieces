@@ -1,6 +1,7 @@
 from domino.base_piece import BasePiece
 from .models import InputModel, OutputModel
 import traceback
+import base64
 
 
 class HelloWorldPiece(BasePiece):
@@ -14,6 +15,13 @@ class HelloWorldPiece(BasePiece):
             message = f"Hello, {input_data.name}!"
 
             self.logger.info(f"Generated message: {message}")
+
+            # Set display result for Domino UI
+            base64_content = base64.b64encode(message.encode("utf-8")).decode("utf-8")
+            self.display_result = {
+                "file_type": "txt",
+                "base64_content": base64_content
+            }
 
             return OutputModel(message=message)
 

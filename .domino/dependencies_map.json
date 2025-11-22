@@ -17,7 +17,8 @@
             "requirements_file": "requirements_0.txt"
         },
         "pieces": [
-            "ExampleSleepPiece"
+            "ExampleSleepPiece",
+            "HelloWorldPiece"
         ],
         "secrets": [],
         "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.2-group1"
