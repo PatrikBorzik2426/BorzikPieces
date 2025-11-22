@@ -5,8 +5,8 @@ REGISTRY_NAME = "borzikpieces"
 
 # The name of this Pieces repository
 REPOSITORY_NAME = "borzikpieces"
-REPOSITORY_LABEL = "dev"
+REPOSITORY_LABEL = "borzikpieces-domino"
 
 # The version of this Pieces release
 # Attention: changing this will create a new release
-VERSION = "0.1.1"
+VERSION = "0.1.2"

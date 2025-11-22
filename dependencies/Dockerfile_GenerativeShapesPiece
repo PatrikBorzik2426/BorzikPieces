@@ -5,5 +5,5 @@ RUN pip install --no-cache-dir Pillow==10.1.0
 
 # Copy the piece source code and config
 COPY config.toml domino/pieces_repository/
-COPY pieces/GenerativeShapesPiece domino/pieces_repository/pieces/GenerativeShapesPiece
+COPY pieces domino/pieces_repository/pieces
 COPY .domino domino/pieces_repository/.domino
