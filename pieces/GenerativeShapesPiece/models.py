@@ -16,3 +16,4 @@ class InputModel(BaseModel):
 class OutputModel(BaseModel):
     message: str
     file_path: str
+    image_base64: Optional[str] = None
