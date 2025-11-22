@@ -60,7 +60,7 @@ class GenerativeShapesPiece(BasePiece):
             self.logger.info(f"Image saved to {out_path}")
 
             # Tell Domino how to display the artifact
-            self.display_result = {"file_type": "image/png", "file_path": out_path}
+            self.format_display_result(input_data, "shapes.png")
             self.logger.info("Set display_result for PNG image")
 
             return OutputModel(message="Shapes generated", file_path="shapes.png")
@@ -70,3 +70,27 @@ class GenerativeShapesPiece(BasePiece):
             traceback.print_exc()
             # Optionally, re-raise to propagate error to Domino
             raise
+
+    def format_display_result(self, input_data: InputModel, image_filename: str):
+        md_text = f"""
+## Generated Shapes Image
+
+**Parameters used:**
+- Width: {input_data.width}
+- Height: {input_data.height}
+- Background color: {input_data.background_color}
+- Shape: {input_data.shape}
+- Count: {input_data.count}
+- Shape size: {input_data.shape_size}
+- Color: {input_data.color}
+- Seed: {input_data.seed if input_data.seed is not None else 'random'}
+
+![Generated Shapes]({image_filename})
+"""
+        file_path = f"{self.results_path}/display_result.md"
+        with open(file_path, "w") as f:
+            f.write(md_text)
+        self.display_result = {
+            "file_type": "md",
+            "file_path": file_path
+        }
