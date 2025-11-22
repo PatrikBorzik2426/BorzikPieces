@@ -253,8 +253,8 @@
     "HelloWorldPiece": {
         "name": "HelloWorldPiece",
         "dependency": {
-            "dockerfile": "Dockerfile_1",
-            "requirements_file": null
+            "dockerfile": null,
+            "requirements_file": "requirements_0.txt"
         },
         "tags": [
             "example",
