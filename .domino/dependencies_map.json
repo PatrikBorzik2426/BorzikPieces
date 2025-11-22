@@ -23,8 +23,8 @@
     },
     "group2": {
         "dependency": {
-            "dockerfile": null,
-            "requirements_file": null
+            "dockerfile": "Dockerfile_1",
+            "requirements_file": "requirements_1.txt"
         },
         "pieces": [
             "GenerativeShapesPiece"

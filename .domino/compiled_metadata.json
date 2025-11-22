@@ -140,8 +140,8 @@
     "GenerativeShapesPiece": {
         "name": "GenerativeShapesPiece",
         "dependency": {
-            "dockerfile": null,
-            "requirements_file": null
+            "dockerfile": "Dockerfile_1",
+            "requirements_file": "requirements_1.txt"
         },
         "tags": [
             "generation",
@@ -149,22 +149,21 @@
             "shapes"
         ],
         "style": {
-            "node_label": "Piece",
+            "node_label": "Example Shapes Piece",
             "node_type": "default",
             "node_style": {
                 "backgroundColor": "#ebebeb"
             },
             "useIcon": true,
-            "icon_class_name": "fa-solid fa-circle",
+            "icon_class_name": "fa-solid:paint-brush",
             "iconStyle": {
                 "cursor": "pointer"
             }
         },
         "title": "Generative Shapes Piece",
         "description": "Generates a PNG image containing simple geometric shapes (circles, squares, triangles).",
-        "dockerfile": "../dependencies/Dockerfile_1",
         "container_resources": {
-            "cpu": 0.5,
+            "cpu": 500,
             "memory": "512Mi"
         },
         "input_schema": {

@@ -7,9 +7,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Avoid relying on a repo-level requirements.txt during image build in CI.
-# Install Pillow directly which is the only runtime dependency for the sample piece.
-RUN pip install --no-cache-dir pillow
+# Copy and install requirements
+COPY dependencies/requirements_0.txt /app/requirements_0.txt
+RUN pip install --no-cache-dir -r /app/requirements_0.txt
+
+COPY dependencies/requirements_1.txt /app/requirements_1.txt
+RUN pip install --no-cache-dir -r /app/requirements_1.txt
 
 CMD ["bash"]
 FROM ghcr.io/tauffer-consulting/domino-base-piece:latest
