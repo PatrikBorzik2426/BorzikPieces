@@ -1,7 +1,6 @@
 from domino.base_piece import BasePiece
 from .models import InputModel, OutputModel
 import traceback
-import base64
 
 
 class HelloWorldPiece(BasePiece):
@@ -17,11 +16,7 @@ class HelloWorldPiece(BasePiece):
             self.logger.info(f"Generated message: {message}")
 
             # Set display result for Domino UI
-            base64_content = base64.b64encode(message.encode("utf-8")).decode("utf-8")
-            self.display_result = {
-                "file_type": "txt",
-                "base64_content": base64_content
-            }
+            self.format_display_result(message, input_data.name)
 
             return OutputModel(message=message)
 
@@ -30,3 +25,19 @@ class HelloWorldPiece(BasePiece):
             print("[HelloWorldPiece] Exception in piece_function:")
             traceback.print_exc()
             raise
+
+    def format_display_result(self, message: str, name: str):
+        md_text = f"""
+## Hello World Greeting
+
+**Message:** {message}
+
+**Generated for:** {name}
+"""
+        file_path = f"{self.results_path}/display_result.md"
+        with open(file_path, "w") as f:
+            f.write(md_text)
+        self.display_result = {
+            "file_type": "md",
+            "file_path": file_path
+        }
