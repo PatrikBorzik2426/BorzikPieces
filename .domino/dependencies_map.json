@@ -8,7 +8,7 @@
             "ExampleSineWavePiece"
         ],
         "secrets": [],
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.1-group0"
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.2-group0"
     },
     "group1": {
         "dependency": {
@@ -19,7 +19,7 @@
             "ExampleSleepPiece"
         ],
         "secrets": [],
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.1-group1"
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.2-group1"
     },
     "group2": {
         "dependency": {
@@ -30,6 +30,6 @@
             "GenerativeShapesPiece"
         ],
         "secrets": [],
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.1-group2"
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.2-group2"
     }
 }
