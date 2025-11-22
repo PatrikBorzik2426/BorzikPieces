@@ -59,16 +59,28 @@ class GenerativeShapesPiece(BasePiece):
             im.save(out_path, format="PNG")
             self.logger.info(f"Image saved to {out_path}")
 
-            # Tell Domino how to display the artifact
-            self.display_result = {"file_type": "image/png", "file_path": "shapes.png"}
-            self.logger.info("Set display_result for PNG image")
+            # Create a markdown file that displays the image
+            md_text = f"""
+## Generated Shapes Image
 
-            return OutputModel(message="Shapes generated", file_path="shapes.png")
-            out_path = os.path.join(results_dir, "shapes.png")
-            im.save(out_path, format="PNG")
+![Generated Shapes]({out_path})
 
+**Parameters used:**
+- Shape: {shape}
+- Count: {count}
+- Size: {size}
+- Color: {col}
+- Background: {bg}
+- Canvas: {width}x{height}
+- Seed: {seed}
+"""
+            md_path = os.path.join(results_dir, "display_result.md")
+            with open(md_path, "w") as f:
+                f.write(md_text)
+            
             # Tell Domino how to display the artifact
-            self.display_result = {"file_type": "image/png", "file_path": "shapes.png"}
+            self.display_result = {"file_type": "md", "file_path": md_path}
+            self.logger.info("Set display_result for markdown with embedded image")
 
             return OutputModel(message="Shapes generated", file_path="shapes.png")
         except Exception as e:
