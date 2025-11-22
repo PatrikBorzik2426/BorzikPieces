@@ -75,7 +75,7 @@ class GenerativeShapesPiece(BasePiece):
             
             # Tell Domino how to display the artifact
             self.display_result = {
-                "file_type": "image/base64",
+                "file_type": "image/png",
                 "base64_content": image_base64
             }
     
