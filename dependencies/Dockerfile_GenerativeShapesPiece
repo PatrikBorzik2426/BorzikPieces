@@ -1,17 +1,9 @@
-FROM python:3.11-slim
+FROM ghcr.io/tauffer-consulting/domino-base-piece:latest
 
-# Install minimal build tools
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
+# Install Pillow for image generation
+RUN pip install --no-cache-dir Pillow==10.1.0
 
-WORKDIR /app
-
-# Copy and install requirements
-COPY dependencies/requirements_1.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r /app/requirements.txt
-
-# Copy the piece source code
-COPY pieces/GenerativeShapesPiece /app/pieces/GenerativeShapesPiece
-
-CMD ["bash"]
+# Copy the piece source code and config
+COPY config.toml domino/pieces_repository/
+COPY pieces/GenerativeShapesPiece domino/pieces_repository/pieces/GenerativeShapesPiece
+COPY .domino domino/pieces_repository/.domino
