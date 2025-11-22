@@ -60,7 +60,7 @@
             "type": "object"
         },
         "secrets_schema": null,
-        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/ExampleSleepPiece"
+        "source_url": null
     },
     "ExampleSineWavePiece": {
         "name": "ExampleSineWavePiece",
@@ -135,7 +135,7 @@
             "type": "object"
         },
         "secrets_schema": null,
-        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/ExampleSineWavePiece"
+        "source_url": null
     },
     "HelloWorldPiece": {
         "name": "HelloWorldPiece",
@@ -195,7 +195,7 @@
             "type": "object"
         },
         "secrets_schema": null,
-        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/HelloWorldPiece"
+        "source_url": null
     },
     "GenerativeShapesPiece": {
         "name": "GenerativeShapesPiece",
@@ -308,6 +308,6 @@
             "type": "object"
         },
         "secrets_schema": null,
-        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/GenerativeShapesPiece"
+        "source_url": null
     }
 }
