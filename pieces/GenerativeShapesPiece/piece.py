@@ -66,16 +66,19 @@ class GenerativeShapesPiece(BasePiece):
             out_path = os.path.join(results_dir, "shapes.png")
             im.save(out_path, format="PNG")
 
-            # Tell Domino how to display the artifact
-            self.display_result = {"file_type": "image/png", "file_path": "shapes.png"}
-            
             # Image base 64 encoding for OutputModel
             with open(out_path, "rb") as img_file:
                 import base64
                 image_bytes = img_file.read()
                 image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+                
+            
+            # Tell Domino how to display the artifact
+            self.display_result = {
+                "file_type": "image/png",
+                "base64_content": image_base64
+            }
     
-
             return OutputModel(message="Shapes generated", file_path="shapes.png", image_base64=image_base64)
         
         except Exception as e:
