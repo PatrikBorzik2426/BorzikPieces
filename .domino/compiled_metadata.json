@@ -140,7 +140,7 @@
     "GenerativeShapesPiece": {
         "name": "GenerativeShapesPiece",
         "dependency": {
-            "dockerfile": "Dockerfile_1",
+            "dockerfile": "Dockerfile_GenerativeShapesPiece",
             "requirements_file": "requirements_1.txt"
         },
         "tags": [

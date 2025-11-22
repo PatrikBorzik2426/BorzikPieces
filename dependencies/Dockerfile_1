@@ -8,11 +8,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 # Copy and install requirements
-COPY dependencies/requirements_0.txt /app/requirements_0.txt
-RUN pip install --no-cache-dir -r /app/requirements_0.txt
-
-COPY dependencies/requirements_1.txt /app/requirements_1.txt
-RUN pip install --no-cache-dir -r /app/requirements_1.txt
+COPY dependencies/requirements_0.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
 CMD ["bash"]
 FROM ghcr.io/tauffer-consulting/domino-base-piece:latest

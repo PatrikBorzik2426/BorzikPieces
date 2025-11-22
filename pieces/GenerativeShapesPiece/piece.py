@@ -10,17 +10,17 @@ class GenerativeShapesPiece(BasePiece):
 
     NAME = "GenerativeShapesPiece"
 
-    def piece_function(self, input_model: InputModel) -> OutputModel:
+    def piece_function(self, input_data: InputModel) -> OutputModel:
         import traceback
         try:
-            width = input_model.width
-            height = input_model.height
-            bg = input_model.background_color
-            shape = input_model.shape
-            count = input_model.count
-            size = input_model.shape_size
-            col = input_model.color
-            seed = input_model.seed if input_model.seed is not None else 0
+            width = input_data.width
+            height = input_data.height
+            bg = input_data.background_color
+            shape = input_data.shape
+            count = input_data.count
+            size = input_data.shape_size
+            col = input_data.color
+            seed = input_data.seed if input_data.seed is not None else 0
 
             random.seed(seed)
             im = Image.new("RGB", (width, height), bg)
