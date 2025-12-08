@@ -1,0 +1,23 @@
+{
+    "name": "NiftiDataLoaderPiece",
+    "title": "NIfTI Data Loader",
+    "description": "Discovers and loads NIfTI medical imaging data (.nii.gz files). Pairs images with corresponding segmentation masks based on filename matching.",
+    "dependency": {
+        "requirements_file": "requirements.txt"
+    },
+    "container_resources": {
+        "cpu": 100,
+        "memory": "256Mi"
+    },
+    "tags": [
+        "medical-imaging",
+        "nifti",
+        "data-loading",
+        "radiology",
+        "preprocessing"
+    ],
+    "style": {
+        "node_label": "NIfTI Loader",
+        "icon_class_name": "fa-solid:file-medical"
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "name": "DataSplitPiece",
+    "title": "Data Split",
+    "description": "Splits dataset subjects into train/validation/test sets with configurable ratios. Supports random and sequential splitting strategies.",
+    "dependency": {
+        "requirements_file": "requirements.txt"
+    },
+    "container_resources": {
+        "cpu": 100,
+        "memory": "128Mi"
+    },
+    "tags": [
+        "data-processing",
+        "train-test-split",
+        "machine-learning",
+        "preprocessing"
+    ],
+    "style": {
+        "node_label": "Data Split",
+        "icon_class_name": "fa-solid:code-branch"
+    }
+}

@@ -1,141 +1,145 @@
 {
-    "ExampleSleepPiece": {
-        "name": "ExampleSleepPiece",
+    "NiftiDataLoaderPiece": {
+        "name": "NiftiDataLoaderPiece",
         "dependency": {
             "dockerfile": null,
             "requirements_file": "requirements.txt"
         },
         "tags": [
-            "Example"
+            "medical-imaging",
+            "nifti",
+            "data-loading",
+            "radiology",
+            "preprocessing"
         ],
         "style": {
-            "node_label": "Example Sleep Piece",
+            "node_label": "NIfTI Loader",
             "node_type": "default",
             "node_style": {
                 "backgroundColor": "#ebebeb"
             },
             "useIcon": true,
-            "icon_class_name": "fa-solid:database",
+            "icon_class_name": "fa-solid:file-medical",
             "iconStyle": {
                 "cursor": "pointer"
             }
         },
-        "description": "This is an example of a simple Domino Piece that sleep for N seconds",
+        "title": "NIfTI Data Loader",
+        "description": "Discovers and loads NIfTI medical imaging data (.nii.gz files). Pairs images with corresponding segmentation masks based on filename matching.",
         "container_resources": {
-            "requests": {
-                "cpu": 100,
-                "memory": 128
-            },
-            "limits": {
-                "cpu": 500,
-                "memory": 512
-            }
+            "cpu": 100,
+            "memory": "256Mi"
         },
         "input_schema": {
-            "description": "Sleep Piece Input Model",
+            "description": "NIfTI Data Loader Piece Input Model",
             "properties": {
-                "sleep_time": {
-                    "default": 1,
-                    "description": "Number of seconds to sleep",
-                    "title": "Sleep Time",
-                    "type": "number"
+                "images_path": {
+                    "default": "/data/images",
+                    "description": "Path to the directory containing NIfTI image files (.nii.gz)",
+                    "title": "Images Path",
+                    "type": "string"
+                },
+                "masks_path": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Path to the directory containing NIfTI mask/segmentation files (.nii.gz). Optional for inference-only mode.",
+                    "title": "Masks Path"
+                },
+                "file_pattern": {
+                    "default": "*.nii.gz",
+                    "description": "Glob pattern to match NIfTI files (e.g., 'sub-*.nii.gz')",
+                    "title": "File Pattern",
+                    "type": "string"
                 }
             },
             "title": "InputModel",
             "type": "object"
         },
         "output_schema": {
-            "description": "Sleep Piece Output Model",
+            "$defs": {
+                "SubjectInfo": {
+                    "description": "Information about a single subject/scan",
+                    "properties": {
+                        "subject_id": {
+                            "title": "Subject Id",
+                            "type": "string"
+                        },
+                        "image_path": {
+                            "title": "Image Path",
+                            "type": "string"
+                        },
+                        "mask_path": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "default": null,
+                            "title": "Mask Path"
+                        }
+                    },
+                    "required": [
+                        "subject_id",
+                        "image_path"
+                    ],
+                    "title": "SubjectInfo",
+                    "type": "object"
+                }
+            },
+            "description": "NIfTI Data Loader Piece Output Model",
             "properties": {
-                "message": {
-                    "description": "Sleep piece executed",
-                    "title": "Message",
+                "subjects": {
+                    "description": "List of discovered subjects with their image and mask paths",
+                    "items": {
+                        "$ref": "#/$defs/SubjectInfo"
+                    },
+                    "title": "Subjects",
+                    "type": "array"
+                },
+                "num_subjects": {
+                    "description": "Total number of subjects found",
+                    "title": "Num Subjects",
+                    "type": "integer"
+                },
+                "images_dir": {
+                    "description": "Path to images directory",
+                    "title": "Images Dir",
                     "type": "string"
+                },
+                "masks_dir": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "Path to masks directory (if provided)",
+                    "title": "Masks Dir"
                 }
             },
             "required": [
-                "message"
+                "subjects",
+                "num_subjects",
+                "images_dir",
+                "masks_dir"
             ],
             "title": "OutputModel",
             "type": "object"
         },
         "secrets_schema": null,
-        "source_url": null
-    },
-    "ExampleSineWavePiece": {
-        "name": "ExampleSineWavePiece",
-        "dependency": {
-            "dockerfile": "Dockerfile",
-            "requirements_file": null
-        },
-        "tags": [
-            "Example"
-        ],
-        "style": {
-            "node_label": "Example Sine Piece",
-            "node_type": "default",
-            "node_style": {
-                "backgroundColor": "#ebebeb"
-            },
-            "useIcon": true,
-            "icon_class_name": "fa-solid:database",
-            "iconStyle": {
-                "cursor": "pointer"
-            }
-        },
-        "description": "This is an example of a piece that uses Dockerfile for dependencies.",
-        "container_resources": {
-            "requests": {
-                "cpu": 100,
-                "memory": 128
-            },
-            "limits": {
-                "cpu": 500,
-                "memory": 512
-            }
-        },
-        "input_schema": {
-            "description": "Sleep Piece Input Model",
-            "properties": {
-                "frequency": {
-                    "default": 5,
-                    "description": "Frequency of the sine wave in Hz",
-                    "title": "Frequency",
-                    "type": "integer"
-                },
-                "duration": {
-                    "default": 1,
-                    "description": "Duration of the sine wave signal in seconds",
-                    "title": "Duration",
-                    "type": "integer"
-                },
-                "sample_rate": {
-                    "default": 1000,
-                    "description": "Sample rate of the sine wave signal.",
-                    "title": "Sample Rate",
-                    "type": "integer"
-                }
-            },
-            "title": "InputModel",
-            "type": "object"
-        },
-        "output_schema": {
-            "description": "Sleep Piece Output Model",
-            "properties": {
-                "message": {
-                    "description": "Sleep piece executed",
-                    "title": "Message",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "message"
-            ],
-            "title": "OutputModel",
-            "type": "object"
-        },
-        "secrets_schema": null,
-        "source_url": null
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/NiftiDataLoaderPiece"
     },
     "HelloWorldPiece": {
         "name": "HelloWorldPiece",
@@ -195,7 +199,772 @@
             "type": "object"
         },
         "secrets_schema": null,
-        "source_url": null
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/HelloWorldPiece"
+    },
+    "DataSplitPiece": {
+        "name": "DataSplitPiece",
+        "dependency": {
+            "dockerfile": null,
+            "requirements_file": "requirements.txt"
+        },
+        "tags": [
+            "data-processing",
+            "train-test-split",
+            "machine-learning",
+            "preprocessing"
+        ],
+        "style": {
+            "node_label": "Data Split",
+            "node_type": "default",
+            "node_style": {
+                "backgroundColor": "#ebebeb"
+            },
+            "useIcon": true,
+            "icon_class_name": "fa-solid:code-branch",
+            "iconStyle": {
+                "cursor": "pointer"
+            }
+        },
+        "title": "Data Split",
+        "description": "Splits dataset subjects into train/validation/test sets with configurable ratios. Supports random and sequential splitting strategies.",
+        "container_resources": {
+            "cpu": 100,
+            "memory": "128Mi"
+        },
+        "input_schema": {
+            "$defs": {
+                "SplitStrategy": {
+                    "description": "Strategy for splitting data",
+                    "enum": [
+                        "random",
+                        "sequential"
+                    ],
+                    "title": "SplitStrategy",
+                    "type": "string"
+                },
+                "SubjectInfo": {
+                    "description": "Information about a single subject/scan",
+                    "properties": {
+                        "subject_id": {
+                            "title": "Subject Id",
+                            "type": "string"
+                        },
+                        "image_path": {
+                            "title": "Image Path",
+                            "type": "string"
+                        },
+                        "mask_path": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "default": null,
+                            "title": "Mask Path"
+                        }
+                    },
+                    "required": [
+                        "subject_id",
+                        "image_path"
+                    ],
+                    "title": "SubjectInfo",
+                    "type": "object"
+                }
+            },
+            "description": "Data Split Piece Input Model",
+            "properties": {
+                "subjects": {
+                    "description": "List of subjects to split (from NiftiDataLoaderPiece)",
+                    "items": {
+                        "$ref": "#/$defs/SubjectInfo"
+                    },
+                    "title": "Subjects",
+                    "type": "array"
+                },
+                "train_ratio": {
+                    "default": 0.7,
+                    "description": "Proportion of data for training (0.0-1.0)",
+                    "maximum": 1.0,
+                    "minimum": 0.0,
+                    "title": "Train Ratio",
+                    "type": "number"
+                },
+                "val_ratio": {
+                    "default": 0.15,
+                    "description": "Proportion of data for validation (0.0-1.0)",
+                    "maximum": 1.0,
+                    "minimum": 0.0,
+                    "title": "Val Ratio",
+                    "type": "number"
+                },
+                "test_ratio": {
+                    "default": 0.15,
+                    "description": "Proportion of data for testing (0.0-1.0). If not specified, uses remaining data.",
+                    "maximum": 1.0,
+                    "minimum": 0.0,
+                    "title": "Test Ratio",
+                    "type": "number"
+                },
+                "random_seed": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": 42,
+                    "description": "Random seed for reproducible splits",
+                    "title": "Random Seed"
+                },
+                "split_strategy": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/SplitStrategy"
+                        }
+                    ],
+                    "default": "random",
+                    "description": "Strategy for splitting: 'random' shuffles data, 'sequential' keeps order"
+                }
+            },
+            "required": [
+                "subjects"
+            ],
+            "title": "InputModel",
+            "type": "object"
+        },
+        "output_schema": {
+            "$defs": {
+                "SubjectInfo": {
+                    "description": "Information about a single subject/scan",
+                    "properties": {
+                        "subject_id": {
+                            "title": "Subject Id",
+                            "type": "string"
+                        },
+                        "image_path": {
+                            "title": "Image Path",
+                            "type": "string"
+                        },
+                        "mask_path": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "default": null,
+                            "title": "Mask Path"
+                        }
+                    },
+                    "required": [
+                        "subject_id",
+                        "image_path"
+                    ],
+                    "title": "SubjectInfo",
+                    "type": "object"
+                }
+            },
+            "description": "Data Split Piece Output Model",
+            "properties": {
+                "train_subjects": {
+                    "description": "Subjects assigned to training set",
+                    "items": {
+                        "$ref": "#/$defs/SubjectInfo"
+                    },
+                    "title": "Train Subjects",
+                    "type": "array"
+                },
+                "val_subjects": {
+                    "description": "Subjects assigned to validation set",
+                    "items": {
+                        "$ref": "#/$defs/SubjectInfo"
+                    },
+                    "title": "Val Subjects",
+                    "type": "array"
+                },
+                "test_subjects": {
+                    "description": "Subjects assigned to test set",
+                    "items": {
+                        "$ref": "#/$defs/SubjectInfo"
+                    },
+                    "title": "Test Subjects",
+                    "type": "array"
+                },
+                "train_count": {
+                    "description": "Number of training subjects",
+                    "title": "Train Count",
+                    "type": "integer"
+                },
+                "val_count": {
+                    "description": "Number of validation subjects",
+                    "title": "Val Count",
+                    "type": "integer"
+                },
+                "test_count": {
+                    "description": "Number of test subjects",
+                    "title": "Test Count",
+                    "type": "integer"
+                },
+                "total_count": {
+                    "description": "Total number of subjects",
+                    "title": "Total Count",
+                    "type": "integer"
+                },
+                "split_info": {
+                    "description": "Summary information about the split",
+                    "title": "Split Info",
+                    "type": "object"
+                }
+            },
+            "required": [
+                "train_subjects",
+                "val_subjects",
+                "test_subjects",
+                "train_count",
+                "val_count",
+                "test_count",
+                "total_count",
+                "split_info"
+            ],
+            "title": "OutputModel",
+            "type": "object"
+        },
+        "secrets_schema": null,
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/DataSplitPiece"
+    },
+    "NiftiPreprocessingPiece": {
+        "name": "NiftiPreprocessingPiece",
+        "dependency": {
+            "dockerfile": null,
+            "requirements_file": "requirements.txt"
+        },
+        "tags": [
+            "medical-imaging",
+            "nifti",
+            "preprocessing",
+            "normalization",
+            "radiology"
+        ],
+        "style": {
+            "node_label": "Preprocess NIfTI",
+            "node_type": "default",
+            "node_style": {
+                "backgroundColor": "#ebebeb"
+            },
+            "useIcon": true,
+            "icon_class_name": "fa-solid:filter",
+            "iconStyle": {
+                "cursor": "pointer"
+            }
+        },
+        "title": "NIfTI Preprocessing",
+        "description": "Preprocesses NIfTI medical imaging data with normalization (z-score, min-max, percentile), optional resizing, and conversion to NumPy format for efficient ML training.",
+        "container_resources": {
+            "cpu": 500,
+            "memory": "2Gi"
+        },
+        "input_schema": {
+            "$defs": {
+                "NormalizationMethod": {
+                    "description": "Normalization methods for medical images",
+                    "enum": [
+                        "zscore",
+                        "minmax",
+                        "percentile",
+                        "none"
+                    ],
+                    "title": "NormalizationMethod",
+                    "type": "string"
+                },
+                "SubjectInfo": {
+                    "description": "Information about a single subject/scan",
+                    "properties": {
+                        "subject_id": {
+                            "title": "Subject Id",
+                            "type": "string"
+                        },
+                        "image_path": {
+                            "title": "Image Path",
+                            "type": "string"
+                        },
+                        "mask_path": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "default": null,
+                            "title": "Mask Path"
+                        }
+                    },
+                    "required": [
+                        "subject_id",
+                        "image_path"
+                    ],
+                    "title": "SubjectInfo",
+                    "type": "object"
+                }
+            },
+            "description": "NIfTI Preprocessing Piece Input Model",
+            "properties": {
+                "subjects": {
+                    "description": "List of subjects to preprocess",
+                    "items": {
+                        "$ref": "#/$defs/SubjectInfo"
+                    },
+                    "title": "Subjects",
+                    "type": "array"
+                },
+                "output_dir": {
+                    "default": "/data/preprocessed",
+                    "description": "Directory to save preprocessed data",
+                    "title": "Output Dir",
+                    "type": "string"
+                },
+                "normalization": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/NormalizationMethod"
+                        }
+                    ],
+                    "default": "zscore",
+                    "description": "Normalization method to apply"
+                },
+                "lower_percentile": {
+                    "default": 1.0,
+                    "description": "Lower percentile for clipping (used with 'percentile' normalization)",
+                    "maximum": 50.0,
+                    "minimum": 0.0,
+                    "title": "Lower Percentile",
+                    "type": "number"
+                },
+                "upper_percentile": {
+                    "default": 99.0,
+                    "description": "Upper percentile for clipping (used with 'percentile' normalization)",
+                    "maximum": 100.0,
+                    "minimum": 50.0,
+                    "title": "Upper Percentile",
+                    "type": "number"
+                },
+                "save_as_numpy": {
+                    "default": true,
+                    "description": "Save preprocessed data as NumPy arrays (.npy) for faster loading",
+                    "title": "Save As Numpy",
+                    "type": "boolean"
+                },
+                "target_shape": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "integer"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Target shape for resizing (e.g., [128, 128, 64]). None = keep original.",
+                    "title": "Target Shape"
+                }
+            },
+            "required": [
+                "subjects"
+            ],
+            "title": "InputModel",
+            "type": "object"
+        },
+        "output_schema": {
+            "$defs": {
+                "PreprocessedSubject": {
+                    "description": "Information about a preprocessed subject",
+                    "properties": {
+                        "subject_id": {
+                            "title": "Subject Id",
+                            "type": "string"
+                        },
+                        "original_image_path": {
+                            "title": "Original Image Path",
+                            "type": "string"
+                        },
+                        "preprocessed_image_path": {
+                            "title": "Preprocessed Image Path",
+                            "type": "string"
+                        },
+                        "preprocessed_mask_path": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "default": null,
+                            "title": "Preprocessed Mask Path"
+                        },
+                        "original_shape": {
+                            "items": {
+                                "type": "integer"
+                            },
+                            "title": "Original Shape",
+                            "type": "array"
+                        },
+                        "preprocessed_shape": {
+                            "items": {
+                                "type": "integer"
+                            },
+                            "title": "Preprocessed Shape",
+                            "type": "array"
+                        },
+                        "image_stats": {
+                            "title": "Image Stats",
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "subject_id",
+                        "original_image_path",
+                        "preprocessed_image_path",
+                        "original_shape",
+                        "preprocessed_shape",
+                        "image_stats"
+                    ],
+                    "title": "PreprocessedSubject",
+                    "type": "object"
+                }
+            },
+            "description": "NIfTI Preprocessing Piece Output Model",
+            "properties": {
+                "preprocessed_subjects": {
+                    "description": "List of preprocessed subjects with paths and statistics",
+                    "items": {
+                        "$ref": "#/$defs/PreprocessedSubject"
+                    },
+                    "title": "Preprocessed Subjects",
+                    "type": "array"
+                },
+                "output_dir": {
+                    "description": "Directory containing preprocessed data",
+                    "title": "Output Dir",
+                    "type": "string"
+                },
+                "num_processed": {
+                    "description": "Number of successfully preprocessed subjects",
+                    "title": "Num Processed",
+                    "type": "integer"
+                },
+                "num_failed": {
+                    "description": "Number of subjects that failed preprocessing",
+                    "title": "Num Failed",
+                    "type": "integer"
+                },
+                "preprocessing_config": {
+                    "description": "Configuration used for preprocessing",
+                    "title": "Preprocessing Config",
+                    "type": "object"
+                }
+            },
+            "required": [
+                "preprocessed_subjects",
+                "output_dir",
+                "num_processed",
+                "num_failed",
+                "preprocessing_config"
+            ],
+            "title": "OutputModel",
+            "type": "object"
+        },
+        "secrets_schema": null,
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/NiftiPreprocessingPiece"
+    },
+    "PituitaryDatasetPiece": {
+        "name": "PituitaryDatasetPiece",
+        "dependency": {
+            "dockerfile": null,
+            "requirements_file": "requirements.txt"
+        },
+        "tags": [
+            "medical-imaging",
+            "pytorch",
+            "dataset",
+            "segmentation",
+            "pituitary"
+        ],
+        "style": {
+            "node_label": "Pituitary Dataset",
+            "node_type": "default",
+            "node_style": {
+                "backgroundColor": "#ebebeb"
+            },
+            "useIcon": true,
+            "icon_class_name": "fa-solid:database",
+            "iconStyle": {
+                "cursor": "pointer"
+            }
+        },
+        "title": "Pituitary Dataset Creator",
+        "description": "Creates PyTorch-compatible dataset configurations for pituitary gland segmentation. Generates dataset configs and provides code for creating DataLoaders.",
+        "container_resources": {
+            "cpu": 200,
+            "memory": "512Mi"
+        },
+        "input_schema": {
+            "$defs": {
+                "PreprocessedSubject": {
+                    "description": "Information about a preprocessed subject",
+                    "properties": {
+                        "subject_id": {
+                            "title": "Subject Id",
+                            "type": "string"
+                        },
+                        "original_image_path": {
+                            "title": "Original Image Path",
+                            "type": "string"
+                        },
+                        "preprocessed_image_path": {
+                            "title": "Preprocessed Image Path",
+                            "type": "string"
+                        },
+                        "preprocessed_mask_path": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "default": null,
+                            "title": "Preprocessed Mask Path"
+                        },
+                        "original_shape": {
+                            "items": {
+                                "type": "integer"
+                            },
+                            "title": "Original Shape",
+                            "type": "array"
+                        },
+                        "preprocessed_shape": {
+                            "items": {
+                                "type": "integer"
+                            },
+                            "title": "Preprocessed Shape",
+                            "type": "array"
+                        },
+                        "image_stats": {
+                            "title": "Image Stats",
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "subject_id",
+                        "original_image_path",
+                        "preprocessed_image_path",
+                        "original_shape",
+                        "preprocessed_shape",
+                        "image_stats"
+                    ],
+                    "title": "PreprocessedSubject",
+                    "type": "object"
+                }
+            },
+            "description": "Pituitary Dataset Piece Input Model",
+            "properties": {
+                "train_subjects": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/PreprocessedSubject"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Preprocessed training subjects",
+                    "title": "Train Subjects"
+                },
+                "val_subjects": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/PreprocessedSubject"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Preprocessed validation subjects",
+                    "title": "Val Subjects"
+                },
+                "test_subjects": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/PreprocessedSubject"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Preprocessed test subjects",
+                    "title": "Test Subjects"
+                },
+                "data_dir": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Directory containing preprocessed 'images' and 'masks' subdirectories",
+                    "title": "Data Dir"
+                },
+                "batch_size": {
+                    "default": 2,
+                    "description": "Batch size for DataLoader",
+                    "minimum": 1,
+                    "title": "Batch Size",
+                    "type": "integer"
+                },
+                "num_workers": {
+                    "default": 0,
+                    "description": "Number of workers for DataLoader",
+                    "minimum": 0,
+                    "title": "Num Workers",
+                    "type": "integer"
+                },
+                "shuffle_train": {
+                    "default": true,
+                    "description": "Whether to shuffle training data",
+                    "title": "Shuffle Train",
+                    "type": "boolean"
+                }
+            },
+            "title": "InputModel",
+            "type": "object"
+        },
+        "output_schema": {
+            "$defs": {
+                "DatasetInfo": {
+                    "description": "Information about a created dataset",
+                    "properties": {
+                        "split_name": {
+                            "title": "Split Name",
+                            "type": "string"
+                        },
+                        "num_samples": {
+                            "title": "Num Samples",
+                            "type": "integer"
+                        },
+                        "batch_size": {
+                            "title": "Batch Size",
+                            "type": "integer"
+                        },
+                        "num_batches": {
+                            "title": "Num Batches",
+                            "type": "integer"
+                        },
+                        "subject_ids": {
+                            "items": {
+                                "type": "string"
+                            },
+                            "title": "Subject Ids",
+                            "type": "array"
+                        }
+                    },
+                    "required": [
+                        "split_name",
+                        "num_samples",
+                        "batch_size",
+                        "num_batches",
+                        "subject_ids"
+                    ],
+                    "title": "DatasetInfo",
+                    "type": "object"
+                }
+            },
+            "description": "Pituitary Dataset Piece Output Model",
+            "properties": {
+                "train_info": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/DatasetInfo"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "Information about training dataset"
+                },
+                "val_info": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/DatasetInfo"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "Information about validation dataset"
+                },
+                "test_info": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/DatasetInfo"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "Information about test dataset"
+                },
+                "data_dir": {
+                    "description": "Directory containing the data",
+                    "title": "Data Dir",
+                    "type": "string"
+                },
+                "dataset_config_path": {
+                    "description": "Path to saved dataset configuration JSON file",
+                    "title": "Dataset Config Path",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "train_info",
+                "val_info",
+                "test_info",
+                "data_dir",
+                "dataset_config_path"
+            ],
+            "title": "OutputModel",
+            "type": "object"
+        },
+        "secrets_schema": null,
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/PituitaryDatasetPiece"
     },
     "GenerativeShapesPiece": {
         "name": "GenerativeShapesPiece",
@@ -320,6 +1089,6 @@
             "type": "object"
         },
         "secrets_schema": null,
-        "source_url": null
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/GenerativeShapesPiece"
     }
 }

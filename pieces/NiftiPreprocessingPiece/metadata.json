@@ -1,0 +1,23 @@
+{
+    "name": "NiftiPreprocessingPiece",
+    "title": "NIfTI Preprocessing",
+    "description": "Preprocesses NIfTI medical imaging data with normalization (z-score, min-max, percentile), optional resizing, and conversion to NumPy format for efficient ML training.",
+    "dependency": {
+        "requirements_file": "requirements.txt"
+    },
+    "container_resources": {
+        "cpu": 500,
+        "memory": "2Gi"
+    },
+    "tags": [
+        "medical-imaging",
+        "nifti",
+        "preprocessing",
+        "normalization",
+        "radiology"
+    ],
+    "style": {
+        "node_label": "Preprocess NIfTI",
+        "icon_class_name": "fa-solid:filter"
+    }
+}

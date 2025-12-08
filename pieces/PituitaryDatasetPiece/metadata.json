@@ -1,0 +1,23 @@
+{
+    "name": "PituitaryDatasetPiece",
+    "title": "Pituitary Dataset Creator",
+    "description": "Creates PyTorch-compatible dataset configurations for pituitary gland segmentation. Generates dataset configs and provides code for creating DataLoaders.",
+    "dependency": {
+        "requirements_file": "requirements.txt"
+    },
+    "container_resources": {
+        "cpu": 200,
+        "memory": "512Mi"
+    },
+    "tags": [
+        "medical-imaging",
+        "pytorch",
+        "dataset",
+        "segmentation",
+        "pituitary"
+    ],
+    "style": {
+        "node_label": "Pituitary Dataset",
+        "icon_class_name": "fa-solid:database"
+    }
+}
