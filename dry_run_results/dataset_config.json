@@ -1,0 +1,141 @@
+{
+  "batch_size": 4,
+  "num_workers": 0,
+  "shuffle_train": true,
+  "data_dir": "/data/preprocessed",
+  "train": {
+    "subjects": [
+      {
+        "subject_id": "train-sub-000",
+        "original_image_path": "/data/images/train-sub-000.nii.gz",
+        "preprocessed_image_path": "/data/preprocessed/images/train-sub-000.npy",
+        "preprocessed_mask_path": "/data/preprocessed/masks/train-sub-000.npy",
+        "original_shape": [
+          256,
+          256,
+          128
+        ],
+        "preprocessed_shape": [
+          128,
+          128,
+          64
+        ],
+        "image_stats": {
+          "original": {
+            "mean": 100
+          },
+          "normalized": {
+            "mean": 0
+          }
+        }
+      },
+      {
+        "subject_id": "train-sub-001",
+        "original_image_path": "/data/images/train-sub-001.nii.gz",
+        "preprocessed_image_path": "/data/preprocessed/images/train-sub-001.npy",
+        "preprocessed_mask_path": "/data/preprocessed/masks/train-sub-001.npy",
+        "original_shape": [
+          256,
+          256,
+          128
+        ],
+        "preprocessed_shape": [
+          128,
+          128,
+          64
+        ],
+        "image_stats": {
+          "original": {
+            "mean": 100
+          },
+          "normalized": {
+            "mean": 0
+          }
+        }
+      },
+      {
+        "subject_id": "train-sub-002",
+        "original_image_path": "/data/images/train-sub-002.nii.gz",
+        "preprocessed_image_path": "/data/preprocessed/images/train-sub-002.npy",
+        "preprocessed_mask_path": "/data/preprocessed/masks/train-sub-002.npy",
+        "original_shape": [
+          256,
+          256,
+          128
+        ],
+        "preprocessed_shape": [
+          128,
+          128,
+          64
+        ],
+        "image_stats": {
+          "original": {
+            "mean": 100
+          },
+          "normalized": {
+            "mean": 0
+          }
+        }
+      },
+      {
+        "subject_id": "train-sub-003",
+        "original_image_path": "/data/images/train-sub-003.nii.gz",
+        "preprocessed_image_path": "/data/preprocessed/images/train-sub-003.npy",
+        "preprocessed_mask_path": "/data/preprocessed/masks/train-sub-003.npy",
+        "original_shape": [
+          256,
+          256,
+          128
+        ],
+        "preprocessed_shape": [
+          128,
+          128,
+          64
+        ],
+        "image_stats": {
+          "original": {
+            "mean": 100
+          },
+          "normalized": {
+            "mean": 0
+          }
+        }
+      },
+      {
+        "subject_id": "train-sub-004",
+        "original_image_path": "/data/images/train-sub-004.nii.gz",
+        "preprocessed_image_path": "/data/preprocessed/images/train-sub-004.npy",
+        "preprocessed_mask_path": "/data/preprocessed/masks/train-sub-004.npy",
+        "original_shape": [
+          256,
+          256,
+          128
+        ],
+        "preprocessed_shape": [
+          128,
+          128,
+          64
+        ],
+        "image_stats": {
+          "original": {
+            "mean": 100
+          },
+          "normalized": {
+            "mean": 0
+          }
+        }
+      }
+    ],
+    "num_samples": 5
+  },
+  "val": {
+    "subjects": [],
+    "num_samples": 0
+  },
+  "test": {
+    "subjects": [],
+    "num_samples": 0
+  },
+  "pytorch_dataset_class": "PituitarySegmentationDataset",
+  "pytorch_code": "\nimport os\nimport numpy as np\nimport torch\nfrom torch.utils.data import Dataset\n\nclass PituitarySegmentationDataset(Dataset):\n    \"\"\"\n    PyTorch Dataset for Pituitary Gland Segmentation.\n    \n    Loads preprocessed numpy arrays (images and masks) for 3D medical image segmentation.\n    \"\"\"\n    \n    def __init__(self, subjects, transform=None):\n        \"\"\"\n        Args:\n            subjects: List of subject dictionaries with 'subject_id', \n                     'preprocessed_image_path', 'preprocessed_mask_path'\n            transform: Optional transform to apply to image and mask\n        \"\"\"\n        self.subjects = subjects\n        self.transform = transform\n    \n    def __len__(self):\n        return len(self.subjects)\n    \n    def __getitem__(self, idx):\n        subject = self.subjects[idx]\n        subject_id = subject[\"subject_id\"]\n        \n        # Load image\n        img_path = subject[\"preprocessed_image_path\"]\n        if img_path.endswith(\".npy\"):\n            img = np.load(img_path).astype(np.float32)\n        else:\n            import nibabel as nib\n            img = nib.load(img_path).get_fdata().astype(np.float32)\n        \n        # Load mask if available\n        mask_path = subject.get(\"preprocessed_mask_path\")\n        if mask_path and os.path.exists(mask_path):\n            if mask_path.endswith(\".npy\"):\n                msk = np.load(mask_path).astype(np.int64)\n            else:\n                import nibabel as nib\n                msk = nib.load(mask_path).get_fdata().astype(np.int64)\n        else:\n            msk = np.zeros_like(img, dtype=np.int64)\n        \n        # Apply transforms\n        if self.transform:\n            img, msk = self.transform(img, msk)\n        \n        # Convert to tensors: [C, D, H, W] format\n        img = torch.tensor(img).unsqueeze(0).float()  # [1, D, H, W]\n        msk = torch.tensor(msk).long()                # [D, H, W]\n        \n        return img, msk, subject_id\n\n\ndef create_dataloaders(config_path, batch_size=None, num_workers=None):\n    \"\"\"\n    Utility function to create DataLoaders from saved configuration.\n    \n    Args:\n        config_path: Path to dataset_config.json\n        batch_size: Override batch size (optional)\n        num_workers: Override num_workers (optional)\n    \n    Returns:\n        dict with 'train', 'val', 'test' DataLoaders\n    \"\"\"\n    import json\n    from torch.utils.data import DataLoader\n    \n    with open(config_path, 'r') as f:\n        config = json.load(f)\n    \n    bs = batch_size or config[\"batch_size\"]\n    nw = num_workers if num_workers is not None else config[\"num_workers\"]\n    \n    loaders = {}\n    \n    if config[\"train\"][\"num_samples\"] > 0:\n        train_ds = PituitarySegmentationDataset(config[\"train\"][\"subjects\"])\n        loaders[\"train\"] = DataLoader(\n            train_ds, batch_size=bs, shuffle=config[\"shuffle_train\"], num_workers=nw\n        )\n    \n    if config[\"val\"][\"num_samples\"] > 0:\n        val_ds = PituitarySegmentationDataset(config[\"val\"][\"subjects\"])\n        loaders[\"val\"] = DataLoader(val_ds, batch_size=bs, shuffle=False, num_workers=nw)\n    \n    if config[\"test\"][\"num_samples\"] > 0:\n        test_ds = PituitarySegmentationDataset(config[\"test\"][\"subjects\"])\n        loaders[\"test\"] = DataLoader(test_ds, batch_size=bs, shuffle=False, num_workers=nw)\n    \n    return loaders\n"
+}
