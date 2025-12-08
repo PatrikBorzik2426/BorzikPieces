@@ -139,7 +139,7 @@
             "type": "object"
         },
         "secrets_schema": null,
-        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/NiftiDataLoaderPiece"
+        "source_url": null
     },
     "HelloWorldPiece": {
         "name": "HelloWorldPiece",
@@ -199,7 +199,7 @@
             "type": "object"
         },
         "secrets_schema": null,
-        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/HelloWorldPiece"
+        "source_url": null
     },
     "DataSplitPiece": {
         "name": "DataSplitPiece",
@@ -437,7 +437,7 @@
             "type": "object"
         },
         "secrets_schema": null,
-        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/DataSplitPiece"
+        "source_url": null
     },
     "NiftiPreprocessingPiece": {
         "name": "NiftiPreprocessingPiece",
@@ -687,7 +687,7 @@
             "type": "object"
         },
         "secrets_schema": null,
-        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/NiftiPreprocessingPiece"
+        "source_url": null
     },
     "PituitaryDatasetPiece": {
         "name": "PituitaryDatasetPiece",
@@ -964,7 +964,7 @@
             "type": "object"
         },
         "secrets_schema": null,
-        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/PituitaryDatasetPiece"
+        "source_url": null
     },
     "GenerativeShapesPiece": {
         "name": "GenerativeShapesPiece",
@@ -1089,6 +1089,6 @@
             "type": "object"
         },
         "secrets_schema": null,
-        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/GenerativeShapesPiece"
+        "source_url": null
     }
 }

@@ -17,9 +17,6 @@ class PituitaryDatasetPiece(BasePiece):
 
     def piece_function(self, input_data: InputModel) -> OutputModel:
         try:
-            print("=" * 60)
-            print("Starting PituitaryDatasetPiece execution")
-            print("=" * 60)
             self.logger.info("=" * 60)
             self.logger.info("Starting PituitaryDatasetPiece execution")
             self.logger.info("=" * 60)
