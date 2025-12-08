@@ -4,7 +4,6 @@ import os
 import json
 import base64
 import traceback
-import numpy as np
 
 
 class PituitaryDatasetPiece(BasePiece):
