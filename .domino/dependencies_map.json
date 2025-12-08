@@ -5,14 +5,14 @@
             "requirements_file": "requirements.txt"
         },
         "pieces": [
-            "NiftiDataLoaderPiece",
-            "HelloWorldPiece",
-            "DataSplitPiece",
             "NiftiPreprocessingPiece",
-            "PituitaryDatasetPiece"
+            "DataSplitPiece",
+            "PituitaryDatasetPiece",
+            "NiftiDataLoaderPiece",
+            "HelloWorldPiece"
         ],
         "secrets": [],
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.18-group0"
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.22-group0"
     },
     "group1": {
         "dependency": {
@@ -23,6 +23,6 @@
             "GenerativeShapesPiece"
         ],
         "secrets": [],
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.18-group1"
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.22-group1"
     }
 }
