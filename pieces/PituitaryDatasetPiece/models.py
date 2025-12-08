@@ -39,7 +39,7 @@ class InputModel(BaseModel):
     # Alternative: provide directories directly
     data_dir: Optional[str] = Field(
         description="Directory containing preprocessed 'images' and 'masks' subdirectories",
-        default=None
+        default="/home/shared_storage/medical_data/preprocessed"
     )
     batch_size: int = Field(
         description="Batch size for DataLoader",

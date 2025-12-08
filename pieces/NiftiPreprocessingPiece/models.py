@@ -27,7 +27,7 @@ class InputModel(BaseModel):
     )
     output_dir: str = Field(
         description="Directory to save preprocessed data",
-        default="/data/preprocessed"
+        default="/home/shared_storage/medical_data/preprocessed"
     )
     normalization: NormalizationMethod = Field(
         description="Normalization method to apply",

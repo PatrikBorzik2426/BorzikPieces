@@ -34,7 +34,7 @@
             "description": "NIfTI Data Loader Piece Input Model",
             "properties": {
                 "images_path": {
-                    "default": "/data/images",
+                    "default": "/home/shared_storage/medical_data/images",
                     "description": "Path to the directory containing NIfTI image files (.nii.gz)",
                     "title": "Images Path",
                     "type": "string"
@@ -48,7 +48,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": "/home/shared_storage/medical_data/masks",
                     "description": "Path to the directory containing NIfTI mask/segmentation files (.nii.gz). Optional for inference-only mode.",
                     "title": "Masks Path"
                 },
@@ -526,7 +526,7 @@
                     "type": "array"
                 },
                 "output_dir": {
-                    "default": "/data/preprocessed",
+                    "default": "/home/shared_storage/medical_data/preprocessed",
                     "description": "Directory to save preprocessed data",
                     "title": "Output Dir",
                     "type": "string"
@@ -839,7 +839,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
+                    "default": "/home/shared_storage/medical_data/preprocessed",
                     "description": "Directory containing preprocessed 'images' and 'masks' subdirectories",
                     "title": "Data Dir"
                 },

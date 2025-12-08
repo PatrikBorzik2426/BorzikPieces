@@ -9,11 +9,11 @@ class InputModel(BaseModel):
     """
     images_path: str = Field(
         description="Path to the directory containing NIfTI image files (.nii.gz)",
-        default="/data/images"
+        default="/home/shared_storage/medical_data/images"
     )
     masks_path: Optional[str] = Field(
         description="Path to the directory containing NIfTI mask/segmentation files (.nii.gz). Optional for inference-only mode.",
-        default=None
+        default="/home/shared_storage/medical_data/masks"
     )
     file_pattern: str = Field(
         description="Glob pattern to match NIfTI files (e.g., 'sub-*.nii.gz')",
