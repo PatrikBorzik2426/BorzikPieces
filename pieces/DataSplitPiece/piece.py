@@ -16,12 +16,24 @@ class DataSplitPiece(BasePiece):
 
     def piece_function(self, input_data: InputModel) -> OutputModel:
         try:
+            self.logger.info("=" * 60)
+            self.logger.info("Starting DataSplitPiece execution")
+            self.logger.info("=" * 60)
+            
             subjects = input_data.subjects
             train_ratio = input_data.train_ratio
             val_ratio = input_data.val_ratio
             test_ratio = input_data.test_ratio
             seed = input_data.random_seed
             strategy = input_data.split_strategy
+            
+            self.logger.info(f"Input configuration:")
+            self.logger.info(f"  - Number of subjects: {len(subjects)}")
+            self.logger.info(f"  - Train ratio: {train_ratio}")
+            self.logger.info(f"  - Val ratio: {val_ratio}")
+            self.logger.info(f"  - Test ratio: {test_ratio}")
+            self.logger.info(f"  - Random seed: {seed}")
+            self.logger.info(f"  - Split strategy: {strategy.value}")
             
             # Validate ratios
             total_ratio = train_ratio + val_ratio + test_ratio
@@ -30,6 +42,7 @@ class DataSplitPiece(BasePiece):
                 train_ratio = train_ratio / total_ratio
                 val_ratio = val_ratio / total_ratio
                 test_ratio = test_ratio / total_ratio
+                self.logger.info(f"Normalized ratios: train={train_ratio:.3f}, val={val_ratio:.3f}, test={test_ratio:.3f}")
             
             n = len(subjects)
             self.logger.info(f"Splitting {n} subjects with ratios: train={train_ratio:.2f}, val={val_ratio:.2f}, test={test_ratio:.2f}")
@@ -50,10 +63,17 @@ class DataSplitPiece(BasePiece):
             train_end = int(train_ratio * n)
             val_end = train_end + int(val_ratio * n)
             
+            self.logger.info(f"Split indices: train_end={train_end}, val_end={val_end}, total={n}")
+            
             # Split subjects
             train_subjects = subjects_list[:train_end]
             val_subjects = subjects_list[train_end:val_end]
             test_subjects = subjects_list[val_end:]
+            
+            self.logger.info(f"Split results:")
+            self.logger.info(f"  - Train: {len(train_subjects)} subjects ({len(train_subjects)/n*100:.1f}%)")
+            self.logger.info(f"  - Val: {len(val_subjects)} subjects ({len(val_subjects)/n*100:.1f}%)")
+            self.logger.info(f"  - Test: {len(test_subjects)} subjects ({len(test_subjects)/n*100:.1f}%)")
             
             # Create split summary
             split_info = {
@@ -72,6 +92,9 @@ class DataSplitPiece(BasePiece):
             }
             
             self.logger.info(f"Split complete: train={len(train_subjects)}, val={len(val_subjects)}, test={len(test_subjects)}")
+            self.logger.info("=" * 60)
+            self.logger.info("DataSplitPiece execution completed successfully")
+            self.logger.info("=" * 60)
             
             # Set display result for Domino UI
             display_summary = {

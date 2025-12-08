@@ -17,9 +17,21 @@ class PituitaryDatasetPiece(BasePiece):
 
     def piece_function(self, input_data: InputModel) -> OutputModel:
         try:
+            self.logger.info("=" * 60)
+            self.logger.info("Starting PituitaryDatasetPiece execution")
+            self.logger.info("=" * 60)
+            
             batch_size = input_data.batch_size
             num_workers = input_data.num_workers
             shuffle_train = input_data.shuffle_train
+            
+            self.logger.info(f"Input configuration:")
+            self.logger.info(f"  - Batch size: {batch_size}")
+            self.logger.info(f"  - Num workers: {num_workers}")
+            self.logger.info(f"  - Shuffle train: {shuffle_train}")
+            self.logger.info(f"  - Train subjects: {len(input_data.train_subjects) if input_data.train_subjects else 0}")
+            self.logger.info(f"  - Val subjects: {len(input_data.val_subjects) if input_data.val_subjects else 0}")
+            self.logger.info(f"  - Test subjects: {len(input_data.test_subjects) if input_data.test_subjects else 0}")
             
             self.logger.info("Creating dataset configuration for pituitary segmentation")
             
@@ -32,6 +44,10 @@ class PituitaryDatasetPiece(BasePiece):
             if input_data.train_subjects:
                 train_subjects = input_data.train_subjects
                 num_batches = (len(train_subjects) + batch_size - 1) // batch_size
+                self.logger.info(f"Processing training set:")
+                self.logger.info(f"  - Samples: {len(train_subjects)}")
+                self.logger.info(f"  - Batches: {num_batches}")
+                self.logger.info(f"  - Samples per batch: ~{len(train_subjects)/num_batches:.1f}")
                 train_info = DatasetInfo(
                     split_name="train",
                     num_samples=len(train_subjects),
@@ -39,12 +55,14 @@ class PituitaryDatasetPiece(BasePiece):
                     num_batches=num_batches,
                     subject_ids=[s.subject_id for s in train_subjects]
                 )
-                self.logger.info(f"Training set: {len(train_subjects)} samples, {num_batches} batches")
             
             # Process validation subjects
             if input_data.val_subjects:
                 val_subjects = input_data.val_subjects
                 num_batches = (len(val_subjects) + batch_size - 1) // batch_size
+                self.logger.info(f"Processing validation set:")
+                self.logger.info(f"  - Samples: {len(val_subjects)}")
+                self.logger.info(f"  - Batches: {num_batches}")
                 val_info = DatasetInfo(
                     split_name="val",
                     num_samples=len(val_subjects),
@@ -52,12 +70,14 @@ class PituitaryDatasetPiece(BasePiece):
                     num_batches=num_batches,
                     subject_ids=[s.subject_id for s in val_subjects]
                 )
-                self.logger.info(f"Validation set: {len(val_subjects)} samples, {num_batches} batches")
             
             # Process test subjects
             if input_data.test_subjects:
                 test_subjects = input_data.test_subjects
                 num_batches = (len(test_subjects) + batch_size - 1) // batch_size
+                self.logger.info(f"Processing test set:")
+                self.logger.info(f"  - Samples: {len(test_subjects)}")
+                self.logger.info(f"  - Batches: {num_batches}")
                 test_info = DatasetInfo(
                     split_name="test",
                     num_samples=len(test_subjects),
@@ -65,7 +85,6 @@ class PituitaryDatasetPiece(BasePiece):
                     num_batches=num_batches,
                     subject_ids=[s.subject_id for s in test_subjects]
                 )
-                self.logger.info(f"Test set: {len(test_subjects)} samples, {num_batches} batches")
             
             # Create dataset configuration
             config = {
@@ -94,10 +113,29 @@ class PituitaryDatasetPiece(BasePiece):
             config_path = os.path.join(config_dir, "dataset_config.json")
             os.makedirs(config_dir, exist_ok=True)
             
+            self.logger.info(f"Saving dataset configuration...")
+            self.logger.debug(f"  Config directory: {config_dir}")
+            self.logger.debug(f"  Config file: dataset_config.json")
+            
             with open(config_path, 'w') as f:
                 json.dump(config, f, indent=2)
             
-            self.logger.info(f"Dataset configuration saved to {config_path}")
+            self.logger.info(f"Dataset configuration saved successfully")
+            self.logger.info(f"  Path: {config_path}")
+            self.logger.info(f"  Size: {os.path.getsize(config_path) / 1024:.2f} KB")
+            
+            total_samples = (train_info.num_samples if train_info else 0) + \
+                           (val_info.num_samples if val_info else 0) + \
+                           (test_info.num_samples if test_info else 0)
+            
+            self.logger.info("Dataset configuration summary:")
+            self.logger.info(f"  - Total samples: {total_samples}")
+            self.logger.info(f"  - Train: {train_info.num_samples if train_info else 0}")
+            self.logger.info(f"  - Val: {val_info.num_samples if val_info else 0}")
+            self.logger.info(f"  - Test: {test_info.num_samples if test_info else 0}")
+            self.logger.info("=" * 60)
+            self.logger.info("PituitaryDatasetPiece execution completed successfully")
+            self.logger.info("=" * 60)
             
             # Set display result
             summary = {

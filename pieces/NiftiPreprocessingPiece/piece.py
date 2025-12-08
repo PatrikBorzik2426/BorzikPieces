@@ -58,15 +58,24 @@ class NiftiPreprocessingPiece(BasePiece):
         try:
             import nibabel as nib
             
+            self.logger.info("=" * 60)
+            self.logger.info("Starting NiftiPreprocessingPiece execution")
+            self.logger.info("=" * 60)
+            
             subjects = input_data.subjects
             output_dir = input_data.output_dir
             normalization = input_data.normalization
             save_numpy = input_data.save_as_numpy
             target_shape = input_data.target_shape
             
-            self.logger.info(f"Preprocessing {len(subjects)} subjects")
-            self.logger.info(f"Normalization method: {normalization.value}")
-            self.logger.info(f"Output directory: {output_dir}")
+            self.logger.info(f"Input configuration:")
+            self.logger.info(f"  - Number of subjects: {len(subjects)}")
+            self.logger.info(f"  - Normalization method: {normalization.value}")
+            self.logger.info(f"  - Output directory: {output_dir}")
+            self.logger.info(f"  - Save as NumPy: {save_numpy}")
+            self.logger.info(f"  - Target shape: {target_shape}")
+            self.logger.info(f"  - Lower percentile: {input_data.lower_percentile}")
+            self.logger.info(f"  - Upper percentile: {input_data.upper_percentile}")
             
             # Create output directories
             images_out = os.path.join(output_dir, "images")
@@ -79,12 +88,14 @@ class NiftiPreprocessingPiece(BasePiece):
             
             for idx, subject in enumerate(subjects):
                 try:
-                    self.logger.info(f"Processing {subject.subject_id} ({idx+1}/{len(subjects)})")
+                    self.logger.info(f"Processing subject {idx+1}/{len(subjects)}: {subject.subject_id}")
                     
                     # Load image
+                    self.logger.debug(f"  Loading image from: {subject.image_path}")
                     img_nii = nib.load(subject.image_path)
                     img_data = img_nii.get_fdata().astype(np.float32)
                     original_shape = list(img_data.shape)
+                    self.logger.debug(f"  Original shape: {original_shape}")
                     
                     # Compute original stats
                     original_stats = {
@@ -95,6 +106,7 @@ class NiftiPreprocessingPiece(BasePiece):
                     }
                     
                     # Normalize
+                    self.logger.debug(f"  Applying {normalization.value} normalization")
                     img_normalized = self.normalize_volume(
                         img_data, 
                         normalization,
@@ -104,9 +116,11 @@ class NiftiPreprocessingPiece(BasePiece):
                     
                     # Resize if specified
                     if target_shape is not None:
+                        self.logger.debug(f"  Resizing to target shape: {target_shape}")
                         img_normalized = self.resize_volume(img_normalized, target_shape)
                     
                     preprocessed_shape = list(img_normalized.shape)
+                    self.logger.debug(f"  Preprocessed shape: {preprocessed_shape}")
                     
                     # Compute normalized stats
                     normalized_stats = {
@@ -120,14 +134,17 @@ class NiftiPreprocessingPiece(BasePiece):
                     if save_numpy:
                         img_out_path = os.path.join(images_out, f"{subject.subject_id}.npy")
                         np.save(img_out_path, img_normalized)
+                        self.logger.debug(f"  Saved image as NumPy: {img_out_path}")
                     else:
                         img_out_path = os.path.join(images_out, f"{subject.subject_id}.nii.gz")
                         out_nii = nib.Nifti1Image(img_normalized, img_nii.affine, img_nii.header)
                         nib.save(out_nii, img_out_path)
+                        self.logger.debug(f"  Saved image as NIfTI: {img_out_path}")
                     
                     # Process mask if available
                     mask_out_path = None
                     if subject.mask_path and os.path.exists(subject.mask_path):
+                        self.logger.debug(f"  Processing mask from: {subject.mask_path}")
                         mask_nii = nib.load(subject.mask_path)
                         mask_data = mask_nii.get_fdata().astype(np.int64)
                         
@@ -176,7 +193,13 @@ class NiftiPreprocessingPiece(BasePiece):
             with open(config_path, 'w') as f:
                 json.dump(preprocessing_config, f, indent=2)
             
-            self.logger.info(f"Preprocessing complete: {len(preprocessed_subjects)} succeeded, {num_failed} failed")
+            self.logger.info(f"Preprocessing complete:")
+            self.logger.info(f"  - Succeeded: {len(preprocessed_subjects)} subjects")
+            self.logger.info(f"  - Failed: {num_failed} subjects")
+            self.logger.info(f"  - Success rate: {len(preprocessed_subjects)/(len(preprocessed_subjects)+num_failed)*100:.1f}%")
+            self.logger.info("=" * 60)
+            self.logger.info("NiftiPreprocessingPiece execution completed")
+            self.logger.info("=" * 60)
             
             # Set display result
             summary = {
