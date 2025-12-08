@@ -1,0 +1,199 @@
+{
+  "name": "NiftiVisualizationPiece",
+  "description": "Visualizes NIfTI medical imaging data with optional mask overlay in axial, sagittal, or coronal planes",
+  "dependency": {
+    "dockerfile": "Dockerfile",
+    "requirements_file": "requirements.txt"
+  },
+  "tags": [
+    "Medical Imaging",
+    "Visualization",
+    "NIfTI",
+    "MRI",
+    "Segmentation"
+  ],
+  "style": {
+    "node_label": "NIfTI Visualization",
+    "node_type": "default",
+    "node_style": {
+      "backgroundColor": "#b3e0ff"
+    },
+    "useIcon": true,
+    "icon_class_name": "fa-solid:image"
+  },
+  "input_schema": {
+    "$defs": {
+      "SubjectInfo": {
+        "description": "Information about a single subject/scan",
+        "properties": {
+          "subject_id": {
+            "title": "Subject Id",
+            "type": "string"
+          },
+          "image_path": {
+            "title": "Image Path",
+            "type": "string"
+          },
+          "mask_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Mask Path"
+          }
+        },
+        "required": [
+          "subject_id",
+          "image_path"
+        ],
+        "title": "SubjectInfo",
+        "type": "object"
+      }
+    },
+    "description": "NIfTI Visualization Piece Input Model",
+    "properties": {
+      "subject": {
+        "allOf": [
+          {
+            "$ref": "#/$defs/SubjectInfo"
+          }
+        ],
+        "description": "Subject to visualize"
+      },
+      "slice_index": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "Slice index to visualize. If None, uses middle slice.",
+        "title": "Slice Index"
+      },
+      "view_plane": {
+        "default": "axial",
+        "description": "Anatomical plane to visualize",
+        "enum": [
+          "axial",
+          "sagittal",
+          "coronal"
+        ],
+        "title": "View Plane",
+        "type": "string"
+      },
+      "show_mask_overlay": {
+        "default": true,
+        "description": "Whether to overlay mask on image",
+        "title": "Show Mask Overlay",
+        "type": "boolean"
+      },
+      "mask_alpha": {
+        "default": 0.5,
+        "description": "Transparency of mask overlay (0.0 = transparent, 1.0 = opaque)",
+        "maximum": 1.0,
+        "minimum": 0.0,
+        "title": "Mask Alpha",
+        "type": "number"
+      },
+      "color_map": {
+        "default": "gray",
+        "description": "Matplotlib colormap for image (e.g., 'gray', 'viridis', 'bone')",
+        "title": "Color Map",
+        "type": "string"
+      },
+      "mask_color": {
+        "default": "red",
+        "description": "Color for mask overlay (e.g., 'red', 'green', 'yellow')",
+        "title": "Mask Color",
+        "type": "string"
+      },
+      "figure_width": {
+        "default": 800,
+        "description": "Figure width in pixels",
+        "maximum": 2000,
+        "minimum": 400,
+        "title": "Figure Width",
+        "type": "integer"
+      },
+      "figure_height": {
+        "default": 600,
+        "description": "Figure height in pixels",
+        "maximum": 2000,
+        "minimum": 300,
+        "title": "Figure Height",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "subject"
+    ],
+    "title": "InputModel",
+    "type": "object"
+  },
+  "output_schema": {
+    "description": "NIfTI Visualization Piece Output Model",
+    "properties": {
+      "subject_id": {
+        "description": "Subject ID that was visualized",
+        "title": "Subject Id",
+        "type": "string"
+      },
+      "slice_index": {
+        "description": "Slice index that was visualized",
+        "title": "Slice Index",
+        "type": "integer"
+      },
+      "view_plane": {
+        "description": "Anatomical plane that was visualized",
+        "title": "View Plane",
+        "type": "string"
+      },
+      "image_shape": {
+        "description": "Shape of the full 3D volume",
+        "items": {
+          "type": "integer"
+        },
+        "title": "Image Shape",
+        "type": "array"
+      },
+      "slice_shape": {
+        "description": "Shape of the 2D slice",
+        "items": {
+          "type": "integer"
+        },
+        "title": "Slice Shape",
+        "type": "array"
+      },
+      "has_mask": {
+        "description": "Whether mask was available and displayed",
+        "title": "Has Mask",
+        "type": "boolean"
+      },
+      "visualization_path": {
+        "description": "Path to saved visualization PNG",
+        "title": "Visualization Path",
+        "type": "string"
+      }
+    },
+    "required": [
+      "subject_id",
+      "slice_index",
+      "view_plane",
+      "image_shape",
+      "slice_shape",
+      "has_mask",
+      "visualization_path"
+    ],
+    "title": "OutputModel",
+    "type": "object"
+  },
+  "source_url": "https://github.com/patrikborzik2426/borzikpieces/tree/main/pieces/NiftiVisualizationPiece"
+}
