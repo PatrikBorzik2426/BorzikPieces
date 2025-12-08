@@ -18,6 +18,9 @@ class NiftiDataLoaderPiece(BasePiece):
 
     def piece_function(self, input_data: InputModel) -> OutputModel:
         try:
+            print("=" * 60)
+            print("Starting NiftiDataLoaderPiece execution")
+            print("=" * 60)
             self.logger.info("=" * 60)
             self.logger.info("Starting NiftiDataLoaderPiece execution")
             self.logger.info("=" * 60)
@@ -26,6 +29,11 @@ class NiftiDataLoaderPiece(BasePiece):
             masks_path = input_data.masks_path
             file_pattern = input_data.file_pattern
             
+            print(f"Input configuration:")
+            print(f"  - Images path: {images_path}")
+            print(f"  - Masks path: {masks_path if masks_path else 'Not provided'}")
+            print(f"  - File pattern: {file_pattern}")
+            print(f"Scanning for NIfTI files...")
             self.logger.info(f"Input configuration:")
             self.logger.info(f"  - Images path: {images_path}")
             self.logger.info(f"  - Masks path: {masks_path if masks_path else 'Not provided'}")

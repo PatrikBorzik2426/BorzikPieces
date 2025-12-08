@@ -16,6 +16,9 @@ class DataSplitPiece(BasePiece):
 
     def piece_function(self, input_data: InputModel) -> OutputModel:
         try:
+            print("=" * 60)
+            print("Starting DataSplitPiece execution")
+            print("=" * 60)
             self.logger.info("=" * 60)
             self.logger.info("Starting DataSplitPiece execution")
             self.logger.info("=" * 60)
@@ -70,6 +73,10 @@ class DataSplitPiece(BasePiece):
             val_subjects = subjects_list[train_end:val_end]
             test_subjects = subjects_list[val_end:]
             
+            print(f"Split results:")
+            print(f"  - Train: {len(train_subjects)} subjects ({len(train_subjects)/n*100:.1f}%)")
+            print(f"  - Val: {len(val_subjects)} subjects ({len(val_subjects)/n*100:.1f}%)")
+            print(f"  - Test: {len(test_subjects)} subjects ({len(test_subjects)/n*100:.1f}%)")
             self.logger.info(f"Split results:")
             self.logger.info(f"  - Train: {len(train_subjects)} subjects ({len(train_subjects)/n*100:.1f}%)")
             self.logger.info(f"  - Val: {len(val_subjects)} subjects ({len(val_subjects)/n*100:.1f}%)")

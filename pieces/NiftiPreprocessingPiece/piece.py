@@ -58,6 +58,9 @@ class NiftiPreprocessingPiece(BasePiece):
         try:
             import nibabel as nib
             
+            print("=" * 60)
+            print("Starting NiftiPreprocessingPiece execution")
+            print("=" * 60)
             self.logger.info("=" * 60)
             self.logger.info("Starting NiftiPreprocessingPiece execution")
             self.logger.info("=" * 60)
@@ -68,6 +71,12 @@ class NiftiPreprocessingPiece(BasePiece):
             save_numpy = input_data.save_as_numpy
             target_shape = input_data.target_shape
             
+            print(f"Input configuration:")
+            print(f"  - Number of subjects: {len(subjects)}")
+            print(f"  - Normalization method: {normalization.value}")
+            print(f"  - Output directory: {output_dir}")
+            print(f"  - Save as NumPy: {save_numpy}")
+            print(f"  - Target shape: {target_shape}")
             self.logger.info(f"Input configuration:")
             self.logger.info(f"  - Number of subjects: {len(subjects)}")
             self.logger.info(f"  - Normalization method: {normalization.value}")
