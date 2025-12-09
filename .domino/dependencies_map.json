@@ -13,7 +13,7 @@
             "HelloWorldPiece"
         ],
         "secrets": [],
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.41-group0"
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.42-group0"
     },
     "group1": {
         "dependency": {
@@ -24,6 +24,6 @@
             "GenerativeShapesPiece"
         ],
         "secrets": [],
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.41-group1"
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.42-group1"
     }
 }
