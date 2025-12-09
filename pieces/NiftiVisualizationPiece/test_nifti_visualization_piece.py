@@ -15,8 +15,7 @@ def test_nifti_visualization_piece():
         slice_index=16,
         show_mask_overlay=True,
         mask_alpha=0.5,
-        color_map="gray",
-        grid_columns=3
+        color_map="gray"
     )
     
     # Validate input model structure
@@ -26,6 +25,5 @@ def test_nifti_visualization_piece():
     assert input_data.view_plane in ["axial", "sagittal", "coronal"]
     assert 0.0 <= input_data.mask_alpha <= 1.0
     assert 1 <= input_data.max_subjects <= 100
-    assert 1 <= input_data.grid_columns <= 10
     
     print(f"✓ NiftiVisualizationPiece model validation passed")
