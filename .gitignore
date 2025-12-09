@@ -1,1 +1,4 @@
 airflow/
+# Domino runtime data
+domino_data/
+airflow/logs/
