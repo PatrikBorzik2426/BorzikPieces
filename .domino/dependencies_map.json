@@ -13,7 +13,7 @@
             "PituitaryDatasetPiece"
         ],
         "secrets": [],
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.46-group0"
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.48-group0"
     },
     "group1": {
         "dependency": {
@@ -24,6 +24,6 @@
             "GenerativeShapesPiece"
         ],
         "secrets": [],
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.46-group1"
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.48-group1"
     }
 }

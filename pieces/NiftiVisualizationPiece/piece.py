@@ -107,8 +107,8 @@ class NiftiVisualizationPiece(BasePiece):
                         mid = input_data.slice_index if input_data.slice_index else img_data.shape[2] // 2
                         slice_2d = img_data[:, :, mid]
                     
-                    # Display image
-                    ax.imshow(slice_2d.T, cmap=input_data.color_map, origin='lower')
+                    # Display image with proper aspect ratio
+                    ax.imshow(slice_2d.T, cmap=input_data.color_map, origin='lower', aspect='equal')
                     
                     # Try to find and overlay mask
                     has_mask = False
@@ -126,9 +126,9 @@ class NiftiVisualizationPiece(BasePiece):
                             else:
                                 msk_slice = msk_data[:, :, mid]
                             
-                            # Overlay mask with tab10 colormap
+                            # Overlay mask with tab10 colormap and proper aspect ratio
                             ax.imshow(msk_slice.T, cmap='tab10', alpha=input_data.mask_alpha,
-                                     origin='lower', vmin=0, vmax=5)
+                                     origin='lower', vmin=0, vmax=5, aspect='equal')
                             has_mask = True
                             self.logger.info(f"  Mask overlaid")
                     
