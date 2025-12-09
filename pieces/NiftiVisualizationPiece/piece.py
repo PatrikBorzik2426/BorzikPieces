@@ -36,43 +36,23 @@ class NiftiVisualizationPiece(BasePiece):
             self.logger.info(f"Raw input_data.subjects length: {len(input_data.subjects) if input_data.subjects else 'None/Empty'}")
             
             if input_data.subjects:
-                self.logger.info(f"First subject raw: {input_data.subjects[0]}")
+                self.logger.info(f"First subject: {input_data.subjects[0]}")
                 self.logger.info(f"First subject type: {type(input_data.subjects[0])}")
             
-            # Convert subjects to proper format (handle both dict and SubjectInfo)
-            subjects_list = []
-            for i, subj in enumerate(input_data.subjects):
-                self.logger.debug(f"Processing subject {i}: type={type(subj)}")
-                if isinstance(subj, dict):
-                    subjects_list.append(subj)
-                elif hasattr(subj, 'dict'):
-                    subjects_list.append(subj.dict())
-                elif hasattr(subj, 'model_dump'):
-                    subjects_list.append(subj.model_dump())
-                else:
-                    # Try to access attributes directly
-                    subjects_list.append({
-                        'subject_id': getattr(subj, 'subject_id', str(subj)),
-                        'image_path': getattr(subj, 'image_path', ''),
-                        'mask_path': getattr(subj, 'mask_path', None)
-                    })
-            
-            self.logger.info(f"Converted {len(subjects_list)} subjects to dict format")
-            
             # Validate that subjects are provided
-            if not subjects_list or len(subjects_list) == 0:
+            if not input_data.subjects or len(input_data.subjects) == 0:
                 self.logger.error("No subjects provided in input!")
                 raise ValueError(
                     "No subjects provided. This piece must be connected to an upstream piece "
-                    "(DataLoader or DataSplit) that provides subjects."
+                    "(DataLoader or DataSplit) that provides List[SubjectInfo]."
                 )
             
             # Limit to max_subjects
-            subjects_to_visualize = subjects_list[:input_data.max_subjects]
+            subjects_to_visualize = input_data.subjects[:input_data.max_subjects]
             num_subjects = len(subjects_to_visualize)
             
             self.logger.info(f"Input configuration:")
-            self.logger.info(f"  - Total subjects available: {len(subjects_list)}")
+            self.logger.info(f"  - Total subjects available: {len(input_data.subjects)}")
             self.logger.info(f"  - Subjects to visualize: {num_subjects}")
             self.logger.info(f"  - Max subjects: {input_data.max_subjects}")
             self.logger.info(f"  - View plane: {input_data.view_plane}")
@@ -105,16 +85,16 @@ class NiftiVisualizationPiece(BasePiece):
             
             visualized_ids = []
             
-            # Process each subject (now as dict)
+            # Process each subject (SubjectInfo objects)
             for idx, subject in enumerate(subjects_to_visualize):
                 row = idx // cols
                 col = idx % cols
                 ax = axes[row, col]
                 
-                # Access as dict since we converted above
-                subject_id = subject['subject_id']
-                image_path = subject['image_path']
-                mask_path = subject.get('mask_path')
+                # Access SubjectInfo attributes
+                subject_id = subject.subject_id
+                image_path = subject.image_path
+                mask_path = subject.mask_path
                 
                 visualized_ids.append(subject_id)
                 

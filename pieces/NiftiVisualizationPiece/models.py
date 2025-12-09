@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, List, Literal, Any, Union
+from typing import Optional, List, Literal
 
 
 class SubjectInfo(BaseModel):
@@ -16,8 +16,7 @@ class InputModel(BaseModel):
     NOTE: This piece must be connected to an upstream piece (DataLoader or DataSplit)
     that outputs List[SubjectInfo]. It visualizes first 10 subjects in a grid.
     """
-    # Accept either List[SubjectInfo] or List[dict] to handle Domino's serialization
-    subjects: List[Any] = Field(
+    subjects: List[SubjectInfo] = Field(
         description="List of subjects with image and mask paths (from DataLoader or DataSplit). Must be connected in workflow.",
         default=[]
     )
