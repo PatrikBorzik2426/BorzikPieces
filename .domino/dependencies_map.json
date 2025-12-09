@@ -5,12 +5,12 @@
             "requirements_file": "requirements.txt"
         },
         "pieces": [
+            "NiftiPreprocessingPiece",
+            "DataSplitPiece",
+            "PituitaryDatasetPiece",
             "NiftiDataLoaderPiece",
             "NiftiVisualizationPiece",
-            "HelloWorldPiece",
-            "DataSplitPiece",
-            "NiftiPreprocessingPiece",
-            "PituitaryDatasetPiece"
+            "HelloWorldPiece"
         ],
         "secrets": [],
         "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.43-group0"
