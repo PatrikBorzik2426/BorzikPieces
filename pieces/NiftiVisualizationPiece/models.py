@@ -23,9 +23,9 @@ class InputModel(BaseModel):
     )
     max_subjects: int = Field(
         description="Maximum number of subjects to visualize",
-        default=6,
+        default=50,
         ge=1,
-        le=20
+        le=100
     )
     slice_index: Optional[int] = Field(
         description="Slice index to visualize. If None, uses middle slice.",
