@@ -97,15 +97,16 @@ class NiftiVisualizationPiece(BasePiece):
                     self.logger.info(f"  Image shape: {img_data.shape}")
                     
                     # Get slice based on view plane
+                    # Shape is typically (X, Y_slices, Z) where Y is the thin dimension (11-16 slices)
                     if input_data.view_plane == "sagittal":
                         mid = input_data.slice_index if input_data.slice_index else img_data.shape[0] // 2
                         slice_2d = img_data[mid, :, :]
                     elif input_data.view_plane == "coronal":
-                        mid = input_data.slice_index if input_data.slice_index else img_data.shape[1] // 2
-                        slice_2d = img_data[:, mid, :]
-                    else:  # axial
                         mid = input_data.slice_index if input_data.slice_index else img_data.shape[2] // 2
                         slice_2d = img_data[:, :, mid]
+                    else:  # axial - slice through Y axis to get XxZ (512x512)
+                        mid = input_data.slice_index if input_data.slice_index else img_data.shape[1] // 2
+                        slice_2d = img_data[:, mid, :]
                     
                     # Display image with proper aspect ratio
                     ax.imshow(slice_2d.T, cmap=input_data.color_map, origin='lower', aspect='equal')
@@ -122,9 +123,9 @@ class NiftiVisualizationPiece(BasePiece):
                             if input_data.view_plane == "sagittal":
                                 msk_slice = msk_data[mid, :, :]
                             elif input_data.view_plane == "coronal":
-                                msk_slice = msk_data[:, mid, :]
-                            else:
                                 msk_slice = msk_data[:, :, mid]
+                            else:  # axial - slice through Y axis
+                                msk_slice = msk_data[:, mid, :]
                             
                             # Overlay mask with tab10 colormap and proper aspect ratio
                             ax.imshow(msk_slice.T, cmap='tab10', alpha=input_data.mask_alpha,
