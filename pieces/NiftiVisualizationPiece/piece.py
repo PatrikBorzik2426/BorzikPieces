@@ -3,267 +3,222 @@ from .models import InputModel, OutputModel
 import os
 import base64
 import traceback
-import numpy as np
-import matplotlib
-matplotlib.use('Agg')  # Non-interactive backend
-import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
 
 
 class NiftiVisualizationPiece(BasePiece):
     """
-    A piece that visualizes NIfTI medical imaging data in a grid layout.
-    
-    This piece loads multiple 3D NIfTI volumes and creates a grid of 2D slice 
-    visualizations with optional mask overlays. It visualizes up to the first 
-    10 subjects (or max_subjects) from the input list.
+    A piece that visualizes NIfTI medical imaging data.
+    Simple implementation inspired by model.ipynb visualization pattern.
     """
 
     def piece_function(self, input_data: InputModel) -> OutputModel:
-        # IMMEDIATE logging - before any processing
-        print("[NiftiVisualizationPiece] piece_function STARTED")
-        self.logger.info("=" * 60)
-        self.logger.info("NiftiVisualizationPiece - ENTRY POINT")
-        self.logger.info("=" * 60)
+        # FIRST: Print immediately to catch any issues
+        print("[NiftiVisualizationPiece] === STARTING ===")
         
         try:
+            self.logger.info("=" * 50)
+            self.logger.info("NiftiVisualizationPiece STARTED")
+            self.logger.info("=" * 50)
+        except Exception as log_err:
+            print(f"[NiftiVisualizationPiece] Logger error: {log_err}")
+        
+        try:
+            # Import inside function to catch import errors
+            print("[NiftiVisualizationPiece] Importing libraries...")
+            import numpy as np
             import nibabel as nib
-            self.logger.info("nibabel imported successfully")
+            import matplotlib
+            matplotlib.use('Agg')
+            import matplotlib.pyplot as plt
+            print("[NiftiVisualizationPiece] Libraries imported OK")
             
-            # Log raw input immediately
-            self.logger.info(f"Raw input_data type: {type(input_data)}")
-            self.logger.info(f"Raw input_data.subjects type: {type(input_data.subjects)}")
-            self.logger.info(f"Raw input_data.subjects length: {len(input_data.subjects) if input_data.subjects else 'None/Empty'}")
+            self.logger.info("Libraries imported successfully")
             
-            if input_data.subjects:
-                self.logger.info(f"First subject: {input_data.subjects[0]}")
-                self.logger.info(f"First subject type: {type(input_data.subjects[0])}")
+            # Log input info
+            print(f"[NiftiVisualizationPiece] input_data type: {type(input_data)}")
+            print(f"[NiftiVisualizationPiece] subjects type: {type(input_data.subjects)}")
+            print(f"[NiftiVisualizationPiece] subjects count: {len(input_data.subjects) if input_data.subjects else 0}")
             
-            # Validate that subjects are provided
-            if not input_data.subjects or len(input_data.subjects) == 0:
-                self.logger.error("No subjects provided in input!")
-                raise ValueError(
-                    "No subjects provided. This piece must be connected to an upstream piece "
-                    "(DataLoader or DataSplit) that provides List[SubjectInfo]."
-                )
+            self.logger.info(f"Input subjects count: {len(input_data.subjects) if input_data.subjects else 0}")
             
-            # Limit to max_subjects
-            subjects_to_visualize = input_data.subjects[:input_data.max_subjects]
-            num_subjects = len(subjects_to_visualize)
+            # Get subjects - handle both list of dicts and list of SubjectInfo
+            subjects = input_data.subjects
+            if not subjects:
+                self.logger.error("No subjects provided!")
+                raise ValueError("No subjects provided in input")
             
-            self.logger.info(f"Input configuration:")
-            self.logger.info(f"  - Total subjects available: {len(input_data.subjects)}")
-            self.logger.info(f"  - Subjects to visualize: {num_subjects}")
-            self.logger.info(f"  - Max subjects: {input_data.max_subjects}")
-            self.logger.info(f"  - View plane: {input_data.view_plane}")
-            self.logger.info(f"  - Slice index: {input_data.slice_index if input_data.slice_index else 'Auto (middle)'}")
-            self.logger.info(f"  - Show mask overlay: {input_data.show_mask_overlay}")
-            self.logger.info(f"  - Mask alpha: {input_data.mask_alpha}")
-            self.logger.info(f"  - Color map: {input_data.color_map}")
-            self.logger.info(f"  - Mask color: {input_data.mask_color}")
-            self.logger.info(f"  - Grid columns: {input_data.grid_columns}")
+            # Log first subject details
+            first_subj = subjects[0]
+            print(f"[NiftiVisualizationPiece] First subject type: {type(first_subj)}")
+            self.logger.info(f"First subject type: {type(first_subj)}")
             
-            # Calculate grid dimensions
-            cols = input_data.grid_columns
-            rows = (num_subjects + cols - 1) // cols  # Ceiling division
+            # Access subject data - handle both dict and object
+            if isinstance(first_subj, dict):
+                print("[NiftiVisualizationPiece] Subjects are dicts")
+                get_id = lambda s: s.get('subject_id', 'unknown')
+                get_img = lambda s: s.get('image_path', '')
+                get_msk = lambda s: s.get('mask_path')
+            else:
+                print("[NiftiVisualizationPiece] Subjects are objects")
+                get_id = lambda s: s.subject_id
+                get_img = lambda s: s.image_path
+                get_msk = lambda s: s.mask_path
             
-            self.logger.info(f"Creating {rows}x{cols} grid visualization...")
-            self.logger.info(f"Figure size: {cols * 4}x{rows * 3} inches at 100 DPI")
+            # Limit subjects
+            max_subj = min(input_data.max_subjects, len(subjects))
+            subjects = subjects[:max_subj]
+            num_subjects = len(subjects)
             
-            # Create figure with subplots
-            fig_width = cols * 4  # 4 inches per column
-            fig_height = rows * 3  # 3 inches per row
-            fig, axes = plt.subplots(rows, cols, figsize=(fig_width, fig_height), dpi=100)
+            self.logger.info(f"Will visualize {num_subjects} subjects")
+            print(f"[NiftiVisualizationPiece] Will visualize {num_subjects} subjects")
             
-            # Handle single subplot case
+            # Simple grid calculation
+            cols = min(input_data.grid_columns, num_subjects)
+            rows = (num_subjects + cols - 1) // cols
+            
+            self.logger.info(f"Grid: {rows}x{cols}")
+            print(f"[NiftiVisualizationPiece] Grid: {rows}x{cols}")
+            
+            # Create figure - SIMPLE like in notebook
+            fig, axes = plt.subplots(rows, cols, figsize=(cols * 4, rows * 4))
+            print(f"[NiftiVisualizationPiece] Figure created")
+            
+            # Make axes always 2D array
             if num_subjects == 1:
-                axes = np.array([[axes]])
+                axes = [[axes]]
             elif rows == 1:
-                axes = axes.reshape(1, -1)
+                axes = [axes]
             elif cols == 1:
-                axes = axes.reshape(-1, 1)
+                axes = [[ax] for ax in axes]
             
             visualized_ids = []
             
-            # Process each subject (SubjectInfo objects)
-            for idx, subject in enumerate(subjects_to_visualize):
-                row = idx // cols
-                col = idx % cols
-                ax = axes[row, col]
+            for idx, subj in enumerate(subjects):
+                r = idx // cols
+                c = idx % cols
+                ax = axes[r][c]
                 
-                # Access SubjectInfo attributes
-                subject_id = subject.subject_id
-                image_path = subject.image_path
-                mask_path = subject.mask_path
+                subj_id = get_id(subj)
+                img_path = get_img(subj)
+                msk_path = get_msk(subj)
                 
-                visualized_ids.append(subject_id)
+                visualized_ids.append(subj_id)
                 
-                self.logger.info(f"Processing subject {idx+1}/{num_subjects}: {subject_id}")
-                self.logger.debug(f"  Image path: {image_path}")
-                self.logger.debug(f"  Mask path: {mask_path if mask_path else 'None'}")
+                print(f"[NiftiVisualizationPiece] Processing {idx+1}/{num_subjects}: {subj_id}")
+                self.logger.info(f"Processing {subj_id}")
                 
                 try:
-                    # Load image
-                    if not os.path.exists(image_path):
-                        self.logger.warning(f"Image not found for {subject_id}: {image_path}")
-                        ax.text(0.5, 0.5, f"Image not found\\n{subject_id}", 
+                    # Check if image exists
+                    if not os.path.exists(img_path):
+                        ax.text(0.5, 0.5, f"Not found:\n{subj_id}", 
                                ha='center', va='center', transform=ax.transAxes)
+                        ax.set_title(subj_id)
                         ax.axis('off')
+                        self.logger.warning(f"Image not found: {img_path}")
                         continue
                     
-                    self.logger.info(f"Loading NIfTI image for {subject_id}...")
-                    img_nii = nib.load(image_path)
-                    img_data = img_nii.get_fdata().astype(np.float32)
-                    self.logger.info(f"Image loaded: shape {img_data.shape}, dtype {img_data.dtype}")
+                    # Load image
+                    img_nii = nib.load(img_path)
+                    img_data = img_nii.get_fdata()
                     
-                    # Load mask if available
-                    mask_data = None
-                    has_mask = False
-                    if mask_path and input_data.show_mask_overlay:
-                        if os.path.exists(mask_path):
-                            self.logger.info(f"Loading mask for {subject_id}...")
-                            mask_nii = nib.load(mask_path)
-                            mask_data = mask_nii.get_fdata().astype(np.int32)
-                            unique_labels = np.unique(mask_data)
-                            has_mask = True
-                            self.logger.info(f"Mask loaded: shape {mask_data.shape}, unique labels {unique_labels}")
-                        else:
-                            self.logger.warning(f"Mask path specified but file not found: {mask_path}")
+                    self.logger.info(f"  Loaded: shape={img_data.shape}")
                     
-                    # Extract slice based on view plane
-                    slice_index = input_data.slice_index
-                    view_plane = input_data.view_plane
+                    # Get middle slice (axial by default)
+                    mid_slice = img_data.shape[2] // 2
+                    if input_data.view_plane == "sagittal":
+                        mid_slice = img_data.shape[0] // 2
+                        slice_2d = img_data[mid_slice, :, :]
+                    elif input_data.view_plane == "coronal":
+                        mid_slice = img_data.shape[1] // 2
+                        slice_2d = img_data[:, mid_slice, :]
+                    else:  # axial
+                        slice_2d = img_data[:, :, mid_slice]
                     
-                    if view_plane == "axial":
-                        if slice_index is None:
-                            slice_index = img_data.shape[2] // 2
-                        img_slice = img_data[:, :, slice_index]
-                        mask_slice = mask_data[:, :, slice_index] if has_mask else None
-                        self.logger.debug(f"Extracted axial slice {slice_index}/{img_data.shape[2]-1}")
-                    elif view_plane == "sagittal":
-                        if slice_index is None:
-                            slice_index = img_data.shape[0] // 2
-                        img_slice = img_data[slice_index, :, :]
-                        mask_slice = mask_data[slice_index, :, :] if has_mask else None
-                        self.logger.debug(f"Extracted sagittal slice {slice_index}/{img_data.shape[0]-1}")
-                    else:  # coronal
-                        if slice_index is None:
-                            slice_index = img_data.shape[1] // 2
-                        img_slice = img_data[:, slice_index, :]
-                        mask_slice = mask_data[:, slice_index, :] if has_mask else None
-                        self.logger.debug(f"Extracted coronal slice {slice_index}/{img_data.shape[1]-1}")
+                    if input_data.slice_index is not None:
+                        mid_slice = input_data.slice_index
                     
-                    self.logger.debug(f"Slice shape: {img_slice.shape}, intensity range: [{img_slice.min():.2f}, {img_slice.max():.2f}]")
+                    # Simple display like in notebook
+                    ax.imshow(slice_2d.T, cmap=input_data.color_map, origin='lower')
                     
-                    # Normalize image (using percentile clipping like in notebook)
-                    p1, p99 = np.percentile(img_slice, [1, 99])
-                    img_slice_clipped = np.clip(img_slice, p1, p99)
-                    img_slice_norm = (img_slice_clipped - img_slice_clipped.min()) / (img_slice_clipped.max() - img_slice_clipped.min() + 1e-8)
-                    self.logger.debug(f"Normalized intensity range: [{img_slice_norm.min():.3f}, {img_slice_norm.max():.3f}]")
-                    
-                    # Display image
-                    self.logger.debug(f"Rendering image with colormap '{input_data.color_map}'")
-                    ax.imshow(img_slice_norm.T, cmap=input_data.color_map, origin='lower', aspect='auto')
-                    
-                    # Overlay mask
-                    if has_mask and mask_slice is not None:
-                        mask_fg_count = np.sum(mask_slice > 0)
-                        mask_fg_percent = (mask_fg_count / mask_slice.size) * 100
-                        self.logger.info(f"Applying mask overlay: {mask_fg_count} foreground pixels ({mask_fg_percent:.2f}%)")
+                    # Overlay mask if available
+                    if msk_path and input_data.show_mask_overlay and os.path.exists(msk_path):
+                        msk_nii = nib.load(msk_path)
+                        msk_data = msk_nii.get_fdata()
                         
-                        mask_colored = np.zeros((*mask_slice.shape, 4))
-                        mask_colored[mask_slice > 0] = matplotlib.colors.to_rgba(
-                            input_data.mask_color, 
-                            alpha=input_data.mask_alpha
-                        )
-                        ax.imshow(mask_colored.T, origin='lower', aspect='auto')
-                        self.logger.debug(f"Mask overlay applied with color '{input_data.mask_color}' and alpha {input_data.mask_alpha}")
+                        if input_data.view_plane == "sagittal":
+                            msk_slice = msk_data[mid_slice, :, :]
+                        elif input_data.view_plane == "coronal":
+                            msk_slice = msk_data[:, mid_slice, :]
+                        else:
+                            msk_slice = msk_data[:, :, mid_slice]
+                        
+                        # Simple mask overlay like notebook uses tab10 colormap
+                        ax.imshow(msk_slice.T, cmap='tab10', alpha=input_data.mask_alpha, 
+                                 origin='lower', vmin=0, vmax=5)
+                        ax.set_title(f"{subj_id} + mask")
+                    else:
+                        ax.set_title(subj_id)
                     
-                    # Add title
-                    title = f"{subject_id}"
-                    if has_mask:
-                        title += " + mask"
-                    ax.set_title(title, fontsize=9)
                     ax.axis('off')
-                    
-                    self.logger.info(f"✓ Successfully visualized {subject_id} [{idx+1}/{num_subjects}]")
+                    self.logger.info(f"  ✓ Visualized {subj_id}")
                     
                 except Exception as e:
-                    self.logger.error(f"✗ Error visualizing {subject_id}: {e}")
-                    self.logger.error(f"Exception details:", exc_info=True)
-                    ax.text(0.5, 0.5, f"Error\\n{subject_id}\\n{str(e)[:30]}", 
-                           ha='center', va='center', transform=ax.transAxes, fontsize=8, color='red')
+                    self.logger.error(f"Error with {subj_id}: {e}")
+                    ax.text(0.5, 0.5, f"Error:\n{str(e)[:30]}", 
+                           ha='center', va='center', transform=ax.transAxes, color='red')
                     ax.axis('off')
             
             # Hide unused subplots
-            unused_count = (rows * cols) - num_subjects
-            if unused_count > 0:
-                self.logger.debug(f"Hiding {unused_count} unused subplot(s)")
-                for idx in range(num_subjects, rows * cols):
-                    row = idx // cols
-                    col = idx % cols
-                    axes[row, col].axis('off')
+            for idx in range(num_subjects, rows * cols):
+                r = idx // cols
+                c = idx % cols
+                axes[r][c].axis('off')
             
-            # Add main title
-            self.logger.info("Adding figure title and finalizing layout")
-            fig.suptitle(f"NIfTI Visualization - {input_data.view_plane.capitalize()} View", 
-                        fontsize=14, fontweight='bold', y=0.995)
-            
+            # Save figure - SIMPLE like in notebook
             plt.tight_layout()
             
-            # Save figure
-            results_dir = getattr(self, "results_path", None)
-            if results_dir:
-                self.logger.info(f"Using results_path: {results_dir}")
-            else:
-                self.logger.warning("results_path not set, using /tmp")
-                results_dir = "/tmp"
+            # Get results path
+            results_dir = getattr(self, 'results_path', '/tmp')
+            if not results_dir:
+                results_dir = '/tmp'
             
-            output_filename = f"grid_visualization_{input_data.view_plane}_{num_subjects}subjects.png"
-            output_path = os.path.join(results_dir, output_filename)
+            output_file = os.path.join(results_dir, f'visualization_{num_subjects}subj.png')
             
-            self.logger.info(f"Saving figure to: {output_path}")
-            plt.savefig(output_path, dpi=100, bbox_inches='tight', facecolor='white')
+            print(f"[NiftiVisualizationPiece] Saving to: {output_file}")
+            self.logger.info(f"Saving to: {output_file}")
             
-            file_size = os.path.getsize(output_path) / 1024  # KB
-            self.logger.info(f"✓ Visualization saved successfully: {file_size:.1f} KB")
+            plt.savefig(output_file)
+            plt.close()
             
-            # Read image for display_result
-            self.logger.info("Encoding image to base64 for display")
-            with open(output_path, 'rb') as f:
-                image_bytes = f.read()
-                image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+            print(f"[NiftiVisualizationPiece] Saved successfully")
+            self.logger.info("Figure saved and closed")
             
-            self.logger.info(f"Base64 encoded: {len(image_base64)} characters")
+            # Read for display
+            with open(output_file, 'rb') as f:
+                img_bytes = f.read()
+                img_b64 = base64.b64encode(img_bytes).decode('utf-8')
             
-            # Set display result (following GenerativeShapesPiece pattern)
             self.display_result = {
                 "file_type": "png",
-                "base64_content": image_base64
+                "base64_content": img_b64
             }
-            self.logger.info("Display result set for PNG image")
             
-            plt.close(fig)
-            self.logger.info("Matplotlib figure closed")
+            self.logger.info("=" * 50)
+            self.logger.info(f"DONE: Visualized {num_subjects} subjects")
+            self.logger.info("=" * 50)
             
-            self.logger.info("=" * 60)
-            self.logger.info(f"✓ Grid visualization completed successfully!")
-            self.logger.info(f"  - Visualized: {num_subjects} subjects")
-            self.logger.info(f"  - Grid size: {rows}x{cols}")
-            self.logger.info(f"  - View plane: {input_data.view_plane}")
-            self.logger.info(f"  - Output file: {output_filename}")
-            self.logger.info("=" * 60)
+            print(f"[NiftiVisualizationPiece] === COMPLETED ===")
             
             return OutputModel(
                 num_subjects=num_subjects,
                 subject_ids=visualized_ids,
                 view_plane=input_data.view_plane,
                 grid_size=f"{rows}x{cols}",
-                visualization_summary=f"Visualized {num_subjects} subjects in {rows}x{cols} grid"
+                visualization_summary=f"Visualized {num_subjects} subjects"
             )
             
         except Exception as e:
-            self.logger.error(f"Error in NiftiVisualizationPiece: {e}")
-            print("[NiftiVisualizationPiece] Exception in piece_function:")
+            print(f"[NiftiVisualizationPiece] ERROR: {e}")
             traceback.print_exc()
+            self.logger.error(f"Error: {e}")
             raise
