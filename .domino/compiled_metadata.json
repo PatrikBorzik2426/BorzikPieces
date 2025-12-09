@@ -168,46 +168,12 @@
         },
         "description": "Visualizes NIfTI medical imaging data with optional mask overlay in axial, sagittal, or coronal planes",
         "input_schema": {
-            "$defs": {
-                "SubjectInfo": {
-                    "description": "Information about a single subject/scan",
-                    "properties": {
-                        "subject_id": {
-                            "title": "Subject Id",
-                            "type": "string"
-                        },
-                        "image_path": {
-                            "title": "Image Path",
-                            "type": "string"
-                        },
-                        "mask_path": {
-                            "anyOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "default": null,
-                            "title": "Mask Path"
-                        }
-                    },
-                    "required": [
-                        "subject_id",
-                        "image_path"
-                    ],
-                    "title": "SubjectInfo",
-                    "type": "object"
-                }
-            },
             "description": "NIfTI Visualization Piece Input Model\n\nNOTE: This piece must be connected to an upstream piece (DataLoader or DataSplit)\nthat outputs List[SubjectInfo]. It visualizes first 10 subjects in a grid.",
             "properties": {
                 "subjects": {
+                    "default": [],
                     "description": "List of subjects with image and mask paths (from DataLoader or DataSplit). Must be connected in workflow.",
-                    "items": {
-                        "$ref": "#/$defs/SubjectInfo"
-                    },
+                    "items": {},
                     "title": "Subjects",
                     "type": "array"
                 },
@@ -278,9 +244,6 @@
                     "type": "integer"
                 }
             },
-            "required": [
-                "subjects"
-            ],
             "title": "InputModel",
             "type": "object"
         },
