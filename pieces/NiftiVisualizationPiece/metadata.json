@@ -1,12 +1,8 @@
 {
   "name": "NiftiVisualizationPiece",
-  "description": "Standalone NIfTI visualization piece. Loads images directly from directories and creates a grid visualization with optional mask overlay.",
+  "description": "Visualizes NIfTI medical imaging data with optional mask overlay in axial, sagittal, or coronal planes",
   "dependency": {
     "requirements_file": "requirements.txt"
-  },
-  "container_resources": {
-    "cpu": 200,
-    "memory": "512Mi"
   },
   "tags": [
     "Medical Imaging",
@@ -25,41 +21,57 @@
     "icon_class_name": "fa-solid:image"
   },
   "input_schema": {
-    "description": "NIfTI Visualization Piece Input Model\n\nStandalone piece that loads NIfTI files directly from directories\nand creates a grid visualization. No upstream connection required.",
-    "properties": {
-      "images_path": {
-        "default": "/home/shared_storage/medical_data/images",
-        "description": "Path to directory containing NIfTI image files (.nii.gz)",
-        "title": "Images Path",
-        "type": "string"
-      },
-      "masks_path": {
-        "anyOf": [
-          {"type": "string"},
-          {"type": "null"}
+    "$defs": {
+      "SubjectInfo": {
+        "description": "Information about a single subject/scan",
+        "properties": {
+          "subject_id": {
+            "title": "Subject Id",
+            "type": "string"
+          },
+          "image_path": {
+            "title": "Image Path",
+            "type": "string"
+          },
+          "mask_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Mask Path"
+          }
+        },
+        "required": [
+          "subject_id",
+          "image_path"
         ],
-        "default": "/home/shared_storage/medical_data/masks",
-        "description": "Path to directory containing NIfTI mask files (.nii.gz). Optional.",
-        "title": "Masks Path"
-      },
-      "file_pattern": {
-        "default": "*.nii.gz",
-        "description": "Glob pattern to match NIfTI files (e.g., '*.nii.gz')",
-        "title": "File Pattern",
-        "type": "string"
-      },
-      "max_subjects": {
-        "default": 6,
-        "description": "Maximum number of subjects to visualize",
-        "maximum": 20,
-        "minimum": 1,
-        "title": "Max Subjects",
-        "type": "integer"
+        "title": "SubjectInfo",
+        "type": "object"
+      }
+    },
+    "description": "NIfTI Visualization Piece Input Model",
+    "properties": {
+      "subject": {
+        "allOf": [
+          {
+            "$ref": "#/$defs/SubjectInfo"
+          }
+        ],
+        "description": "Subject to visualize"
       },
       "slice_index": {
         "anyOf": [
-          {"type": "integer"},
-          {"type": "null"}
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
         ],
         "default": null,
         "description": "Slice index to visualize. If None, uses middle slice.",
@@ -68,7 +80,11 @@
       "view_plane": {
         "default": "axial",
         "description": "Anatomical plane to visualize",
-        "enum": ["axial", "sagittal", "coronal"],
+        "enum": [
+          "axial",
+          "sagittal",
+          "coronal"
+        ],
         "title": "View Plane",
         "type": "string"
       },
@@ -92,50 +108,89 @@
         "title": "Color Map",
         "type": "string"
       },
-      "grid_columns": {
-        "default": 3,
-        "description": "Number of columns in visualization grid",
-        "maximum": 10,
-        "minimum": 1,
-        "title": "Grid Columns",
+      "mask_color": {
+        "default": "red",
+        "description": "Color for mask overlay (e.g., 'red', 'green', 'yellow')",
+        "title": "Mask Color",
+        "type": "string"
+      },
+      "figure_width": {
+        "default": 800,
+        "description": "Figure width in pixels",
+        "maximum": 2000,
+        "minimum": 400,
+        "title": "Figure Width",
+        "type": "integer"
+      },
+      "figure_height": {
+        "default": 600,
+        "description": "Figure height in pixels",
+        "maximum": 2000,
+        "minimum": 300,
+        "title": "Figure Height",
         "type": "integer"
       }
     },
-    "required": [],
+    "required": [
+      "subject"
+    ],
     "title": "InputModel",
     "type": "object"
   },
   "output_schema": {
     "description": "NIfTI Visualization Piece Output Model",
     "properties": {
-      "num_subjects": {
-        "description": "Number of subjects visualized",
-        "title": "Num Subjects",
-        "type": "integer"
+      "subject_id": {
+        "description": "Subject ID that was visualized",
+        "title": "Subject Id",
+        "type": "string"
       },
-      "subject_ids": {
-        "description": "List of subject IDs that were visualized",
-        "items": {"type": "string"},
-        "title": "Subject Ids",
-        "type": "array"
+      "slice_index": {
+        "description": "Slice index that was visualized",
+        "title": "Slice Index",
+        "type": "integer"
       },
       "view_plane": {
         "description": "Anatomical plane that was visualized",
         "title": "View Plane",
         "type": "string"
       },
-      "grid_size": {
-        "description": "Grid size (rows x columns)",
-        "title": "Grid Size",
-        "type": "string"
+      "image_shape": {
+        "description": "Shape of the full 3D volume",
+        "items": {
+          "type": "integer"
+        },
+        "title": "Image Shape",
+        "type": "array"
       },
-      "visualization_summary": {
-        "description": "Summary of visualization",
-        "title": "Visualization Summary",
+      "slice_shape": {
+        "description": "Shape of the 2D slice",
+        "items": {
+          "type": "integer"
+        },
+        "title": "Slice Shape",
+        "type": "array"
+      },
+      "has_mask": {
+        "description": "Whether mask was available and displayed",
+        "title": "Has Mask",
+        "type": "boolean"
+      },
+      "visualization_path": {
+        "description": "Path to saved visualization PNG",
+        "title": "Visualization Path",
         "type": "string"
       }
     },
-    "required": ["num_subjects", "subject_ids", "view_plane", "grid_size", "visualization_summary"],
+    "required": [
+      "subject_id",
+      "slice_index",
+      "view_plane",
+      "image_shape",
+      "slice_shape",
+      "has_mask",
+      "visualization_path"
+    ],
     "title": "OutputModel",
     "type": "object"
   },
