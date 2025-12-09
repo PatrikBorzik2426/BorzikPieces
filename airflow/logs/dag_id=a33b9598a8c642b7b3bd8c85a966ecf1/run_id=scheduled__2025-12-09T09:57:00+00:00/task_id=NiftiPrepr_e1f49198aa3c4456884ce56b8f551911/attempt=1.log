@@ -1,0 +1,73 @@
+[2025-12-09T09:58:12.500+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: a33b9598a8c642b7b3bd8c85a966ecf1.NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 scheduled__2025-12-09T09:57:00+00:00 [queued]>
+[2025-12-09T09:58:12.513+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: a33b9598a8c642b7b3bd8c85a966ecf1.NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 scheduled__2025-12-09T09:57:00+00:00 [queued]>
+[2025-12-09T09:58:12.513+0000] {taskinstance.py:1361} INFO - Starting attempt 1 of 1
+[2025-12-09T09:58:12.531+0000] {taskinstance.py:1382} INFO - Executing <Task(DominoDockerOperator): NiftiPrepr_e1f49198aa3c4456884ce56b8f551911> on 2025-12-09 09:57:00+00:00
+[2025-12-09T09:58:12.538+0000] {standard_task_runner.py:57} INFO - Started process 225 to run task
+[2025-12-09T09:58:12.542+0000] {standard_task_runner.py:84} INFO - Running: ['***', 'tasks', 'run', 'a33b9598a8c642b7b3bd8c85a966ecf1', 'NiftiPrepr_e1f49198aa3c4456884ce56b8f551911', 'scheduled__2025-12-09T09:57:00+00:00', '--job-id', '8', '--raw', '--subdir', 'DAGS_FOLDER/a33b9598a8c642b7b3bd8c85a966ecf1.py', '--cfg-path', '/tmp/tmp11pzmnto']
+[2025-12-09T09:58:12.543+0000] {standard_task_runner.py:85} INFO - Job 8: Subtask NiftiPrepr_e1f49198aa3c4456884ce56b8f551911
+[2025-12-09T09:58:12.590+0000] {task_command.py:416} INFO - Running <TaskInstance: a33b9598a8c642b7b3bd8c85a966ecf1.NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 scheduled__2025-12-09T09:57:00+00:00 [running]> on host 337ec7743ed8
+[2025-12-09T09:58:12.672+0000] {taskinstance.py:1662} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='a33b9598a8c642b7b3bd8c85a966ecf1' AIRFLOW_CTX_TASK_ID='NiftiPrepr_e1f49198aa3c4456884ce56b8f551911' AIRFLOW_CTX_EXECUTION_DATE='2025-12-09T09:57:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-12-09T09:57:00+00:00'
+[2025-12-09T09:58:12.829+0000] {docker.py:324} INFO - Starting docker container from image ghcr.io/borzikpieces/borzikpieces:0.1.44-group0
+[2025-12-09T09:58:14.333+0000] {docker.py:391} INFO - 
+[2025-12-09T09:58:14.334+0000] {docker.py:391} INFO - Welcome to Domino! ❤️
+[2025-12-09T09:58:14.336+0000] {docker.py:391} INFO - Running Piece inside Docker container[33m...[0m
+[2025-12-09T09:58:14.760+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 69 : 2025-12-09 09:58:14.759 Started NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 of type NiftiPreprocessingPiece at 2025-12-09T09:58:14.758979
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 70 : 2025-12-09 09:58:14.760 Start cut point for logger 48c94577-0225-4c3f-87c0-8add3f4e6d4b
+[2025-12-09T09:58:14.879+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 61 : 2025-12-09 09:58:14.878 ============================================================
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 62 : 2025-12-09 09:58:14.879 Starting NiftiPreprocessingPiece execution
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 63 : 2025-12-09 09:58:14.879 ============================================================
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 71 : 2025-12-09 09:58:14.879 Input configuration:
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 72 : 2025-12-09 09:58:14.879   - Number of subjects: 35
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 73 : 2025-12-09 09:58:14.879   - Normalization method: zscore
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 74 : 2025-12-09 09:58:14.879   - Output directory: /home/shared_storage/medical_data/preprocessed
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 75 : 2025-12-09 09:58:14.879   - Save as NumPy: True
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 76 : 2025-12-09 09:58:14.879   - Target shape: None
+[2025-12-09T09:58:14.880+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 77 : 2025-12-09 09:58:14.879   - Lower percentile: 1.0
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 78 : 2025-12-09 09:58:14.879   - Upper percentile: 99.0
+[2025-12-09T09:58:14.880+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:14.880 Processing subject 1/35: sub-026
+[2025-12-09T09:58:15.135+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:15.134 Processing subject 2/35: sub-024
+[2025-12-09T09:58:15.368+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:15.367 Processing subject 3/35: sub-020
+[2025-12-09T09:58:15.616+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:15.616 Processing subject 4/35: sub-012
+[2025-12-09T09:58:18.731+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:18.730 Processing subject 5/35: sub-005
+[2025-12-09T09:58:19.213+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:19.212 Processing subject 6/35: sub-046
+[2025-12-09T09:58:19.458+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:19.457 Processing subject 7/35: sub-027
+[2025-12-09T09:58:19.617+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:19.616 Processing subject 8/35: sub-010
+[2025-12-09T09:58:19.808+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:19.807 Processing subject 9/35: sub-030
+[2025-12-09T09:58:19.992+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:19.991 Processing subject 10/35: sub-017
+[2025-12-09T09:58:20.197+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:20.197 Processing subject 11/35: sub-032
+[2025-12-09T09:58:20.328+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:20.327 Processing subject 12/35: sub-022
+[2025-12-09T09:58:20.580+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:20.580 Processing subject 13/35: sub-013
+[2025-12-09T09:58:22.043+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:22.43 Processing subject 14/35: sub-004
+[2025-12-09T09:58:22.317+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:22.317 Processing subject 15/35: sub-040
+[2025-12-09T09:58:22.431+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:22.430 Processing subject 16/35: sub-039
+[2025-12-09T09:58:22.581+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:22.581 Processing subject 17/35: sub-011
+[2025-12-09T09:58:22.712+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:22.711 Processing subject 18/35: sub-025
+[2025-12-09T09:58:22.810+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:22.810 Processing subject 19/35: sub-036
+[2025-12-09T09:58:22.987+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:22.986 Processing subject 20/35: sub-001
+[2025-12-09T09:58:23.136+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:23.135 Processing subject 21/35: sub-044
+[2025-12-09T09:58:23.243+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:23.242 Processing subject 22/35: sub-019
+[2025-12-09T09:58:24.589+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:24.588 Processing subject 23/35: sub-034
+[2025-12-09T09:58:25.619+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:25.619 Processing subject 24/35: sub-049
+[2025-12-09T09:58:25.748+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:25.747 Processing subject 25/35: sub-042
+[2025-12-09T09:58:25.850+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:25.849 Processing subject 26/35: sub-031
+[2025-12-09T09:58:25.952+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:25.952 Processing subject 27/35: sub-029
+[2025-12-09T09:58:26.075+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:26.74 Processing subject 28/35: sub-021
+[2025-12-09T09:58:26.167+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:26.167 Processing subject 29/35: sub-023
+[2025-12-09T09:58:26.248+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:26.247 Processing subject 30/35: sub-043
+[2025-12-09T09:58:26.354+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:26.353 Processing subject 31/35: sub-047
+[2025-12-09T09:58:26.439+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:26.438 Processing subject 32/35: sub-037
+[2025-12-09T09:58:26.521+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:26.521 Processing subject 33/35: sub-033
+[2025-12-09T09:58:26.607+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:26.607 Processing subject 34/35: sub-045
+[2025-12-09T09:58:26.693+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 91 : 2025-12-09 09:58:26.692 Processing subject 35/35: sub-014
+[2025-12-09T09:58:26.811+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 196 : 2025-12-09 09:58:26.810 Preprocessing complete:
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 197 : 2025-12-09 09:58:26.810   - Succeeded: 35 subjects
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 198 : 2025-12-09 09:58:26.810   - Failed: 0 subjects
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 201 : 2025-12-09 09:58:26.810   - Success rate: 100.0%
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 204 : 2025-12-09 09:58:26.810 ============================================================
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 205 : 2025-12-09 09:58:26.810 NiftiPreprocessingPiece execution completed
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 206 : 2025-12-09 09:58:26.810 ============================================================
+[2025-12-09T09:58:26.900+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 308 : 2025-12-09 09:58:26.899 Piece used 0 bytes of storage.
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_e1f49198aa3c4456884ce56b8f551911 : 309 : 2025-12-09 09:58:26.899 End cut point for logger 48c94577-0225-4c3f-87c0-8add3f4e6d4b
+[2025-12-09T09:58:27.855+0000] {taskinstance.py:1400} INFO - Marking task as SUCCESS. dag_id=a33b9598a8c642b7b3bd8c85a966ecf1, task_id=NiftiPrepr_e1f49198aa3c4456884ce56b8f551911, execution_date=20251209T095700, start_date=20251209T095812, end_date=20251209T095827
+[2025-12-09T09:58:27.899+0000] {local_task_job_runner.py:228} INFO - Task exited with return code 0
+[2025-12-09T09:58:27.922+0000] {taskinstance.py:2778} INFO - 1 downstream tasks scheduled from follow-on schedule check

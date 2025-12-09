@@ -1,0 +1,44 @@
+[2025-12-09T09:58:12.502+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: a33b9598a8c642b7b3bd8c85a966ecf1.NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 scheduled__2025-12-09T09:57:00+00:00 [queued]>
+[2025-12-09T09:58:12.511+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: a33b9598a8c642b7b3bd8c85a966ecf1.NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 scheduled__2025-12-09T09:57:00+00:00 [queued]>
+[2025-12-09T09:58:12.512+0000] {taskinstance.py:1361} INFO - Starting attempt 1 of 1
+[2025-12-09T09:58:12.524+0000] {taskinstance.py:1382} INFO - Executing <Task(DominoDockerOperator): NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6> on 2025-12-09 09:57:00+00:00
+[2025-12-09T09:58:12.532+0000] {standard_task_runner.py:57} INFO - Started process 224 to run task
+[2025-12-09T09:58:12.536+0000] {standard_task_runner.py:84} INFO - Running: ['***', 'tasks', 'run', 'a33b9598a8c642b7b3bd8c85a966ecf1', 'NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6', 'scheduled__2025-12-09T09:57:00+00:00', '--job-id', '9', '--raw', '--subdir', 'DAGS_FOLDER/a33b9598a8c642b7b3bd8c85a966ecf1.py', '--cfg-path', '/tmp/tmp8k2chr69']
+[2025-12-09T09:58:12.537+0000] {standard_task_runner.py:85} INFO - Job 9: Subtask NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6
+[2025-12-09T09:58:12.590+0000] {task_command.py:416} INFO - Running <TaskInstance: a33b9598a8c642b7b3bd8c85a966ecf1.NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 scheduled__2025-12-09T09:57:00+00:00 [running]> on host 337ec7743ed8
+[2025-12-09T09:58:12.681+0000] {taskinstance.py:1662} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='a33b9598a8c642b7b3bd8c85a966ecf1' AIRFLOW_CTX_TASK_ID='NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6' AIRFLOW_CTX_EXECUTION_DATE='2025-12-09T09:57:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-12-09T09:57:00+00:00'
+[2025-12-09T09:58:12.839+0000] {docker.py:324} INFO - Starting docker container from image ghcr.io/borzikpieces/borzikpieces:0.1.44-group0
+[2025-12-09T09:58:14.580+0000] {docker.py:391} INFO - Welcome to Domino! ❤️
+[2025-12-09T09:58:14.581+0000] {docker.py:391} INFO - Running Piece inside Docker container[33m...[0m
+[2025-12-09T09:58:14.921+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 69 : 2025-12-09 09:58:14.920 Started NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 of type NiftiPreprocessingPiece at 2025-12-09T09:58:14.920514
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 70 : 2025-12-09 09:58:14.920 Start cut point for logger 48c94577-0225-4c3f-87c0-8add3f4e6d4b
+[2025-12-09T09:58:15.004+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 61 : 2025-12-09 09:58:15.3 ============================================================
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 62 : 2025-12-09 09:58:15.3 Starting NiftiPreprocessingPiece execution
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 63 : 2025-12-09 09:58:15.3 ============================================================
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 71 : 2025-12-09 09:58:15.3 Input configuration:
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 72 : 2025-12-09 09:58:15.3   - Number of subjects: 7
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 73 : 2025-12-09 09:58:15.3   - Normalization method: zscore
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 74 : 2025-12-09 09:58:15.3   - Output directory: /home/shared_storage/medical_data/preprocessed
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 75 : 2025-12-09 09:58:15.3   - Save as NumPy: True
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 76 : 2025-12-09 09:58:15.4   - Target shape: None
+[2025-12-09T09:58:15.005+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 77 : 2025-12-09 09:58:15.4   - Lower percentile: 1.0
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 78 : 2025-12-09 09:58:15.4   - Upper percentile: 99.0
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 91 : 2025-12-09 09:58:15.4 Processing subject 1/7: sub-050
+[2025-12-09T09:58:15.541+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 91 : 2025-12-09 09:58:15.540 Processing subject 2/7: sub-048
+[2025-12-09T09:58:15.934+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 91 : 2025-12-09 09:58:15.933 Processing subject 3/7: sub-003
+[2025-12-09T09:58:16.220+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 91 : 2025-12-09 09:58:16.219 Processing subject 4/7: sub-028
+[2025-12-09T09:58:18.418+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 91 : 2025-12-09 09:58:18.417 Processing subject 5/7: sub-038
+[2025-12-09T09:58:18.649+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 91 : 2025-12-09 09:58:18.648 Processing subject 6/7: sub-006
+[2025-12-09T09:58:18.856+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 91 : 2025-12-09 09:58:18.855 Processing subject 7/7: sub-035
+[2025-12-09T09:58:19.022+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 196 : 2025-12-09 09:58:19.21 Preprocessing complete:
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 197 : 2025-12-09 09:58:19.21   - Succeeded: 7 subjects
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 198 : 2025-12-09 09:58:19.21   - Failed: 0 subjects
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 201 : 2025-12-09 09:58:19.21   - Success rate: 100.0%
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 204 : 2025-12-09 09:58:19.21 ============================================================
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 205 : 2025-12-09 09:58:19.21 NiftiPreprocessingPiece execution completed
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 206 : 2025-12-09 09:58:19.21 ============================================================
+[2025-12-09T09:58:19.093+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 308 : 2025-12-09 09:58:19.92 Piece used 0 bytes of storage.
+INFO  - [     MainThread] domino-.NiftiPreprocessingPiece-NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6 : 309 : 2025-12-09 09:58:19.92 End cut point for logger 48c94577-0225-4c3f-87c0-8add3f4e6d4b
+[2025-12-09T09:58:20.017+0000] {taskinstance.py:1400} INFO - Marking task as SUCCESS. dag_id=a33b9598a8c642b7b3bd8c85a966ecf1, task_id=NiftiPrepr_5a6c68d92d3642c7823630abcd6f20e6, execution_date=20251209T095700, start_date=20251209T095812, end_date=20251209T095820
+[2025-12-09T09:58:20.069+0000] {local_task_job_runner.py:228} INFO - Task exited with return code 0
+[2025-12-09T09:58:20.104+0000] {taskinstance.py:2778} INFO - 0 downstream tasks scheduled from follow-on schedule check

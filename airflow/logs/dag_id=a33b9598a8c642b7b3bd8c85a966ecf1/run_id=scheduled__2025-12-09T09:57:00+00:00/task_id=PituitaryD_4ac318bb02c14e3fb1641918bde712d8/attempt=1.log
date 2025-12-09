@@ -1,0 +1,52 @@
+[2025-12-09T09:58:29.495+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: a33b9598a8c642b7b3bd8c85a966ecf1.PituitaryD_4ac318bb02c14e3fb1641918bde712d8 scheduled__2025-12-09T09:57:00+00:00 [queued]>
+[2025-12-09T09:58:29.502+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: a33b9598a8c642b7b3bd8c85a966ecf1.PituitaryD_4ac318bb02c14e3fb1641918bde712d8 scheduled__2025-12-09T09:57:00+00:00 [queued]>
+[2025-12-09T09:58:29.502+0000] {taskinstance.py:1361} INFO - Starting attempt 1 of 1
+[2025-12-09T09:58:29.513+0000] {taskinstance.py:1382} INFO - Executing <Task(DominoDockerOperator): PituitaryD_4ac318bb02c14e3fb1641918bde712d8> on 2025-12-09 09:57:00+00:00
+[2025-12-09T09:58:29.519+0000] {standard_task_runner.py:57} INFO - Started process 228 to run task
+[2025-12-09T09:58:29.521+0000] {standard_task_runner.py:84} INFO - Running: ['***', 'tasks', 'run', 'a33b9598a8c642b7b3bd8c85a966ecf1', 'PituitaryD_4ac318bb02c14e3fb1641918bde712d8', 'scheduled__2025-12-09T09:57:00+00:00', '--job-id', '11', '--raw', '--subdir', 'DAGS_FOLDER/a33b9598a8c642b7b3bd8c85a966ecf1.py', '--cfg-path', '/tmp/tmpjui2l9rc']
+[2025-12-09T09:58:29.522+0000] {standard_task_runner.py:85} INFO - Job 11: Subtask PituitaryD_4ac318bb02c14e3fb1641918bde712d8
+[2025-12-09T09:58:29.556+0000] {task_command.py:416} INFO - Running <TaskInstance: a33b9598a8c642b7b3bd8c85a966ecf1.PituitaryD_4ac318bb02c14e3fb1641918bde712d8 scheduled__2025-12-09T09:57:00+00:00 [running]> on host 337ec7743ed8
+[2025-12-09T09:58:29.615+0000] {taskinstance.py:1662} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='a33b9598a8c642b7b3bd8c85a966ecf1' AIRFLOW_CTX_TASK_ID='PituitaryD_4ac318bb02c14e3fb1641918bde712d8' AIRFLOW_CTX_EXECUTION_DATE='2025-12-09T09:57:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-12-09T09:57:00+00:00'
+[2025-12-09T09:58:29.700+0000] {docker.py:324} INFO - Starting docker container from image ghcr.io/borzikpieces/borzikpieces:0.1.44-group0
+[2025-12-09T09:58:30.810+0000] {docker.py:391} INFO - Welcome to Domino! ❤️
+[2025-12-09T09:58:30.810+0000] {docker.py:391} INFO - Running Piece inside Docker container[33m...[0m
+[2025-12-09T09:58:30.897+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 69 : 2025-12-09 09:58:30.897 Started PituitaryD_4ac318bb02c14e3fb1641918bde712d8 of type PituitaryDatasetPiece at 2025-12-09T09:58:30.897216
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 70 : 2025-12-09 09:58:30.897 Start cut point for logger 48c94577-0225-4c3f-87c0-8add3f4e6d4b
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 20 : 2025-12-09 09:58:30.897 ============================================================
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 21 : 2025-12-09 09:58:30.897 Starting PituitaryDatasetPiece execution
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 22 : 2025-12-09 09:58:30.897 ============================================================
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 28 : 2025-12-09 09:58:30.897 Input configuration:
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 29 : 2025-12-09 09:58:30.897   - Batch size: 2
+[2025-12-09T09:58:30.898+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 30 : 2025-12-09 09:58:30.897   - Num workers: 0
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 31 : 2025-12-09 09:58:30.897   - Shuffle train: True
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 32 : 2025-12-09 09:58:30.897   - Train subjects: 35
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 33 : 2025-12-09 09:58:30.897   - Val subjects: 7
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 34 : 2025-12-09 09:58:30.897   - Test subjects: 8
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 36 : 2025-12-09 09:58:30.897 Creating dataset configuration for pituitary segmentation
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 47 : 2025-12-09 09:58:30.897 Processing training set:
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 48 : 2025-12-09 09:58:30.897   - Samples: 35
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 49 : 2025-12-09 09:58:30.897   - Batches: 18
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 50 : 2025-12-09 09:58:30.897   - Samples per batch: ~1.9
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 63 : 2025-12-09 09:58:30.897 Processing validation set:
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 64 : 2025-12-09 09:58:30.897   - Samples: 7
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 65 : 2025-12-09 09:58:30.897   - Batches: 4
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 78 : 2025-12-09 09:58:30.897 Processing test set:
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 79 : 2025-12-09 09:58:30.897   - Samples: 8
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 80 : 2025-12-09 09:58:30.897   - Batches: 4
+[2025-12-09T09:58:30.898+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 116 : 2025-12-09 09:58:30.898 Saving dataset configuration...
+[2025-12-09T09:58:30.901+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 123 : 2025-12-09 09:58:30.900 Dataset configuration saved successfully
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 124 : 2025-12-09 09:58:30.900   Path: /home/shared_storage/a33b9598a8c642b7b3bd8c85a966ecf1/scheduled__2025_12_09T09_57_00_00_00/PituitaryD_4ac318bb02c14e3fb1641918bde712d8/results/dataset_config.json
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 125 : 2025-12-09 09:58:30.900   Size: 48.13 KB
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 131 : 2025-12-09 09:58:30.901 Dataset configuration summary:
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 132 : 2025-12-09 09:58:30.901   - Total samples: 50
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 133 : 2025-12-09 09:58:30.901   - Train: 35
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 134 : 2025-12-09 09:58:30.901   - Val: 7
+[2025-12-09T09:58:30.901+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 135 : 2025-12-09 09:58:30.901   - Test: 8
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 136 : 2025-12-09 09:58:30.901 ============================================================
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 137 : 2025-12-09 09:58:30.901 PituitaryDatasetPiece execution completed successfully
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 138 : 2025-12-09 09:58:30.901 ============================================================
+[2025-12-09T09:58:30.910+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 308 : 2025-12-09 09:58:30.910 Piece used 49281 bytes of storage.
+INFO  - [     MainThread] domino-.PituitaryDatasetPiece-PituitaryD_4ac318bb02c14e3fb1641918bde712d8 : 309 : 2025-12-09 09:58:30.910 End cut point for logger 48c94577-0225-4c3f-87c0-8add3f4e6d4b
+[2025-12-09T09:58:31.245+0000] {taskinstance.py:1400} INFO - Marking task as SUCCESS. dag_id=a33b9598a8c642b7b3bd8c85a966ecf1, task_id=PituitaryD_4ac318bb02c14e3fb1641918bde712d8, execution_date=20251209T095700, start_date=20251209T095829, end_date=20251209T095831
+[2025-12-09T09:58:31.299+0000] {local_task_job_runner.py:228} INFO - Task exited with return code 0
+[2025-12-09T09:58:31.316+0000] {taskinstance.py:2778} INFO - 0 downstream tasks scheduled from follow-on schedule check

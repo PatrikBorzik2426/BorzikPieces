@@ -1,0 +1,298 @@
+[2025-12-09T09:58:09.461+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: a33b9598a8c642b7b3bd8c85a966ecf1.NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 scheduled__2025-12-09T09:57:00+00:00 [queued]>
+[2025-12-09T09:58:09.470+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: a33b9598a8c642b7b3bd8c85a966ecf1.NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 scheduled__2025-12-09T09:57:00+00:00 [queued]>
+[2025-12-09T09:58:09.471+0000] {taskinstance.py:1361} INFO - Starting attempt 1 of 1
+[2025-12-09T09:58:09.484+0000] {taskinstance.py:1382} INFO - Executing <Task(DominoDockerOperator): NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9> on 2025-12-09 09:57:00+00:00
+[2025-12-09T09:58:09.491+0000] {standard_task_runner.py:57} INFO - Started process 220 to run task
+[2025-12-09T09:58:09.495+0000] {standard_task_runner.py:84} INFO - Running: ['***', 'tasks', 'run', 'a33b9598a8c642b7b3bd8c85a966ecf1', 'NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9', 'scheduled__2025-12-09T09:57:00+00:00', '--job-id', '7', '--raw', '--subdir', 'DAGS_FOLDER/a33b9598a8c642b7b3bd8c85a966ecf1.py', '--cfg-path', '/tmp/tmpa3q_o08h']
+[2025-12-09T09:58:09.496+0000] {standard_task_runner.py:85} INFO - Job 7: Subtask NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9
+[2025-12-09T09:58:09.539+0000] {task_command.py:416} INFO - Running <TaskInstance: a33b9598a8c642b7b3bd8c85a966ecf1.NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 scheduled__2025-12-09T09:57:00+00:00 [running]> on host 337ec7743ed8
+[2025-12-09T09:58:09.606+0000] {taskinstance.py:1662} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='a33b9598a8c642b7b3bd8c85a966ecf1' AIRFLOW_CTX_TASK_ID='NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9' AIRFLOW_CTX_EXECUTION_DATE='2025-12-09T09:57:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-12-09T09:57:00+00:00'
+[2025-12-09T09:58:09.674+0000] {docker.py:324} INFO - Starting docker container from image ghcr.io/borzikpieces/borzikpieces:0.1.44-group0
+[2025-12-09T09:58:10.654+0000] {docker.py:391} INFO - 
+[2025-12-09T09:58:10.654+0000] {docker.py:391} INFO - Welcome to Domino! ❤️
+[2025-12-09T09:58:10.655+0000] {docker.py:391} INFO - Running Piece inside Docker container[33m...[0m
+[2025-12-09T09:58:10.758+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 69 : 2025-12-09 09:58:10.757 Started NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 of type NiftiVisualizationPiece at 2025-12-09T09:58:10.757511
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 70 : 2025-12-09 09:58:10.757 Start cut point for logger 48c94577-0225-4c3f-87c0-8add3f4e6d4b
+[2025-12-09T09:58:10.758+0000] {docker.py:391} INFO - [NiftiVisualizationPiece] === STARTING ===
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 20 : 2025-12-09 09:58:10.758 ==================================================
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 21 : 2025-12-09 09:58:10.758 NiftiVisualizationPiece STARTED
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 22 : 2025-12-09 09:58:10.758 ==================================================
+[NiftiVisualizationPiece] Importing libraries...
+[2025-12-09T09:58:11.274+0000] {docker.py:391} INFO - INFO  - [     MainThread] matplotlib.font_manager : 1547 : 2025-12-09 09:58:11.274 generated new fontManager
+[2025-12-09T09:58:11.444+0000] {docker.py:391} INFO - [NiftiVisualizationPiece] Libraries imported OK
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 35 : 2025-12-09 09:58:11.444 Libraries imported successfully
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 38 : 2025-12-09 09:58:11.444 Images path: /home/shared_storage/medical_data/images
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 39 : 2025-12-09 09:58:11.444 Masks path: /home/shared_storage/medical_data/masks
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 40 : 2025-12-09 09:58:11.444 File pattern: *.nii.gz
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 41 : 2025-12-09 09:58:11.444 Max subjects: 50
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 42 : 2025-12-09 09:58:11.444 View plane: axial
+[NiftiVisualizationPiece] Images: /home/shared_storage/medical_data/images
+[NiftiVisualizationPiece] Masks: /home/shared_storage/medical_data/masks
+[2025-12-09T09:58:11.445+0000] {docker.py:391} INFO - 
+[2025-12-09T09:58:11.445+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 55 : 2025-12-09 09:58:11.444 Found 50 image files
+[NiftiVisualizationPiece] Found 50 images
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 69 : 2025-12-09 09:58:11.444 Grid: 17x3
+[NiftiVisualizationPiece] Grid: 17x3
+[2025-12-09T09:58:12.546+0000] {docker.py:391} INFO - [NiftiVisualizationPiece] Processing 1/50: sub-001
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:12.545 Processing sub-001
+[2025-12-09T09:58:12.636+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:12.636   Image shape: (512, 13, 512)
+[2025-12-09T09:58:12.676+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:12.676   Mask overlaid
+[2025-12-09T09:58:12.677+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:12.676   ✓ Done
+[NiftiVisualizationPiece] Processing 2/50: sub-002
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:12.677 Processing sub-002
+[2025-12-09T09:58:12.809+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:12.808   Image shape: (512, 11, 512)
+[2025-12-09T09:58:12.824+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:12.823   Mask overlaid
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:12.823   ✓ Done
+[NiftiVisualizationPiece] Processing 3/50: sub-003
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:12.823 Processing sub-003
+[2025-12-09T09:58:12.885+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:12.884   Image shape: (512, 13, 512)
+[2025-12-09T09:58:12.899+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:12.898   Mask overlaid
+[2025-12-09T09:58:12.900+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:12.899   ✓ Done
+[NiftiVisualizationPiece] Processing 4/50: sub-004
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:12.899 Processing sub-004
+[2025-12-09T09:58:12.960+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:12.959   Image shape: (512, 11, 512)
+[2025-12-09T09:58:12.971+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:12.971   Mask overlaid
+[2025-12-09T09:58:12.972+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:12.971   ✓ Done
+[NiftiVisualizationPiece] Processing 5/50: sub-005
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:12.971 Processing sub-005
+[2025-12-09T09:58:13.026+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:13.25   Image shape: (512, 11, 512)
+[2025-12-09T09:58:13.038+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:13.38   Mask overlaid
+[2025-12-09T09:58:13.039+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:13.38   ✓ Done
+[2025-12-09T09:58:13.039+0000] {docker.py:391} INFO - [NiftiVisualizationPiece] Processing 6/50: sub-006
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:13.38 Processing sub-006
+[2025-12-09T09:58:13.130+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:13.130   Image shape: (512, 13, 512)
+[2025-12-09T09:58:13.147+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:13.146   Mask overlaid
+[2025-12-09T09:58:13.147+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:13.146   ✓ Done
+[NiftiVisualizationPiece] Processing 7/50: sub-007
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:13.146 Processing sub-007
+[2025-12-09T09:58:13.214+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:13.213   Image shape: (512, 11, 512)
+[2025-12-09T09:58:13.231+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:13.230   Mask overlaid
+[2025-12-09T09:58:13.232+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:13.231   ✓ Done
+[NiftiVisualizationPiece] Processing 8/50: sub-008
+[2025-12-09T09:58:13.232+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:13.231 Processing sub-008
+[2025-12-09T09:58:13.291+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:13.291   Image shape: (512, 11, 512)
+[2025-12-09T09:58:13.310+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:13.309   Mask overlaid
+[2025-12-09T09:58:13.311+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:13.310   ✓ Done
+[NiftiVisualizationPiece] Processing 9/50: sub-009
+[2025-12-09T09:58:13.311+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:13.310 Processing sub-009
+[2025-12-09T09:58:13.382+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:13.381   Image shape: (512, 11, 512)
+[2025-12-09T09:58:13.400+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:13.399   Mask overlaid
+[2025-12-09T09:58:13.400+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:13.399   ✓ Done
+[NiftiVisualizationPiece] Processing 10/50: sub-010
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:13.399 Processing sub-010
+[2025-12-09T09:58:13.470+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:13.469   Image shape: (512, 11, 512)
+[2025-12-09T09:58:13.487+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:13.486   Mask overlaid
+[2025-12-09T09:58:13.487+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:13.486   ✓ Done
+[NiftiVisualizationPiece] Processing 11/50: sub-011
+[2025-12-09T09:58:13.488+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:13.487 Processing sub-011
+[2025-12-09T09:58:13.550+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:13.549   Image shape: (512, 11, 512)
+[2025-12-09T09:58:13.565+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:13.564   Mask overlaid
+[2025-12-09T09:58:13.565+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:13.565   ✓ Done
+[NiftiVisualizationPiece] Processing 12/50: sub-012
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:13.565 Processing sub-012
+[2025-12-09T09:58:14.079+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:14.78   Image shape: (1024, 16, 1024)
+[2025-12-09T09:58:14.214+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:14.214   Mask overlaid
+[2025-12-09T09:58:14.215+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:14.214   ✓ Done
+[NiftiVisualizationPiece] Processing 13/50: sub-013
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:14.214 Processing sub-013
+[2025-12-09T09:58:14.687+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:14.686   Image shape: (1024, 15, 1024)
+[2025-12-09T09:58:14.849+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:14.848   Mask overlaid
+[2025-12-09T09:58:14.849+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:14.848   ✓ Done
+[NiftiVisualizationPiece] Processing 14/50: sub-014
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:14.848 Processing sub-014
+[2025-12-09T09:58:14.923+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:14.923   Image shape: (512, 11, 512)
+[2025-12-09T09:58:14.959+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:14.959   Mask overlaid
+[2025-12-09T09:58:14.960+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:14.959   ✓ Done
+[NiftiVisualizationPiece] Processing 15/50: sub-015
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:14.959 Processing sub-015
+[2025-12-09T09:58:15.084+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:15.83   Image shape: (512, 14, 512)
+[2025-12-09T09:58:15.127+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:15.126   Mask overlaid
+[2025-12-09T09:58:15.128+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:15.127   ✓ Done
+[NiftiVisualizationPiece] Processing 16/50: sub-016
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:15.127 Processing sub-016
+[2025-12-09T09:58:15.205+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:15.204   Image shape: (512, 13, 512)
+[2025-12-09T09:58:15.235+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:15.234   Mask overlaid
+[2025-12-09T09:58:15.236+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:15.235   ✓ Done
+[NiftiVisualizationPiece] Processing 17/50: sub-017
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:15.235 Processing sub-017
+[2025-12-09T09:58:15.323+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:15.322   Image shape: (512, 13, 512)
+[2025-12-09T09:58:15.341+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:15.340   Mask overlaid
+[2025-12-09T09:58:15.342+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:15.341   ✓ Done
+[NiftiVisualizationPiece] Processing 18/50: sub-018
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:15.341 Processing sub-018
+[2025-12-09T09:58:15.414+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:15.413   Image shape: (512, 12, 512)
+[2025-12-09T09:58:15.439+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:15.438   Mask overlaid
+[2025-12-09T09:58:15.439+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:15.439   ✓ Done
+[NiftiVisualizationPiece] Processing 19/50: sub-019
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:15.439 Processing sub-019
+[2025-12-09T09:58:16.346+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:16.345   Image shape: (1024, 16, 1024)
+[2025-12-09T09:58:16.781+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:16.779   Mask overlaid
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:16.780   ✓ Done
+[NiftiVisualizationPiece] Processing 20/50: sub-020
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:16.781 Processing sub-020
+[2025-12-09T09:58:16.919+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:16.918   Image shape: (512, 11, 512)
+[2025-12-09T09:58:17.057+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:17.56   Mask overlaid
+[2025-12-09T09:58:17.058+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:17.57   ✓ Done
+[NiftiVisualizationPiece] Processing 21/50: sub-021
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:17.57 Processing sub-021
+[2025-12-09T09:58:17.246+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:17.246   Image shape: (512, 12, 512)
+[2025-12-09T09:58:17.341+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:17.341   Mask overlaid
+[2025-12-09T09:58:17.342+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:17.341   ✓ Done
+[NiftiVisualizationPiece] Processing 22/50: sub-022
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:17.341 Processing sub-022
+[2025-12-09T09:58:17.592+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:17.591   Image shape: (512, 15, 512)
+[2025-12-09T09:58:17.631+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:17.630   Mask overlaid
+[2025-12-09T09:58:17.632+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:17.631   ✓ Done
+[NiftiVisualizationPiece] Processing 23/50: sub-023
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:17.631 Processing sub-023
+[2025-12-09T09:58:17.726+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:17.726   Image shape: (512, 11, 512)
+[2025-12-09T09:58:17.756+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:17.755   Mask overlaid
+[2025-12-09T09:58:17.757+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:17.756   ✓ Done
+[NiftiVisualizationPiece] Processing 24/50: sub-024
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:17.756 Processing sub-024
+[2025-12-09T09:58:17.831+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:17.830   Image shape: (512, 11, 512)
+[2025-12-09T09:58:17.852+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:17.851   Mask overlaid
+[2025-12-09T09:58:17.856+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:17.852   ✓ Done
+[NiftiVisualizationPiece] Processing 25/50: sub-025
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:17.852 Processing sub-025
+[2025-12-09T09:58:18.110+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:18.110   Image shape: (512, 11, 512)
+[2025-12-09T09:58:18.136+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:18.136   Mask overlaid
+[2025-12-09T09:58:18.137+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:18.136   ✓ Done
+[NiftiVisualizationPiece] Processing 26/50: sub-026
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:18.136 Processing sub-026
+[2025-12-09T09:58:18.226+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:18.225   Image shape: (512, 11, 512)
+[2025-12-09T09:58:18.243+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:18.243   Mask overlaid
+[2025-12-09T09:58:18.244+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:18.243   ✓ Done
+[NiftiVisualizationPiece] Processing 27/50: sub-027
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:18.243 Processing sub-027
+[2025-12-09T09:58:18.328+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:18.327   Image shape: (512, 11, 512)
+[2025-12-09T09:58:18.345+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:18.344   Mask overlaid
+[2025-12-09T09:58:18.346+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:18.345   ✓ Done
+[NiftiVisualizationPiece] Processing 28/50: sub-028
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:18.345 Processing sub-028
+[2025-12-09T09:58:19.057+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:19.56   Image shape: (1024, 14, 1024)
+[2025-12-09T09:58:19.231+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:19.230   Mask overlaid
+[2025-12-09T09:58:19.231+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:19.231   ✓ Done
+[NiftiVisualizationPiece] Processing 29/50: sub-029
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:19.231 Processing sub-029
+[2025-12-09T09:58:19.313+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:19.312   Image shape: (512, 13, 512)
+[2025-12-09T09:58:19.340+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:19.339   Mask overlaid
+[2025-12-09T09:58:19.340+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:19.340   ✓ Done
+[NiftiVisualizationPiece] Processing 30/50: sub-030
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:19.340 Processing sub-030
+[2025-12-09T09:58:19.438+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:19.437   Image shape: (512, 14, 512)
+[2025-12-09T09:58:19.471+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:19.470   Mask overlaid
+[2025-12-09T09:58:19.472+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:19.471   ✓ Done
+[NiftiVisualizationPiece] Processing 31/50: sub-031
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:19.471 Processing sub-031
+[2025-12-09T09:58:19.704+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:19.704   Image shape: (512, 11, 512)
+[2025-12-09T09:58:19.714+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:19.714   Mask overlaid
+[2025-12-09T09:58:19.714+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:19.714   ✓ Done
+[NiftiVisualizationPiece] Processing 32/50: sub-032
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:19.714 Processing sub-032
+[2025-12-09T09:58:19.810+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:19.809   Image shape: (512, 11, 512)
+[2025-12-09T09:58:19.836+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:19.835   Mask overlaid
+[2025-12-09T09:58:19.836+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:19.835   ✓ Done
+[NiftiVisualizationPiece] Processing 33/50: sub-033
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:19.836 Processing sub-033
+[2025-12-09T09:58:19.939+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:19.938   Image shape: (512, 11, 512)
+[2025-12-09T09:58:19.962+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:19.961   Mask overlaid
+[2025-12-09T09:58:19.963+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:19.962   ✓ Done
+[2025-12-09T09:58:19.964+0000] {docker.py:391} INFO - [NiftiVisualizationPiece] Processing 34/50: sub-034
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:19.962 Processing sub-034
+[2025-12-09T09:58:20.667+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:20.667   Image shape: (1024, 16, 1024)
+[2025-12-09T09:58:20.940+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:20.940   Mask overlaid
+[2025-12-09T09:58:20.941+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:20.940   ✓ Done
+[NiftiVisualizationPiece] Processing 35/50: sub-035
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:20.940 Processing sub-035
+[2025-12-09T09:58:20.999+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:20.998   Image shape: (512, 11, 512)
+[2025-12-09T09:58:21.028+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:21.27   Mask overlaid
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:21.27   ✓ Done
+[NiftiVisualizationPiece] Processing 36/50: sub-036
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:21.27 Processing sub-036
+[2025-12-09T09:58:21.157+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:21.156   Image shape: (512, 14, 512)
+[2025-12-09T09:58:21.210+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:21.210   Mask overlaid
+[2025-12-09T09:58:21.211+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:21.210   ✓ Done
+[NiftiVisualizationPiece] Processing 37/50: sub-037
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:21.210 Processing sub-037
+[2025-12-09T09:58:21.264+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:21.264   Image shape: (512, 11, 512)
+[2025-12-09T09:58:21.274+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:21.273   Mask overlaid
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:21.273   ✓ Done
+[NiftiVisualizationPiece] Processing 38/50: sub-038
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:21.273 Processing sub-038
+[2025-12-09T09:58:21.325+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:21.325   Image shape: (512, 13, 512)
+[2025-12-09T09:58:21.339+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:21.339   Mask overlaid
+[2025-12-09T09:58:21.340+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:21.339   ✓ Done
+[NiftiVisualizationPiece] Processing 39/50: sub-039
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:21.339 Processing sub-039
+[2025-12-09T09:58:21.447+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:21.446   Image shape: (512, 16, 512)
+[2025-12-09T09:58:21.493+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:21.493   Mask overlaid
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:21.493   ✓ Done
+[NiftiVisualizationPiece] Processing 40/50: sub-040
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:21.493 Processing sub-040
+[2025-12-09T09:58:21.546+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:21.546   Image shape: (512, 11, 512)
+[2025-12-09T09:58:21.567+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:21.566   Mask overlaid
+[2025-12-09T09:58:21.567+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:21.566   ✓ Done
+[NiftiVisualizationPiece] Processing 41/50: sub-041
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:21.566 Processing sub-041
+[2025-12-09T09:58:21.627+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:21.626   Image shape: (512, 13, 512)
+[2025-12-09T09:58:21.644+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:21.643   Mask overlaid
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:21.644   ✓ Done
+[2025-12-09T09:58:21.645+0000] {docker.py:391} INFO - [NiftiVisualizationPiece] Processing 42/50: sub-042
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:21.644 Processing sub-042
+[2025-12-09T09:58:21.723+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:21.722   Image shape: (512, 13, 512)
+[2025-12-09T09:58:21.733+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:21.732   Mask overlaid
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:21.732   ✓ Done
+[NiftiVisualizationPiece] Processing 43/50: sub-043
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:21.732 Processing sub-043
+[2025-12-09T09:58:21.857+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:21.856   Image shape: (512, 14, 512)
+[2025-12-09T09:58:21.874+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:21.874   Mask overlaid
+[2025-12-09T09:58:21.875+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:21.874   ✓ Done
+[NiftiVisualizationPiece] Processing 44/50: sub-044
+[2025-12-09T09:58:21.875+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:21.874 Processing sub-044
+[2025-12-09T09:58:21.936+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:21.935   Image shape: (512, 11, 512)
+[2025-12-09T09:58:21.955+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:21.954   Mask overlaid
+[2025-12-09T09:58:21.956+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:21.954   ✓ Done
+[NiftiVisualizationPiece] Processing 45/50: sub-045
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:21.954 Processing sub-045
+[2025-12-09T09:58:22.105+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:22.104   Image shape: (512, 11, 512)
+[2025-12-09T09:58:22.138+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:22.137   Mask overlaid
+[2025-12-09T09:58:22.138+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:22.138   ✓ Done
+[NiftiVisualizationPiece] Processing 46/50: sub-046
+[2025-12-09T09:58:22.138+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:22.138 Processing sub-046
+[2025-12-09T09:58:22.183+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:22.182   Image shape: (512, 13, 512)
+[2025-12-09T09:58:22.195+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:22.195   Mask overlaid
+[2025-12-09T09:58:22.196+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:22.195   ✓ Done
+[NiftiVisualizationPiece] Processing 47/50: sub-047
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:22.195 Processing sub-047
+[2025-12-09T09:58:22.293+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:22.293   Image shape: (512, 11, 512)
+[2025-12-09T09:58:22.310+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:22.310   Mask overlaid
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:22.310   ✓ Done
+[NiftiVisualizationPiece] Processing 48/50: sub-048
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:22.310 Processing sub-048
+[2025-12-09T09:58:22.448+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:22.447   Image shape: (512, 14, 512)
+[2025-12-09T09:58:22.483+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:22.482   Mask overlaid
+[2025-12-09T09:58:22.483+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:22.482   ✓ Done
+[NiftiVisualizationPiece] Processing 49/50: sub-049
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:22.482 Processing sub-049
+[2025-12-09T09:58:22.633+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:22.633   Image shape: (512, 13, 512)
+[2025-12-09T09:58:22.647+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:22.646   Mask overlaid
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:22.646   ✓ Done
+[NiftiVisualizationPiece] Processing 50/50: sub-050
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 96 : 2025-12-09 09:58:22.646 Processing sub-050
+[2025-12-09T09:58:22.775+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 102 : 2025-12-09 09:58:22.774   Image shape: (512, 15, 512)
+[2025-12-09T09:58:22.797+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 138 : 2025-12-09 09:58:22.796   Mask overlaid
+[2025-12-09T09:58:22.797+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 144 : 2025-12-09 09:58:22.796   ✓ Done
+[2025-12-09T09:58:23.282+0000] {docker.py:391} INFO - [NiftiVisualizationPiece] Saving to: /home/shared_storage/a33b9598a8c642b7b3bd8c85a966ecf1/scheduled__2025_12_09T09_57_00_00_00/NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9/results/nifti_grid_50subj.png
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 165 : 2025-12-09 09:58:23.281 Saving to: /home/shared_storage/a33b9598a8c642b7b3bd8c85a966ecf1/scheduled__2025_12_09T09_57_00_00_00/NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9/results/nifti_grid_50subj.png
+[2025-12-09T09:58:24.883+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 170 : 2025-12-09 09:58:24.883 Figure saved
+[NiftiVisualizationPiece] Saved successfully
+[2025-12-09T09:58:24.884+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 182 : 2025-12-09 09:58:24.884 ==================================================
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 183 : 2025-12-09 09:58:24.884 DONE: Visualized 50 subjects
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 184 : 2025-12-09 09:58:24.884 ==================================================
+[NiftiVisualizationPiece] === COMPLETED ===
+[2025-12-09T09:58:24.893+0000] {docker.py:391} INFO - INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 308 : 2025-12-09 09:58:24.892 Piece used 333115 bytes of storage.
+INFO  - [     MainThread] domino-.NiftiVisualizationPiece-NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9 : 309 : 2025-12-09 09:58:24.893 End cut point for logger 48c94577-0225-4c3f-87c0-8add3f4e6d4b
+[2025-12-09T09:58:25.846+0000] {taskinstance.py:1400} INFO - Marking task as SUCCESS. dag_id=a33b9598a8c642b7b3bd8c85a966ecf1, task_id=NiftiVisua_f6bab4518ef3452eb58ef350fbda4ed9, execution_date=20251209T095700, start_date=20251209T095809, end_date=20251209T095825
+[2025-12-09T09:58:25.869+0000] {local_task_job_runner.py:228} INFO - Task exited with return code 0
+[2025-12-09T09:58:25.886+0000] {taskinstance.py:2778} INFO - 0 downstream tasks scheduled from follow-on schedule check

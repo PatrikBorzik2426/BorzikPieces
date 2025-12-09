@@ -1,0 +1,36 @@
+[2025-12-09T09:37:01.329+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: d714e607e62c40578f7691f8b22fb1fc.NiftiDataL_981e378c2648421bbc0bc6339f4ecdf6 scheduled__2025-12-09T09:36:00+00:00 [queued]>
+[2025-12-09T09:37:01.337+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: d714e607e62c40578f7691f8b22fb1fc.NiftiDataL_981e378c2648421bbc0bc6339f4ecdf6 scheduled__2025-12-09T09:36:00+00:00 [queued]>
+[2025-12-09T09:37:01.338+0000] {taskinstance.py:1361} INFO - Starting attempt 1 of 1
+[2025-12-09T09:37:01.351+0000] {taskinstance.py:1382} INFO - Executing <Task(DominoDockerOperator): NiftiDataL_981e378c2648421bbc0bc6339f4ecdf6> on 2025-12-09 09:36:00+00:00
+[2025-12-09T09:37:01.356+0000] {standard_task_runner.py:57} INFO - Started process 116 to run task
+[2025-12-09T09:37:01.359+0000] {standard_task_runner.py:84} INFO - Running: ['***', 'tasks', 'run', 'd714e607e62c40578f7691f8b22fb1fc', 'NiftiDataL_981e378c2648421bbc0bc6339f4ecdf6', 'scheduled__2025-12-09T09:36:00+00:00', '--job-id', '3', '--raw', '--subdir', 'DAGS_FOLDER/d714e607e62c40578f7691f8b22fb1fc.py', '--cfg-path', '/tmp/tmpcmeckjhg']
+[2025-12-09T09:37:01.360+0000] {standard_task_runner.py:85} INFO - Job 3: Subtask NiftiDataL_981e378c2648421bbc0bc6339f4ecdf6
+[2025-12-09T09:37:01.403+0000] {task_command.py:416} INFO - Running <TaskInstance: d714e607e62c40578f7691f8b22fb1fc.NiftiDataL_981e378c2648421bbc0bc6339f4ecdf6 scheduled__2025-12-09T09:36:00+00:00 [running]> on host 2143d8ad8ab8
+[2025-12-09T09:37:01.470+0000] {taskinstance.py:1662} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='d714e607e62c40578f7691f8b22fb1fc' AIRFLOW_CTX_TASK_ID='NiftiDataL_981e378c2648421bbc0bc6339f4ecdf6' AIRFLOW_CTX_EXECUTION_DATE='2025-12-09T09:36:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-12-09T09:36:00+00:00'
+[2025-12-09T09:37:01.539+0000] {docker.py:450} INFO - Pulling docker image ghcr.io/borzikpieces/borzikpieces:0.1.44-group0
+[2025-12-09T09:37:01.846+0000] {taskinstance.py:1937} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.9/site-packages/docker/api/client.py", line 268, in _raise_for_status
+    response.raise_for_status()
+  File "/home/airflow/.local/lib/python3.9/site-packages/requests/models.py", line 1021, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 403 Client Error: Forbidden for url: http://docker-proxy:2375/v1.52/images/create?tag=0.1.44-group0&fromImage=ghcr.io%2Fborzikpieces%2Fborzikpieces
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.9/site-packages/domino/custom_operators/docker_operator.py", line 193, in execute
+    result = super().execute(context=context)
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/providers/docker/operators/docker.py", line 452, in execute
+    for output in self.cli.pull(self.image, stream=True, decode=True):
+  File "/home/airflow/.local/lib/python3.9/site-packages/docker/api/image.py", line 429, in pull
+    self._raise_for_status(response)
+  File "/home/airflow/.local/lib/python3.9/site-packages/docker/api/client.py", line 270, in _raise_for_status
+    raise create_api_error_from_http_exception(e) from e
+  File "/home/airflow/.local/lib/python3.9/site-packages/docker/errors.py", line 39, in create_api_error_from_http_exception
+    raise cls(e, response=response, explanation=explanation) from e
+docker.errors.APIError: 403 Client Error for http://docker-proxy:2375/v1.52/images/create?tag=0.1.44-group0&fromImage=ghcr.io%2Fborzikpieces%2Fborzikpieces: Forbidden ("Head "https://ghcr.io/v2/borzikpieces/borzikpieces/manifests/0.1.44-group0": denied")
+[2025-12-09T09:37:01.855+0000] {taskinstance.py:1400} INFO - Marking task as FAILED. dag_id=d714e607e62c40578f7691f8b22fb1fc, task_id=NiftiDataL_981e378c2648421bbc0bc6339f4ecdf6, execution_date=20251209T093600, start_date=20251209T093701, end_date=20251209T093701
+[2025-12-09T09:37:01.868+0000] {standard_task_runner.py:104} ERROR - Failed to execute job 3 for task NiftiDataL_981e378c2648421bbc0bc6339f4ecdf6 (403 Client Error for http://docker-proxy:2375/v1.52/images/create?tag=0.1.44-group0&fromImage=ghcr.io%2Fborzikpieces%2Fborzikpieces: Forbidden ("Head "https://ghcr.io/v2/borzikpieces/borzikpieces/manifests/0.1.44-group0": denied"); 116)
+[2025-12-09T09:37:01.891+0000] {local_task_job_runner.py:228} INFO - Task exited with return code 1
+[2025-12-09T09:37:01.907+0000] {taskinstance.py:2778} INFO - 0 downstream tasks scheduled from follow-on schedule check

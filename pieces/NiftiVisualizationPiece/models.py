@@ -49,12 +49,6 @@ class InputModel(BaseModel):
         description="Matplotlib colormap for image (e.g., 'gray', 'viridis', 'bone')",
         default="gray"
     )
-    grid_columns: int = Field(
-        description="Number of columns in visualization grid",
-        default=3,
-        ge=1,
-        le=10
-    )
 
 
 class OutputModel(BaseModel):

@@ -62,30 +62,24 @@ class NiftiVisualizationPiece(BasePiece):
             image_files = image_files[:input_data.max_subjects]
             num_subjects = len(image_files)
             
-            # Calculate grid
-            cols = min(input_data.grid_columns, num_subjects)
-            rows = (num_subjects + cols - 1) // cols
+            self.logger.info(f"Visualizing {num_subjects} subjects in vertical layout")
+            print(f"[NiftiVisualizationPiece] Vertical layout: {num_subjects} subjects")
             
-            self.logger.info(f"Grid: {rows}x{cols}")
-            print(f"[NiftiVisualizationPiece] Grid: {rows}x{cols}")
+            # Create vertical layout - one subject per row, fixed width
+            fig_width = 10  # Fixed width for consistency
+            fig_height = num_subjects * 3  # 3 inches per subject
+            fig, axes = plt.subplots(num_subjects, 1, figsize=(fig_width, fig_height))
             
-            # Create figure
-            fig, axes = plt.subplots(rows, cols, figsize=(cols * 4, rows * 4))
-            
-            # Make axes 2D array
+            # Make axes iterable
             if num_subjects == 1:
-                axes = [[axes]]
-            elif rows == 1:
-                axes = [axes] if cols > 1 else [[axes]]
-            elif cols == 1:
-                axes = [[ax] for ax in axes]
+                axes = [axes]
+            else:
+                axes = list(axes)
             
             visualized_ids = []
             
             for idx, img_path in enumerate(image_files):
-                r = idx // cols
-                c = idx % cols
-                ax = axes[r][c]
+                ax = axes[idx]
                 
                 # Extract subject ID from filename
                 filename = os.path.basename(img_path)
@@ -149,12 +143,6 @@ class NiftiVisualizationPiece(BasePiece):
                            ha='center', va='center', transform=ax.transAxes, color='red')
                     ax.axis('off')
             
-            # Hide unused subplots
-            for idx in range(num_subjects, rows * cols):
-                r = idx // cols
-                c = idx % cols
-                axes[r][c].axis('off')
-            
             # Save figure
             plt.tight_layout()
             
@@ -188,8 +176,8 @@ class NiftiVisualizationPiece(BasePiece):
                 num_subjects=num_subjects,
                 subject_ids=visualized_ids,
                 view_plane=input_data.view_plane,
-                grid_size=f"{rows}x{cols}",
-                visualization_summary=f"Visualized {num_subjects} subjects from {input_data.images_path}"
+                grid_size=f"{num_subjects}x1",
+                visualization_summary=f"Visualized {num_subjects} subjects in vertical layout from {input_data.images_path}"
             )
             
         except Exception as e:
