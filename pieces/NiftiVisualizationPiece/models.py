@@ -17,8 +17,7 @@ class InputModel(BaseModel):
     that outputs List[SubjectInfo]. It visualizes first 10 subjects in a grid.
     """
     subjects: List[SubjectInfo] = Field(
-        description="List of subjects with image and mask paths (from DataLoader or DataSplit). Must be connected in workflow.",
-        default=[]
+        description="List of subjects with image and mask paths (from DataLoader or DataSplit). Must be connected in workflow."
     )
     max_subjects: int = Field(
         description="Maximum number of subjects to visualize",
