@@ -14,11 +14,17 @@ class InputModel(BaseModel):
     NIfTI Visualization Piece Input Model
     
     NOTE: This piece must be connected to an upstream piece (DataLoader or DataSplit)
-    that outputs SubjectInfo. It cannot be run standalone from the UI form.
+    that outputs List[SubjectInfo]. It visualizes first 10 subjects in a grid.
     """
-    subject: Optional[SubjectInfo] = Field(
-        description="Subject information with image and mask paths (from DataLoader or DataSplit). Must be connected in workflow.",
-        default=None
+    subjects: List[SubjectInfo] = Field(
+        description="List of subjects with image and mask paths (from DataLoader or DataSplit). Must be connected in workflow.",
+        default=[]
+    )
+    max_subjects: int = Field(
+        description="Maximum number of subjects to visualize",
+        default=10,
+        ge=1,
+        le=20
     )
     slice_index: Optional[int] = Field(
         description="Slice index to visualize. If None, uses middle slice.",
@@ -46,17 +52,11 @@ class InputModel(BaseModel):
         description="Color for mask overlay (e.g., 'red', 'green', 'yellow')",
         default="red"
     )
-    figure_width: int = Field(
-        description="Figure width in pixels",
-        default=800,
-        ge=400,
-        le=2000
-    )
-    figure_height: int = Field(
-        description="Figure height in pixels",
-        default=600,
-        ge=300,
-        le=2000
+    grid_columns: int = Field(
+        description="Number of columns in visualization grid",
+        default=5,
+        ge=1,
+        le=10
     )
 
 
@@ -64,24 +64,18 @@ class OutputModel(BaseModel):
     """
     NIfTI Visualization Piece Output Model
     """
-    subject_id: str = Field(
-        description="Subject ID that was visualized"
+    num_subjects: int = Field(
+        description="Number of subjects visualized"
     )
-    slice_index: int = Field(
-        description="Slice index that was visualized"
+    subject_ids: List[str] = Field(
+        description="List of subject IDs that were visualized"
     )
     view_plane: str = Field(
         description="Anatomical plane that was visualized"
     )
-    image_shape: List[int] = Field(
-        description="Shape of the full 3D volume"
+    grid_size: str = Field(
+        description="Grid size (rows x columns)"
     )
-    slice_shape: List[int] = Field(
-        description="Shape of the 2D slice"
-    )
-    has_mask: bool = Field(
-        description="Whether mask was available and displayed"
-    )
-    visualization_path: str = Field(
-        description="Path to saved visualization PNG"
+    visualization_summary: str = Field(
+        description="Summary of visualization"
     )

@@ -12,11 +12,11 @@ from matplotlib.colors import ListedColormap
 
 class NiftiVisualizationPiece(BasePiece):
     """
-    A piece that visualizes NIfTI medical imaging data with optional mask overlay.
+    A piece that visualizes NIfTI medical imaging data in a grid layout.
     
-    This piece loads a 3D NIfTI volume and creates 2D slice visualizations
-    in axial, sagittal, or coronal planes. It can overlay segmentation masks
-    with customizable transparency and colors.
+    This piece loads multiple 3D NIfTI volumes and creates a grid of 2D slice 
+    visualizations with optional mask overlays. It visualizes up to the first 
+    10 subjects (or max_subjects) from the input list.
     """
 
     def piece_function(self, input_data: InputModel) -> OutputModel:
@@ -24,127 +24,149 @@ class NiftiVisualizationPiece(BasePiece):
             import nibabel as nib
             
             self.logger.info("=" * 60)
-            self.logger.info("Starting NiftiVisualizationPiece execution")
+            self.logger.info("Starting NiftiVisualizationPiece (Grid Mode)")
             self.logger.info("=" * 60)
             
-            # Validate that subject data is provided
-            if input_data.subject is None:
+            # Validate that subjects are provided
+            if not input_data.subjects or len(input_data.subjects) == 0:
                 raise ValueError(
-                    "Subject data is required. This piece must be connected to an upstream piece "
-                    "(DataLoader or DataSplit) that provides SubjectInfo. "
-                    "It cannot be run standalone from the UI."
+                    "No subjects provided. This piece must be connected to an upstream piece "
+                    "(DataLoader or DataSplit) that provides List[SubjectInfo]."
                 )
             
-            subject = input_data.subject
-            image_path = subject.image_path
-            mask_path = subject.mask_path
-            subject_id = subject.subject_id
-            slice_index = input_data.slice_index
-            view_plane = input_data.view_plane
-            show_mask = input_data.show_mask_overlay
+            # Limit to max_subjects
+            subjects_to_visualize = input_data.subjects[:input_data.max_subjects]
+            num_subjects = len(subjects_to_visualize)
             
             self.logger.info(f"Input configuration:")
-            self.logger.info(f"  - Subject ID: {subject_id}")
-            self.logger.info(f"  - Image path: {image_path}")
-            self.logger.info(f"  - Mask path: {mask_path if mask_path else 'None'}")
-            self.logger.info(f"  - View plane: {view_plane}")
-            self.logger.info(f"  - Slice index: {slice_index if slice_index is not None else 'Auto (middle)'}")
+            self.logger.info(f"  - Total subjects available: {len(input_data.subjects)}")
+            self.logger.info(f"  - Subjects to visualize: {num_subjects}")
+            self.logger.info(f"  - View plane: {input_data.view_plane}")
+            self.logger.info(f"  - Show mask overlay: {input_data.show_mask_overlay}")
+            self.logger.info(f"  - Grid columns: {input_data.grid_columns}")
             
-            # Load image
-            self.logger.info(f"Loading NIfTI image...")
-            if not os.path.exists(image_path):
-                raise ValueError(f"Image file not found: {image_path}")
+            # Calculate grid dimensions
+            cols = input_data.grid_columns
+            rows = (num_subjects + cols - 1) // cols  # Ceiling division
             
-            img_nii = nib.load(image_path)
-            img_data = img_nii.get_fdata().astype(np.float32)
-            image_shape = list(img_data.shape)
-            self.logger.info(f"Image loaded successfully: shape {image_shape}")
+            self.logger.info(f"Creating {rows}x{cols} grid visualization...")
             
-            # Load mask if available
-            mask_data = None
-            has_mask = False
-            if mask_path and show_mask:
-                if os.path.exists(mask_path):
-                    self.logger.info(f"Loading mask...")
-                    mask_nii = nib.load(mask_path)
-                    mask_data = mask_nii.get_fdata().astype(np.int32)
-                    has_mask = True
-                    self.logger.info(f"Mask loaded successfully: shape {list(mask_data.shape)}")
-                else:
-                    self.logger.warning(f"Mask file not found: {mask_path}")
+            # Create figure with subplots
+            fig_width = cols * 4  # 4 inches per column
+            fig_height = rows * 3  # 3 inches per row
+            fig, axes = plt.subplots(rows, cols, figsize=(fig_width, fig_height), dpi=100)
             
-            # Select slice based on view plane
-            if view_plane == "axial":
-                max_slices = img_data.shape[2]
-                if slice_index is None:
-                    slice_index = max_slices // 2
-                img_slice = img_data[:, :, slice_index]
-                mask_slice = mask_data[:, :, slice_index] if has_mask else None
-                axis_labels = ("Left → Right", "Posterior → Anterior")
-            elif view_plane == "sagittal":
-                max_slices = img_data.shape[0]
-                if slice_index is None:
-                    slice_index = max_slices // 2
-                img_slice = img_data[slice_index, :, :]
-                mask_slice = mask_data[slice_index, :, :] if has_mask else None
-                axis_labels = ("Posterior → Anterior", "Inferior → Superior")
-            else:  # coronal
-                max_slices = img_data.shape[1]
-                if slice_index is None:
-                    slice_index = max_slices // 2
-                img_slice = img_data[:, slice_index, :]
-                mask_slice = mask_data[:, slice_index, :] if has_mask else None
-                axis_labels = ("Left → Right", "Inferior → Superior")
+            # Handle single subplot case
+            if num_subjects == 1:
+                axes = np.array([[axes]])
+            elif rows == 1:
+                axes = axes.reshape(1, -1)
+            elif cols == 1:
+                axes = axes.reshape(-1, 1)
             
-            slice_shape = list(img_slice.shape)
-            self.logger.info(f"Extracted {view_plane} slice {slice_index}/{max_slices-1}, shape: {slice_shape}")
+            visualized_ids = []
             
-            # Normalize image for display
-            img_slice_norm = (img_slice - img_slice.min()) / (img_slice.max() - img_slice.min() + 1e-8)
+            # Process each subject
+            for idx, subject in enumerate(subjects_to_visualize):
+                row = idx // cols
+                col = idx % cols
+                ax = axes[row, col]
+                
+                subject_id = subject.subject_id
+                image_path = subject.image_path
+                mask_path = subject.mask_path
+                
+                visualized_ids.append(subject_id)
+                
+                try:
+                    # Load image
+                    if not os.path.exists(image_path):
+                        self.logger.warning(f"Image not found for {subject_id}: {image_path}")
+                        ax.text(0.5, 0.5, f"Image not found\\n{subject_id}", 
+                               ha='center', va='center', transform=ax.transAxes)
+                        ax.axis('off')
+                        continue
+                    
+                    img_nii = nib.load(image_path)
+                    img_data = img_nii.get_fdata().astype(np.float32)
+                    
+                    # Load mask if available
+                    mask_data = None
+                    has_mask = False
+                    if mask_path and input_data.show_mask_overlay and os.path.exists(mask_path):
+                        mask_nii = nib.load(mask_path)
+                        mask_data = mask_nii.get_fdata().astype(np.int32)
+                        has_mask = True
+                    
+                    # Extract slice based on view plane
+                    slice_index = input_data.slice_index
+                    view_plane = input_data.view_plane
+                    
+                    if view_plane == "axial":
+                        if slice_index is None:
+                            slice_index = img_data.shape[2] // 2
+                        img_slice = img_data[:, :, slice_index]
+                        mask_slice = mask_data[:, :, slice_index] if has_mask else None
+                    elif view_plane == "sagittal":
+                        if slice_index is None:
+                            slice_index = img_data.shape[0] // 2
+                        img_slice = img_data[slice_index, :, :]
+                        mask_slice = mask_data[slice_index, :, :] if has_mask else None
+                    else:  # coronal
+                        if slice_index is None:
+                            slice_index = img_data.shape[1] // 2
+                        img_slice = img_data[:, slice_index, :]
+                        mask_slice = mask_data[:, slice_index, :] if has_mask else None
+                    
+                    # Normalize image
+                    img_slice_norm = (img_slice - img_slice.min()) / (img_slice.max() - img_slice.min() + 1e-8)
+                    
+                    # Display image
+                    ax.imshow(img_slice_norm.T, cmap=input_data.color_map, origin='lower', aspect='auto')
+                    
+                    # Overlay mask
+                    if has_mask and mask_slice is not None:
+                        mask_colored = np.zeros((*mask_slice.shape, 4))
+                        mask_colored[mask_slice > 0] = matplotlib.colors.to_rgba(
+                            input_data.mask_color, 
+                            alpha=input_data.mask_alpha
+                        )
+                        ax.imshow(mask_colored.T, origin='lower', aspect='auto')
+                    
+                    # Add title
+                    title = f"{subject_id}"
+                    if has_mask:
+                        title += " + mask"
+                    ax.set_title(title, fontsize=9)
+                    ax.axis('off')
+                    
+                    self.logger.info(f"  [{idx+1}/{num_subjects}] Visualized {subject_id}")
+                    
+                except Exception as e:
+                    self.logger.error(f"Error visualizing {subject_id}: {e}")
+                    ax.text(0.5, 0.5, f"Error\\n{subject_id}\\n{str(e)[:30]}", 
+                           ha='center', va='center', transform=ax.transAxes, fontsize=8)
+                    ax.axis('off')
             
-            # Create visualization
-            self.logger.info("Creating visualization...")
-            dpi = 100
-            fig_width = input_data.figure_width / dpi
-            fig_height = input_data.figure_height / dpi
+            # Hide unused subplots
+            for idx in range(num_subjects, rows * cols):
+                row = idx // cols
+                col = idx % cols
+                axes[row, col].axis('off')
             
-            fig, ax = plt.subplots(figsize=(fig_width, fig_height), dpi=dpi)
-            
-            # Display image
-            ax.imshow(img_slice_norm.T, cmap=input_data.color_map, origin='lower', aspect='auto')
-            
-            # Overlay mask if available
-            if has_mask and mask_slice is not None:
-                # Create colored mask overlay
-                mask_colored = np.zeros((*mask_slice.shape, 4))
-                mask_colored[mask_slice > 0] = matplotlib.colors.to_rgba(
-                    input_data.mask_color, 
-                    alpha=input_data.mask_alpha
-                )
-                ax.imshow(mask_colored.T, origin='lower', aspect='auto')
-                self.logger.info(f"Mask overlay applied with alpha={input_data.mask_alpha}")
-            
-            # Add labels and title
-            ax.set_xlabel(axis_labels[0], fontsize=10)
-            ax.set_ylabel(axis_labels[1], fontsize=10)
-            title = f"{subject_id} - {view_plane.capitalize()} view (slice {slice_index})"
-            if has_mask:
-                title += " with mask overlay"
-            ax.set_title(title, fontsize=12, fontweight='bold')
-            
-            # Add colorbar for intensity
-            cbar = plt.colorbar(ax.images[0], ax=ax, fraction=0.046, pad=0.04)
-            cbar.set_label('Normalized Intensity', fontsize=9)
+            # Add main title
+            fig.suptitle(f"NIfTI Visualization - {input_data.view_plane.capitalize()} View", 
+                        fontsize=14, fontweight='bold', y=0.995)
             
             plt.tight_layout()
             
             # Save figure
             results_dir = getattr(self, "results_path", "/tmp")
-            output_filename = f"{subject_id}_{view_plane}_slice{slice_index}.png"
+            output_filename = f"grid_visualization_{input_data.view_plane}_{num_subjects}subjects.png"
             output_path = os.path.join(results_dir, output_filename)
             
-            plt.savefig(output_path, dpi=dpi, bbox_inches='tight', facecolor='white')
-            self.logger.info(f"Visualization saved to: {output_path}")
+            plt.savefig(output_path, dpi=100, bbox_inches='tight', facecolor='white')
+            self.logger.info(f"Grid visualization saved to: {output_path}")
             
             # Read image for display_result
             with open(output_path, 'rb') as f:
@@ -160,17 +182,15 @@ class NiftiVisualizationPiece(BasePiece):
             plt.close(fig)
             
             self.logger.info("=" * 60)
-            self.logger.info("NiftiVisualizationPiece execution completed successfully")
+            self.logger.info(f"Grid visualization completed: {num_subjects} subjects in {rows}x{cols} grid")
             self.logger.info("=" * 60)
             
             return OutputModel(
-                subject_id=subject_id,
-                slice_index=slice_index,
-                view_plane=view_plane,
-                image_shape=image_shape,
-                slice_shape=slice_shape,
-                has_mask=has_mask,
-                visualization_path=output_path
+                num_subjects=num_subjects,
+                subject_ids=visualized_ids,
+                view_plane=input_data.view_plane,
+                grid_size=f"{rows}x{cols}",
+                visualization_summary=f"Visualized {num_subjects} subjects in {rows}x{cols} grid"
             )
             
         except Exception as e:
