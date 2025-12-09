@@ -2,35 +2,27 @@ from domino.testing import piece_dry_run
 
 
 def test_nifti_visualization_piece():
-    """Test NiftiVisualizationPiece with model validation for grid mode."""
-    from pieces.NiftiVisualizationPiece.models import InputModel, SubjectInfo
+    """Test NiftiVisualizationPiece with model validation for standalone mode."""
+    from pieces.NiftiVisualizationPiece.models import InputModel
     
-    # Test model creation and validation with multiple subjects
-    test_subjects = [
-        SubjectInfo(
-            subject_id=f"test_subject_{i}",
-            image_path=f"/home/shared_storage/medical_data/images/sub-test{i:03d}.nii.gz",
-            mask_path=f"/home/shared_storage/medical_data/masks/sub-test{i:03d}.nii.gz"
-        )
-        for i in range(1, 6)
-    ]
-    
+    # Test model creation with direct directory paths (standalone mode)
     input_data = InputModel(
-        subjects=test_subjects,
-        max_subjects=10,
+        images_path="/home/shared_storage/medical_data/images",
+        masks_path="/home/shared_storage/medical_data/masks",
+        file_pattern="*.nii.gz",
+        max_subjects=6,
         view_plane="axial",
         slice_index=16,
         show_mask_overlay=True,
         mask_alpha=0.5,
         color_map="gray",
-        mask_color="red",
-        grid_columns=5
+        grid_columns=3
     )
     
     # Validate input model structure
-    assert len(input_data.subjects) == 5
-    assert input_data.subjects[0].subject_id == "test_subject_1"
-    assert input_data.subjects[0].image_path.endswith(".nii.gz")
+    assert input_data.images_path == "/home/shared_storage/medical_data/images"
+    assert input_data.masks_path == "/home/shared_storage/medical_data/masks"
+    assert input_data.file_pattern == "*.nii.gz"
     assert input_data.view_plane in ["axial", "sagittal", "coronal"]
     assert 0.0 <= input_data.mask_alpha <= 1.0
     assert 1 <= input_data.max_subjects <= 20

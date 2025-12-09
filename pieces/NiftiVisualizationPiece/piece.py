@@ -197,7 +197,3 @@ class NiftiVisualizationPiece(BasePiece):
             traceback.print_exc()
             self.logger.error(f"Error: {e}")
             raise
-            print(f"[NiftiVisualizationPiece] ERROR: {e}")
-            traceback.print_exc()
-            self.logger.error(f"Error: {e}")
-            raise
