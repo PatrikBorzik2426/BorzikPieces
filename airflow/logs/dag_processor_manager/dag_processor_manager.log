@@ -1990,3 +1990,238 @@ File Path                                              PID    Runtime      # DAG
 [2025-12-09T10:48:13.010+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
 [2025-12-09T10:48:23.050+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
 [2025-12-09T10:48:23.051+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:48:33.194+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:48:33.195+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:48:41.256+0000] {manager.py:887} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                              PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/a33b9598a8c642b7b3bd8c85a966ecf1.py                           1           0  1.04s           2025-12-09T10:48:29
+================================================================================
+[2025-12-09T10:48:43.273+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:48:43.275+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:48:53.376+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:48:53.378+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:49:03.546+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:49:03.555+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:49:11.273+0000] {manager.py:887} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                              PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/a33b9598a8c642b7b3bd8c85a966ecf1.py                           1           0  6.76s           2025-12-09T10:49:06
+================================================================================
+[2025-12-09T10:49:13.694+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:49:13.697+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:49:23.814+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:49:23.817+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:49:33.923+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:49:33.926+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:49:41.548+0000] {manager.py:887} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                                PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/a33b9598a8c642b7b3bd8c85a966ecf1.py   1024  5.04s             1           0  6.76s           2025-12-09T10:49:06
+================================================================================
+[2025-12-09T10:49:44.564+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:49:44.566+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:49:54.681+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:49:54.685+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:50:04.844+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:50:04.854+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:50:12.067+0000] {manager.py:887} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                                PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/a33b9598a8c642b7b3bd8c85a966ecf1.py   1032  0.02s             1           0  5.05s           2025-12-09T10:49:41
+================================================================================
+[2025-12-09T10:50:22.118+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:50:22.889+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:51:08.467+0000] {manager.py:887} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                                PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/a33b9598a8c642b7b3bd8c85a966ecf1.py   1032  56.43s            1           0  5.05s           2025-12-09T10:49:41
+================================================================================
+[2025-12-09T10:51:08.496+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:51:08.502+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:51:08.556+0000] {manager.py:1209} ERROR - Processor for /opt/airflow/dags/a33b9598a8c642b7b3bd8c85a966ecf1.py with PID 1032 started at 2025-12-09T10:50:12.034833+00:00 has timed out, killing it.
+[2025-12-09T10:51:18.527+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:51:18.531+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:51:28.584+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:51:28.585+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:51:38.623+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:51:38.623+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:51:38.633+0000] {manager.py:887} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                                PID  Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/a33b9598a8c642b7b3bd8c85a966ecf1.py   1040  0.00s             0           1  56.52s          2025-12-09T10:51:08
+================================================================================
+[2025-12-09T10:51:48.729+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:51:48.730+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:51:58.769+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:51:58.769+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:52:08.807+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:52:08.807+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:52:08.812+0000] {manager.py:887} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                              PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/a33b9598a8c642b7b3bd8c85a966ecf1.py                           1           0  2.29s           2025-12-09T10:51:40
+================================================================================
+[2025-12-09T10:52:19.037+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:52:19.038+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:52:29.075+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:52:29.076+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:52:39.128+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:52:39.129+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:52:39.143+0000] {manager.py:887} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                              PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/a33b9598a8c642b7b3bd8c85a966ecf1.py                           1           0  1.47s           2025-12-09T10:52:12
+================================================================================
+[2025-12-09T10:52:49.620+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:52:49.621+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:52:59.654+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:52:59.655+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:53:09.692+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:53:09.693+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:53:09.697+0000] {manager.py:887} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                              PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/a33b9598a8c642b7b3bd8c85a966ecf1.py                           1           0  2.27s           2025-12-09T10:52:44
+================================================================================
+[2025-12-09T10:53:19.966+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:53:19.967+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:53:30.007+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:53:30.007+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:53:40.048+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:53:40.048+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:53:40.052+0000] {manager.py:887} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                              PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/a33b9598a8c642b7b3bd8c85a966ecf1.py                           1           0  1.03s           2025-12-09T10:53:15
+================================================================================
+[2025-12-09T10:53:50.094+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:53:50.095+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:54:00.132+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:54:00.133+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:54:10.173+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:54:10.174+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:54:10.179+0000] {manager.py:887} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                              PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/a33b9598a8c642b7b3bd8c85a966ecf1.py                           1           0  1.07s           2025-12-09T10:53:47
+================================================================================
+[2025-12-09T10:54:20.205+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:54:20.206+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:54:30.247+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:54:30.248+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:54:40.286+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:54:40.287+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:54:40.292+0000] {manager.py:887} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                              PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/a33b9598a8c642b7b3bd8c85a966ecf1.py                           1           0  1.99s           2025-12-09T10:54:19
+================================================================================
+[2025-12-09T10:54:50.332+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:54:50.333+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:55:00.372+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:55:00.373+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:55:10.411+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:55:10.411+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:55:10.416+0000] {manager.py:887} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                              PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/a33b9598a8c642b7b3bd8c85a966ecf1.py                           1           0  2.27s           2025-12-09T10:54:51
+================================================================================
+[2025-12-09T10:55:20.447+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:55:20.448+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:55:30.707+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:55:30.708+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:55:40.747+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:55:40.747+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:55:40.751+0000] {manager.py:887} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                              PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/a33b9598a8c642b7b3bd8c85a966ecf1.py                           1           0  1.51s           2025-12-09T10:55:23
+================================================================================
+[2025-12-09T10:55:50.781+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:55:50.782+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:56:01.302+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:56:01.302+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:56:11.341+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:56:11.341+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:56:11.346+0000] {manager.py:887} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                              PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/a33b9598a8c642b7b3bd8c85a966ecf1.py                           1           0  1.03s           2025-12-09T10:55:54
+================================================================================
+[2025-12-09T10:56:21.380+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:56:21.381+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:56:31.428+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:56:31.429+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:56:41.467+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:56:41.468+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:56:41.473+0000] {manager.py:887} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                              PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/a33b9598a8c642b7b3bd8c85a966ecf1.py                           1           0  1.06s           2025-12-09T10:56:25
+================================================================================
+[2025-12-09T10:56:51.507+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:56:51.508+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:57:01.560+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:57:01.561+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:57:11.598+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:57:11.598+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
+[2025-12-09T10:57:11.603+0000] {manager.py:887} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                              PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+-----------------------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/a33b9598a8c642b7b3bd8c85a966ecf1.py                           1           0  1.38s           2025-12-09T10:56:56
+================================================================================
+[2025-12-09T10:57:21.632+0000] {manager.py:755} INFO - Searching for files in /opt/airflow/dags
+[2025-12-09T10:57:21.633+0000] {manager.py:758} INFO - There are 1 files in /opt/airflow/dags
