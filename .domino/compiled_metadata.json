@@ -931,11 +931,7 @@
                 "cursor": "pointer"
             }
         },
-        "description": "Standalone NIfTI visualization piece. Loads images directly from directories and creates a grid visualization with optional mask overlay.",
-        "container_resources": {
-            "cpu": 200,
-            "memory": "512Mi"
-        },
+        "description": "Visualizes NIfTI medical imaging data with optional mask overlay in axial, sagittal, or coronal planes",
         "input_schema": {
             "description": "NIfTI Visualization Piece Input Model\n\nStandalone piece that loads NIfTI files directly from directories\nand creates a grid visualization. No upstream connection required.",
             "properties": {
