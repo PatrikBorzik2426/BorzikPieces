@@ -909,7 +909,7 @@
     "NiftiVisualizationPiece": {
         "name": "NiftiVisualizationPiece",
         "dependency": {
-            "dockerfile": "Dockerfile",
+            "dockerfile": null,
             "requirements_file": "requirements.txt"
         },
         "tags": [

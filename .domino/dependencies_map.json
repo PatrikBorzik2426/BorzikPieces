@@ -9,23 +9,13 @@
             "DataSplitPiece",
             "PituitaryDatasetPiece",
             "NiftiDataLoaderPiece",
+            "NiftiVisualizationPiece",
             "HelloWorldPiece"
         ],
         "secrets": [],
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.40-group0"
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.41-group0"
     },
     "group1": {
-        "dependency": {
-            "dockerfile": "Dockerfile",
-            "requirements_file": "requirements.txt"
-        },
-        "pieces": [
-            "NiftiVisualizationPiece"
-        ],
-        "secrets": [],
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.40-group1"
-    },
-    "group2": {
         "dependency": {
             "dockerfile": "Dockerfile",
             "requirements_file": null
@@ -34,6 +24,6 @@
             "GenerativeShapesPiece"
         ],
         "secrets": [],
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.40-group2"
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.41-group1"
     }
 }
