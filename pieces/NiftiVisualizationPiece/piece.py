@@ -27,9 +27,10 @@ class NiftiVisualizationPiece(BasePiece):
             self.logger.info("Starting NiftiVisualizationPiece execution")
             self.logger.info("=" * 60)
             
-            image_path = input_data.image_path
-            mask_path = input_data.mask_path
-            subject_id = input_data.subject_id
+            subject = input_data.subject
+            image_path = subject.image_path
+            mask_path = subject.mask_path
+            subject_id = subject.subject_id
             slice_index = input_data.slice_index
             view_plane = input_data.view_plane
             show_mask = input_data.show_mask_overlay

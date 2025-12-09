@@ -196,7 +196,11 @@ class NiftiPreprocessingPiece(BasePiece):
             self.logger.info(f"Preprocessing complete:")
             self.logger.info(f"  - Succeeded: {len(preprocessed_subjects)} subjects")
             self.logger.info(f"  - Failed: {num_failed} subjects")
-            self.logger.info(f"  - Success rate: {len(preprocessed_subjects)/(len(preprocessed_subjects)+num_failed)*100:.1f}%")
+            total = len(preprocessed_subjects) + num_failed
+            if total > 0:
+                self.logger.info(f"  - Success rate: {len(preprocessed_subjects)/total*100:.1f}%")
+            else:
+                self.logger.info(f"  - Success rate: N/A (no subjects to process)")
             self.logger.info("=" * 60)
             self.logger.info("NiftiPreprocessingPiece execution completed")
             self.logger.info("=" * 60)

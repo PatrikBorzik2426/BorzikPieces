@@ -3,13 +3,16 @@ from domino.testing import piece_dry_run
 
 def test_nifti_visualization_piece():
     """Test NiftiVisualizationPiece with model validation only."""
-    from pieces.NiftiVisualizationPiece.models import InputModel
+    from pieces.NiftiVisualizationPiece.models import InputModel, SubjectInfo
     
     # Test model creation and validation
-    input_data = InputModel(
-        image_path="/home/shared_storage/medical_data/images/sub-test001.nii.gz",
-        mask_path="/home/shared_storage/medical_data/masks/sub-test001.nii.gz",
+    test_subject = SubjectInfo(
         subject_id="test_subject",
+        image_path="/home/shared_storage/medical_data/images/sub-test001.nii.gz",
+        mask_path="/home/shared_storage/medical_data/masks/sub-test001.nii.gz"
+    )
+    input_data = InputModel(
+        subject=test_subject,
         view_plane="axial",
         slice_index=16,
         show_mask_overlay=True,
@@ -19,8 +22,8 @@ def test_nifti_visualization_piece():
     )
     
     # Validate input model structure
-    assert input_data.subject_id == "test_subject"
-    assert input_data.image_path.endswith(".nii.gz")
+    assert input_data.subject.subject_id == "test_subject"
+    assert input_data.subject.image_path.endswith(".nii.gz")
     assert input_data.view_plane in ["axial", "sagittal", "coronal"]
     assert 0.0 <= input_data.mask_alpha <= 1.0
     assert 400 <= input_data.figure_width <= 2000
