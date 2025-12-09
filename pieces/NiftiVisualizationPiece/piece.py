@@ -65,9 +65,10 @@ class NiftiVisualizationPiece(BasePiece):
             self.logger.info(f"Visualizing {num_subjects} subjects in vertical layout")
             print(f"[NiftiVisualizationPiece] Vertical layout: {num_subjects} subjects")
             
-            # Create vertical layout - one subject per row, fixed width
-            fig_width = 10  # Fixed width for consistency
-            fig_height = num_subjects * 3  # 3 inches per subject
+            # Create vertical layout - one subject per row, minimum 400x400 per image
+            fig_width = 8  # Width in inches (800px at 100 dpi)
+            height_per_subject = 4  # Height per subject in inches (400px at 100 dpi)
+            fig_height = max(height_per_subject, num_subjects * height_per_subject)  # Minimum 400px height
             fig, axes = plt.subplots(num_subjects, 1, figsize=(fig_width, fig_height))
             
             # Make axes iterable
