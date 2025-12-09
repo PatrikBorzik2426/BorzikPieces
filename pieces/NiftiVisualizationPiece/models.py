@@ -2,27 +2,28 @@ from pydantic import BaseModel, Field
 from typing import Optional, List, Literal
 
 
-class SubjectInfo(BaseModel):
-    """Information about a single subject/scan"""
-    subject_id: str
-    image_path: str
-    mask_path: Optional[str] = None
-
-
 class InputModel(BaseModel):
     """
     NIfTI Visualization Piece Input Model
     
-    NOTE: This piece must be connected to an upstream piece (DataLoader or DataSplit)
-    that outputs List[SubjectInfo]. It visualizes first 10 subjects in a grid.
+    Standalone piece that loads NIfTI files directly from directories
+    and creates a grid visualization. No upstream connection required.
     """
-    subjects: List[SubjectInfo] = Field(
-        description="List of subjects with image and mask paths (from DataLoader or DataSplit). Must be connected in workflow.",
-        default=[]
+    images_path: str = Field(
+        description="Path to directory containing NIfTI image files (.nii.gz)",
+        default="/home/shared_storage/medical_data/images"
+    )
+    masks_path: Optional[str] = Field(
+        description="Path to directory containing NIfTI mask files (.nii.gz). Optional.",
+        default="/home/shared_storage/medical_data/masks"
+    )
+    file_pattern: str = Field(
+        description="Glob pattern to match NIfTI files (e.g., '*.nii.gz')",
+        default="*.nii.gz"
     )
     max_subjects: int = Field(
         description="Maximum number of subjects to visualize",
-        default=10,
+        default=6,
         ge=1,
         le=20
     )
@@ -48,13 +49,9 @@ class InputModel(BaseModel):
         description="Matplotlib colormap for image (e.g., 'gray', 'viridis', 'bone')",
         default="gray"
     )
-    mask_color: str = Field(
-        description="Color for mask overlay (e.g., 'red', 'green', 'yellow')",
-        default="red"
-    )
     grid_columns: int = Field(
         description="Number of columns in visualization grid",
-        default=5,
+        default=3,
         ge=1,
         le=10
     )

@@ -168,52 +168,35 @@
         },
         "description": "Visualizes NIfTI medical imaging data with optional mask overlay in axial, sagittal, or coronal planes",
         "input_schema": {
-            "$defs": {
-                "SubjectInfo": {
-                    "description": "Information about a single subject/scan",
-                    "properties": {
-                        "subject_id": {
-                            "title": "Subject Id",
-                            "type": "string"
-                        },
-                        "image_path": {
-                            "title": "Image Path",
-                            "type": "string"
-                        },
-                        "mask_path": {
-                            "anyOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "default": null,
-                            "title": "Mask Path"
-                        }
-                    },
-                    "required": [
-                        "subject_id",
-                        "image_path"
-                    ],
-                    "title": "SubjectInfo",
-                    "type": "object"
-                }
-            },
-            "description": "NIfTI Visualization Piece Input Model\n\nNOTE: This piece must be connected to an upstream piece (DataLoader or DataSplit)\nthat outputs List[SubjectInfo]. It visualizes first 10 subjects in a grid.",
+            "description": "NIfTI Visualization Piece Input Model\n\nStandalone piece that loads NIfTI files directly from directories\nand creates a grid visualization. No upstream connection required.",
             "properties": {
-                "subjects": {
-                    "default": [],
-                    "description": "List of subjects with image and mask paths (from DataLoader or DataSplit). Must be connected in workflow.",
-                    "items": {
-                        "$ref": "#/$defs/SubjectInfo"
-                    },
-                    "title": "Subjects",
-                    "type": "array"
+                "images_path": {
+                    "default": "/home/shared_storage/medical_data/images",
+                    "description": "Path to directory containing NIfTI image files (.nii.gz)",
+                    "title": "Images Path",
+                    "type": "string"
+                },
+                "masks_path": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": "/home/shared_storage/medical_data/masks",
+                    "description": "Path to directory containing NIfTI mask files (.nii.gz). Optional.",
+                    "title": "Masks Path"
+                },
+                "file_pattern": {
+                    "default": "*.nii.gz",
+                    "description": "Glob pattern to match NIfTI files (e.g., '*.nii.gz')",
+                    "title": "File Pattern",
+                    "type": "string"
                 },
                 "max_subjects": {
-                    "default": 10,
+                    "default": 6,
                     "description": "Maximum number of subjects to visualize",
                     "maximum": 20,
                     "minimum": 1,
@@ -264,14 +247,8 @@
                     "title": "Color Map",
                     "type": "string"
                 },
-                "mask_color": {
-                    "default": "red",
-                    "description": "Color for mask overlay (e.g., 'red', 'green', 'yellow')",
-                    "title": "Mask Color",
-                    "type": "string"
-                },
                 "grid_columns": {
-                    "default": 5,
+                    "default": 3,
                     "description": "Number of columns in visualization grid",
                     "maximum": 10,
                     "minimum": 1,
