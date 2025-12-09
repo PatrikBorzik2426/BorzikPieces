@@ -2,7 +2,7 @@
   "batch_size": 4,
   "num_workers": 0,
   "shuffle_train": true,
-  "data_dir": "/data/preprocessed",
+  "data_dir": "/home/shared_storage/medical_data/preprocessed",
   "train": {
     "subjects": [
       {

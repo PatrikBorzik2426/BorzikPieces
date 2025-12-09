@@ -2,19 +2,21 @@ from pydantic import BaseModel, Field
 from typing import Optional, List, Literal
 
 
-class SubjectInfo(BaseModel):
-    """Information about a single subject/scan"""
-    subject_id: str
-    image_path: str
-    mask_path: Optional[str] = None
-
-
 class InputModel(BaseModel):
     """
     NIfTI Visualization Piece Input Model
     """
-    subject: SubjectInfo = Field(
-        description="Subject to visualize"
+    image_path: str = Field(
+        description="Path to NIfTI image file",
+        default="/home/shared_storage/medical_data/images/sub-test001.nii.gz"
+    )
+    mask_path: Optional[str] = Field(
+        description="Path to NIfTI mask file (optional)",
+        default="/home/shared_storage/medical_data/masks/sub-test001.nii.gz"
+    )
+    subject_id: str = Field(
+        description="Subject identifier for display",
+        default="sub-test001"
     )
     slice_index: Optional[int] = Field(
         description="Slice index to visualize. If None, uses middle slice.",

@@ -27,24 +27,26 @@ class NiftiVisualizationPiece(BasePiece):
             self.logger.info("Starting NiftiVisualizationPiece execution")
             self.logger.info("=" * 60)
             
-            subject = input_data.subject
+            image_path = input_data.image_path
+            mask_path = input_data.mask_path
+            subject_id = input_data.subject_id
             slice_index = input_data.slice_index
             view_plane = input_data.view_plane
             show_mask = input_data.show_mask_overlay
             
             self.logger.info(f"Input configuration:")
-            self.logger.info(f"  - Subject ID: {subject.subject_id}")
-            self.logger.info(f"  - Image path: {subject.image_path}")
-            self.logger.info(f"  - Mask path: {subject.mask_path if subject.mask_path else 'None'}")
+            self.logger.info(f"  - Subject ID: {subject_id}")
+            self.logger.info(f"  - Image path: {image_path}")
+            self.logger.info(f"  - Mask path: {mask_path if mask_path else 'None'}")
             self.logger.info(f"  - View plane: {view_plane}")
             self.logger.info(f"  - Slice index: {slice_index if slice_index is not None else 'Auto (middle)'}")
             
             # Load image
             self.logger.info(f"Loading NIfTI image...")
-            if not os.path.exists(subject.image_path):
-                raise ValueError(f"Image file not found: {subject.image_path}")
+            if not os.path.exists(image_path):
+                raise ValueError(f"Image file not found: {image_path}")
             
-            img_nii = nib.load(subject.image_path)
+            img_nii = nib.load(image_path)
             img_data = img_nii.get_fdata().astype(np.float32)
             image_shape = list(img_data.shape)
             self.logger.info(f"Image loaded successfully: shape {image_shape}")
@@ -52,15 +54,15 @@ class NiftiVisualizationPiece(BasePiece):
             # Load mask if available
             mask_data = None
             has_mask = False
-            if subject.mask_path and show_mask:
-                if os.path.exists(subject.mask_path):
+            if mask_path and show_mask:
+                if os.path.exists(mask_path):
                     self.logger.info(f"Loading mask...")
-                    mask_nii = nib.load(subject.mask_path)
+                    mask_nii = nib.load(mask_path)
                     mask_data = mask_nii.get_fdata().astype(np.int32)
                     has_mask = True
                     self.logger.info(f"Mask loaded successfully: shape {list(mask_data.shape)}")
                 else:
-                    self.logger.warning(f"Mask file not found: {subject.mask_path}")
+                    self.logger.warning(f"Mask file not found: {mask_path}")
             
             # Select slice based on view plane
             if view_plane == "axial":
@@ -116,7 +118,7 @@ class NiftiVisualizationPiece(BasePiece):
             # Add labels and title
             ax.set_xlabel(axis_labels[0], fontsize=10)
             ax.set_ylabel(axis_labels[1], fontsize=10)
-            title = f"{subject.subject_id} - {view_plane.capitalize()} view (slice {slice_index})"
+            title = f"{subject_id} - {view_plane.capitalize()} view (slice {slice_index})"
             if has_mask:
                 title += " with mask overlay"
             ax.set_title(title, fontsize=12, fontweight='bold')
@@ -129,7 +131,7 @@ class NiftiVisualizationPiece(BasePiece):
             
             # Save figure
             results_dir = getattr(self, "results_path", "/tmp")
-            output_filename = f"{subject.subject_id}_{view_plane}_slice{slice_index}.png"
+            output_filename = f"{subject_id}_{view_plane}_slice{slice_index}.png"
             output_path = os.path.join(results_dir, output_filename)
             
             plt.savefig(output_path, dpi=dpi, bbox_inches='tight', facecolor='white')
@@ -153,7 +155,7 @@ class NiftiVisualizationPiece(BasePiece):
             self.logger.info("=" * 60)
             
             return OutputModel(
-                subject_id=subject.subject_id,
+                subject_id=subject_id,
                 slice_index=slice_index,
                 view_plane=view_plane,
                 image_shape=image_shape,
