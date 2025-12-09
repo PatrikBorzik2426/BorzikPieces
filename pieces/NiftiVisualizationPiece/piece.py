@@ -27,6 +27,14 @@ class NiftiVisualizationPiece(BasePiece):
             self.logger.info("Starting NiftiVisualizationPiece execution")
             self.logger.info("=" * 60)
             
+            # Validate that subject data is provided
+            if input_data.subject is None:
+                raise ValueError(
+                    "Subject data is required. This piece must be connected to an upstream piece "
+                    "(DataLoader or DataSplit) that provides SubjectInfo. "
+                    "It cannot be run standalone from the UI."
+                )
+            
             subject = input_data.subject
             image_path = subject.image_path
             mask_path = subject.mask_path

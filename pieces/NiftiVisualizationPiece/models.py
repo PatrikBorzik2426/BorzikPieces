@@ -12,14 +12,13 @@ class SubjectInfo(BaseModel):
 class InputModel(BaseModel):
     """
     NIfTI Visualization Piece Input Model
+    
+    NOTE: This piece must be connected to an upstream piece (DataLoader or DataSplit)
+    that outputs SubjectInfo. It cannot be run standalone from the UI form.
     """
-    subject: SubjectInfo = Field(
-        description="Subject information with image and mask paths (from DataLoader or DataSplit)",
-        default=SubjectInfo(
-            subject_id="sub-test001",
-            image_path="/home/shared_storage/medical_data/images/sub-test001.nii.gz",
-            mask_path="/home/shared_storage/medical_data/masks/sub-test001.nii.gz"
-        )
+    subject: Optional[SubjectInfo] = Field(
+        description="Subject information with image and mask paths (from DataLoader or DataSplit). Must be connected in workflow.",
+        default=None
     )
     slice_index: Optional[int] = Field(
         description="Slice index to visualize. If None, uses middle slice.",
