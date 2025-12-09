@@ -12,7 +12,7 @@
             "HelloWorldPiece"
         ],
         "secrets": [],
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.31-group0"
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.32-group0"
     },
     "group1": {
         "dependency": {
@@ -23,7 +23,7 @@
             "NiftiVisualizationPiece"
         ],
         "secrets": [],
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.31-group1"
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.32-group1"
     },
     "group2": {
         "dependency": {
@@ -34,6 +34,6 @@
             "GenerativeShapesPiece"
         ],
         "secrets": [],
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.31-group2"
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.1.32-group2"
     }
 }
