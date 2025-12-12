@@ -14,8 +14,7 @@
             "PituitaryDatasetPiece",
             "NiftiEDAPiece"
         ],
-        "secrets": [],
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.2.5-group0"
+        "secrets": []
     },
     "group1": {
         "dependency": {
@@ -25,7 +24,6 @@
         "pieces": [
             "GenerativeShapesPiece"
         ],
-        "secrets": [],
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.2.5-group1"
+        "secrets": []
     }
 }
