@@ -353,9 +353,14 @@ Visualizations Generated: {viz_count}
             self.logger.info("Generating HTML visualization gallery...")
             html_content = self._generate_html_gallery(output_dir, viz_count, analysis_summary)
             
+            # Save HTML to file and encode as base64
+            html_path = os.path.join(output_dir, 'eda_report.html')
+            with open(html_path, 'w', encoding='utf-8') as f:
+                f.write(html_content)
+            
             self.display_result = {
                 "file_type": "html",
-                "value": html_content
+                "base64_content": base64.b64encode(html_content.encode('utf-8')).decode('utf-8')
             }
             
             return OutputModel(

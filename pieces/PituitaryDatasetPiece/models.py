@@ -85,3 +85,7 @@ class OutputModel(BaseModel):
     dataset_config_path: str = Field(
         description="Path to saved dataset configuration JSON file"
     )
+    subjects: Optional[List[SubjectInfo]] = Field(
+        description="Combined list of all subjects for downstream pieces (e.g., ModelTrainingPiece)",
+        default=None
+    )

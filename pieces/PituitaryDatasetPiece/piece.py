@@ -152,12 +152,41 @@ class PituitaryDatasetPiece(BasePiece):
                 "base64_content": base64_content
             }
             
+            # Combine all subjects for downstream pieces
+            from .models import SubjectInfo
+            all_subjects = []
+            if input_data.train_subjects:
+                all_subjects.extend([
+                    SubjectInfo(
+                        subject_id=s.subject_id,
+                        image_path=s.preprocessed_image_path,
+                        mask_path=s.preprocessed_mask_path
+                    ) for s in input_data.train_subjects
+                ])
+            if input_data.val_subjects:
+                all_subjects.extend([
+                    SubjectInfo(
+                        subject_id=s.subject_id,
+                        image_path=s.preprocessed_image_path,
+                        mask_path=s.preprocessed_mask_path
+                    ) for s in input_data.val_subjects
+                ])
+            if input_data.test_subjects:
+                all_subjects.extend([
+                    SubjectInfo(
+                        subject_id=s.subject_id,
+                        image_path=s.preprocessed_image_path,
+                        mask_path=s.preprocessed_mask_path
+                    ) for s in input_data.test_subjects
+                ])
+            
             return OutputModel(
                 train_info=train_info,
                 val_info=val_info,
                 test_info=test_info,
                 data_dir=data_dir,
-                dataset_config_path=config_path
+                dataset_config_path=config_path,
+                subjects=all_subjects if all_subjects else None
             )
             
         except Exception as e:

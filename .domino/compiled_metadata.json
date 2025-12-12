@@ -1459,6 +1459,37 @@
                     ],
                     "title": "DatasetInfo",
                     "type": "object"
+                },
+                "SubjectInfo": {
+                    "description": "Information about a single subject/scan",
+                    "properties": {
+                        "subject_id": {
+                            "title": "Subject Id",
+                            "type": "string"
+                        },
+                        "image_path": {
+                            "title": "Image Path",
+                            "type": "string"
+                        },
+                        "mask_path": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "default": null,
+                            "title": "Mask Path"
+                        }
+                    },
+                    "required": [
+                        "subject_id",
+                        "image_path"
+                    ],
+                    "title": "SubjectInfo",
+                    "type": "object"
                 }
             },
             "description": "Pituitary Dataset Piece Output Model",
@@ -1505,6 +1536,22 @@
                     "description": "Path to saved dataset configuration JSON file",
                     "title": "Dataset Config Path",
                     "type": "string"
+                },
+                "subjects": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/SubjectInfo"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Combined list of all subjects for downstream pieces (e.g., ModelTrainingPiece)",
+                    "title": "Subjects"
                 }
             },
             "required": [
