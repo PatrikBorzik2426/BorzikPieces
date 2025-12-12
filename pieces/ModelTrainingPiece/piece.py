@@ -92,6 +92,7 @@ class PituitaryPatchDataset(Dataset):
     def _get_patch_center(self, img_shape, sub):
         """Get patch center with foreground oversampling"""
         fg_locs = self.fg_locations[sub]
+        patch_size = self.patch_size
         
         if fg_locs is not None and len(fg_locs) > 0:
             if np.random.rand() < self.fg_oversample:
@@ -99,13 +100,18 @@ class PituitaryPatchDataset(Dataset):
                 rand_idx = np.random.randint(len(fg_locs))
                 center = tuple(fg_locs[rand_idx])
             else:
-                # Random sampling
-                patch_size = self.patch_size
-                center = (
-                    np.random.randint(patch_size//2, img_shape[0] - patch_size//2),
-                    np.random.randint(patch_size//2, img_shape[1] - patch_size//2),
-                    np.random.randint(patch_size//2, img_shape[2] - patch_size//2)
-                )
+                # Random sampling with bounds checking
+                center = []
+                for i, dim_size in enumerate(img_shape):
+                    half_patch = patch_size // 2
+                    if dim_size > patch_size:
+                        # Normal case: sample within valid range
+                        c = np.random.randint(half_patch, dim_size - half_patch)
+                    else:
+                        # Small dimension: center the patch
+                        c = dim_size // 2
+                    center.append(c)
+                center = tuple(center)
         else:
             # Fallback to center if no foreground
             center = tuple(s // 2 for s in img_shape)
