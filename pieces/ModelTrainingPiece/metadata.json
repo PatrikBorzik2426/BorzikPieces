@@ -1,0 +1,25 @@
+{
+  "name": "ModelTrainingPiece",
+  "description": "Trains 3D medical image segmentation models (UNet/SwinUNETR) using patch-based training with data augmentation and comprehensive metrics tracking",
+  "dependency": {
+    "requirements_file": "requirements.txt"
+  },
+  "tags": [
+    "Medical Imaging",
+    "Deep Learning",
+    "Training",
+    "UNet",
+    "SwinUNETR",
+    "Segmentation",
+    "PyTorch"
+  ],
+  "style": {
+    "node_label": "Model Training",
+    "node_type": "default",
+    "node_style": {
+      "backgroundColor": "#99ccff"
+    },
+    "useIcon": true,
+    "icon_class_name": "fa-solid:brain"
+  }
+}

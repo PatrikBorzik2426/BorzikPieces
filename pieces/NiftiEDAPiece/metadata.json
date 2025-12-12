@@ -1,0 +1,24 @@
+{
+  "name": "NiftiEDAPiece",
+  "description": "Performs comprehensive Exploratory Data Analysis (EDA) on NIfTI medical imaging datasets with visual graphs and statistics",
+  "dependency": {
+    "requirements_file": "requirements.txt"
+  },
+  "tags": [
+    "Medical Imaging",
+    "EDA",
+    "Visualization",
+    "NIfTI",
+    "Analytics",
+    "Statistics"
+  ],
+  "style": {
+    "node_label": "NIfTI EDA",
+    "node_type": "default",
+    "node_style": {
+      "backgroundColor": "#ffcc99"
+    },
+    "useIcon": true,
+    "icon_class_name": "fa-solid:chart-bar"
+  }
+}
