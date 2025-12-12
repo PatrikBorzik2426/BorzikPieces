@@ -28,7 +28,7 @@ class PituitaryPatchDataset(Dataset):
     """
     
     def __init__(self, root, subjects, patch_size=64, samples_per_volume=10, 
-                 is_training=True, fg_oversample=0.9, augment_prob=0.5, logger=None):
+                 is_training=True, fg_oversample=0.9, augment_prob=0.5, logger=None, subject_paths=None):
         self.root = root
         self.subjects = subjects
         self.patch_size = patch_size
@@ -37,9 +37,15 @@ class PituitaryPatchDataset(Dataset):
         self.fg_oversample = fg_oversample
         self.augment_prob = augment_prob
         self.logger = logger
+        self.subject_paths = subject_paths  # Optional: {subject_id: {'image': path, 'mask': path}}
         
-        self.img_dir = os.path.join(root, "images")
-        self.msk_dir = os.path.join(root, "masks")
+        # Use subject_paths if provided, otherwise construct from root
+        if subject_paths is None:
+            self.img_dir = os.path.join(root, "images")
+            self.msk_dir = os.path.join(root, "masks")
+        else:
+            self.img_dir = None
+            self.msk_dir = None
         
         self.fg_locations = self._precompute_fg_locations()
     
@@ -52,7 +58,12 @@ class PituitaryPatchDataset(Dataset):
         self._log("Precomputing foreground locations...")
         fg_locs = {}
         for sub in self.subjects:
-            msk_path = os.path.join(self.msk_dir, f"{sub}.nii.gz")
+            # Get mask path from subject_paths or construct it
+            if self.subject_paths and sub in self.subject_paths:
+                msk_path = self.subject_paths[sub]['mask']
+            else:
+                msk_path = os.path.join(self.msk_dir, f"{sub}.nii.gz")
+            
             if not os.path.exists(msk_path):
                 fg_locs[sub] = None
                 continue
@@ -176,8 +187,13 @@ class PituitaryPatchDataset(Dataset):
         vol_idx = idx // self.samples_per_volume
         sub = self.subjects[vol_idx]
         
-        img_path = os.path.join(self.img_dir, f"{sub}.nii.gz")
-        msk_path = os.path.join(self.msk_dir, f"{sub}.nii.gz")
+        # Get paths from subject_paths or construct them
+        if self.subject_paths and sub in self.subject_paths:
+            img_path = self.subject_paths[sub]['image']
+            msk_path = self.subject_paths[sub]['mask']
+        else:
+            img_path = os.path.join(self.img_dir, f"{sub}.nii.gz")
+            msk_path = os.path.join(self.msk_dir, f"{sub}.nii.gz")
         
         # Load volumes
         img = nib.load(img_path).get_fdata().astype(np.float32)
@@ -249,10 +265,20 @@ class ModelTrainingPiece(BasePiece):
             os.makedirs(plots_dir, exist_ok=True)
             
             # Load or generate dataset configuration
+            subject_paths = None  # Will be populated if using upstream subjects
+            
             if input_data.subjects is not None:
                 # Using upstream subject list - perform train/val split
                 self.logger.info(f"Using {len(input_data.subjects)} subjects from upstream piece")
                 self.logger.info(f"Performing train/val split: {input_data.train_val_split:.1%} train, {1-input_data.train_val_split:.1%} val")
+                
+                # Create subject path mapping
+                subject_paths = {
+                    s.subject_id: {
+                        'image': s.image_path,
+                        'mask': s.mask_path
+                    } for s in input_data.subjects
+                }
                 
                 # Shuffle and split
                 all_subjects = [s.subject_id for s in input_data.subjects]
@@ -261,16 +287,8 @@ class ModelTrainingPiece(BasePiece):
                 train_subjects = all_subjects[:split_idx]
                 val_subjects = all_subjects[split_idx:]
                 
-                # Use data_root from first subject's path
-                if input_data.subjects:
-                    # Extract root from first subject's image path
-                    first_img = input_data.subjects[0].image_path
-                    # Typically path is like /home/shared_storage/medical_data/images/sub-001.nii.gz
-                    # We want /home/shared_storage/medical_data
-                    data_root = os.path.dirname(os.path.dirname(first_img))
-                    self.logger.info(f"Inferred data_root from subject paths: {data_root}")
-                else:
-                    data_root = input_data.data_root
+                # data_root not used when subject_paths is provided, but set for logging
+                data_root = "(using direct paths from upstream)"
                     
             elif input_data.dataset_config_path and os.path.exists(input_data.dataset_config_path):
                 # Using config file from PituitaryDatasetPiece
@@ -289,29 +307,34 @@ class ModelTrainingPiece(BasePiece):
             
             self.logger.info(f"Training subjects: {len(train_subjects)}")
             self.logger.info(f"Validation subjects: {len(val_subjects)}")
-            self.logger.info(f"Data root: {data_root}")
+            if subject_paths:
+                self.logger.info(f"Using direct file paths from upstream piece")
+            else:
+                self.logger.info(f"Data root: {data_root}")
             
             # Create datasets
             train_dataset = PituitaryPatchDataset(
-                root=data_root,
+                root=data_root if not subject_paths else "/tmp",  # root unused when subject_paths provided
                 subjects=train_subjects,
                 patch_size=input_data.patch_size,
                 samples_per_volume=input_data.samples_per_volume,
                 is_training=True,
                 fg_oversample=input_data.foreground_oversample,
                 augment_prob=input_data.augmentation_probability if input_data.use_augmentation else 0.0,
-                logger=self.logger
+                logger=self.logger,
+                subject_paths=subject_paths
             )
             
             val_dataset = PituitaryPatchDataset(
-                root=data_root,
+                root=data_root if not subject_paths else "/tmp",  # root unused when subject_paths provided
                 subjects=val_subjects,
                 patch_size=input_data.patch_size,
                 samples_per_volume=5,  # Fewer samples for validation
                 is_training=False,
                 fg_oversample=0.5,
                 augment_prob=0.0,
-                logger=self.logger
+                logger=self.logger,
+                subject_paths=subject_paths
             )
             
             # Create data loaders
