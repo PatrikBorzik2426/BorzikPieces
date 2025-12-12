@@ -146,8 +146,8 @@ class InputModel(BaseModel):
     
     # Misc
     num_workers: int = Field(
-        description="Number of data loader workers",
-        default=4,
+        description="Number of data loader workers (set to 0 to avoid Docker shared memory issues)",
+        default=0,
         ge=0
     )
     random_seed: int = Field(

@@ -548,8 +548,8 @@
                     "type": "integer"
                 },
                 "num_workers": {
-                    "default": 4,
-                    "description": "Number of data loader workers",
+                    "default": 0,
+                    "description": "Number of data loader workers (set to 0 to avoid Docker shared memory issues)",
                     "minimum": 0,
                     "title": "Num Workers",
                     "type": "integer"
