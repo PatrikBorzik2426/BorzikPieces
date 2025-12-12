@@ -248,21 +248,52 @@ class ModelTrainingPiece(BasePiece):
             plots_dir = os.path.join(input_data.output_dir, "plots")
             os.makedirs(plots_dir, exist_ok=True)
             
-            # Load dataset configuration
-            self.logger.info(f"Loading dataset config from: {input_data.dataset_config_path}")
-            with open(input_data.dataset_config_path, 'r') as f:
-                dataset_config = json.load(f)
-            
-            # Extract subject lists
-            train_subjects = [s['subject_id'] for s in dataset_config['train']['subjects']]
-            val_subjects = [s['subject_id'] for s in dataset_config['val']['subjects']]
+            # Load or generate dataset configuration
+            if input_data.subjects is not None:
+                # Using upstream subject list - perform train/val split
+                self.logger.info(f"Using {len(input_data.subjects)} subjects from upstream piece")
+                self.logger.info(f"Performing train/val split: {input_data.train_val_split:.1%} train, {1-input_data.train_val_split:.1%} val")
+                
+                # Shuffle and split
+                all_subjects = [s.subject_id for s in input_data.subjects]
+                random.shuffle(all_subjects)
+                split_idx = int(len(all_subjects) * input_data.train_val_split)
+                train_subjects = all_subjects[:split_idx]
+                val_subjects = all_subjects[split_idx:]
+                
+                # Use data_root from first subject's path
+                if input_data.subjects:
+                    # Extract root from first subject's image path
+                    first_img = input_data.subjects[0].image_path
+                    # Typically path is like /home/shared_storage/medical_data/images/sub-001.nii.gz
+                    # We want /home/shared_storage/medical_data
+                    data_root = os.path.dirname(os.path.dirname(first_img))
+                    self.logger.info(f"Inferred data_root from subject paths: {data_root}")
+                else:
+                    data_root = input_data.data_root
+                    
+            elif input_data.dataset_config_path and os.path.exists(input_data.dataset_config_path):
+                # Using config file from PituitaryDatasetPiece
+                self.logger.info(f"Loading dataset config from: {input_data.dataset_config_path}")
+                with open(input_data.dataset_config_path, 'r') as f:
+                    dataset_config = json.load(f)
+                
+                train_subjects = [s['subject_id'] for s in dataset_config['train']['subjects']]
+                val_subjects = [s['subject_id'] for s in dataset_config['val']['subjects']]
+                data_root = input_data.data_root
+            else:
+                raise ValueError(
+                    "Must provide either 'subjects' from upstream piece or valid 'dataset_config_path'. "
+                    f"Got subjects={input_data.subjects is not None}, config_path={input_data.dataset_config_path}"
+                )
             
             self.logger.info(f"Training subjects: {len(train_subjects)}")
             self.logger.info(f"Validation subjects: {len(val_subjects)}")
+            self.logger.info(f"Data root: {data_root}")
             
             # Create datasets
             train_dataset = PituitaryPatchDataset(
-                root=input_data.data_root,
+                root=data_root,
                 subjects=train_subjects,
                 patch_size=input_data.patch_size,
                 samples_per_volume=input_data.samples_per_volume,
@@ -273,7 +304,7 @@ class ModelTrainingPiece(BasePiece):
             )
             
             val_dataset = PituitaryPatchDataset(
-                root=input_data.data_root,
+                root=data_root,
                 subjects=val_subjects,
                 patch_size=input_data.patch_size,
                 samples_per_volume=5,  # Fewer samples for validation

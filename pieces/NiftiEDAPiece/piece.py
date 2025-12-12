@@ -2,6 +2,7 @@ from domino.base_piece import BasePiece
 from .models import InputModel, OutputModel, EDAStatistics
 import os
 import json
+import base64
 import nibabel as nib
 import numpy as np
 import matplotlib
@@ -24,6 +25,73 @@ class NiftiEDAPiece(BasePiece):
     - Mask coverage statistics
     - Correlations and outlier detection
     """
+
+    def _generate_html_gallery(self, output_dir: str, viz_count: int, analysis_summary: str) -> str:
+        """Generate an HTML gallery showing all visualizations"""
+        
+        # List of expected visualization files
+        viz_files = [
+            ('volume_shapes.png', 'Volume Shape Distributions'),
+            ('intensity_boxplots.png', 'Intensity Statistics (Mean, Std, Median, Max)'),
+            ('intensity_distribution.png', 'Overall Intensity Distribution'),
+            ('class_distribution.png', 'Class Distribution'),
+            ('mask_coverage.png', 'Mask Coverage Distribution'),
+            ('intensity_correlations.png', 'Intensity Metrics Correlation Matrix'),
+            ('per_subject_intensity.png', 'Per-Subject Intensity Comparison')
+        ]
+        
+        html_parts = [
+            '<!DOCTYPE html>',
+            '<html>',
+            '<head>',
+            '<meta charset="UTF-8">',
+            '<title>NIfTI EDA Analysis Report</title>',
+            '<style>',
+            'body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }',
+            'h1 { color: #333; border-bottom: 3px solid #4CAF50; padding-bottom: 10px; }',
+            'h2 { color: #555; margin-top: 30px; border-bottom: 2px solid #ddd; padding-bottom: 5px; }',
+            '.summary { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }',
+            '.summary pre { background: #f9f9f9; padding: 15px; border-left: 4px solid #4CAF50; overflow-x: auto; }',
+            '.viz-container { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }',
+            '.viz-title { font-size: 18px; font-weight: bold; color: #444; margin-bottom: 15px; }',
+            '.viz-image { max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; }',
+            '.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0; }',
+            '.stat-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #4CAF50; }',
+            '.stat-label { font-size: 12px; color: #888; text-transform: uppercase; }',
+            '.stat-value { font-size: 24px; font-weight: bold; color: #333; margin-top: 5px; }',
+            '</style>',
+            '</head>',
+            '<body>',
+            '<h1>📊 NIfTI Medical Imaging EDA Report</h1>',
+            '<div class="summary">',
+            '<h2>Analysis Summary</h2>',
+            f'<pre>{analysis_summary}</pre>',
+            '</div>'
+        ]
+        
+        # Add each visualization
+        for viz_file, viz_title in viz_files:
+            viz_path = os.path.join(output_dir, viz_file)
+            if os.path.exists(viz_path):
+                try:
+                    with open(viz_path, 'rb') as f:
+                        img_data = base64.b64encode(f.read()).decode('utf-8')
+                    
+                    html_parts.extend([
+                        '<div class="viz-container">',
+                        f'<div class="viz-title">{viz_title}</div>',
+                        f'<img src="data:image/png;base64,{img_data}" class="viz-image" alt="{viz_title}">',
+                        '</div>'
+                    ])
+                except Exception as e:
+                    self.logger.warning(f"Could not load {viz_file}: {e}")
+        
+        html_parts.extend([
+            '</body>',
+            '</html>'
+        ])
+        
+        return '\n'.join(html_parts)
 
     def piece_function(self, input_data: InputModel) -> OutputModel:
         try:
@@ -280,6 +348,15 @@ Visualizations Generated: {viz_count}
             self.logger.info(f"EDA completed successfully. Generated {viz_count} visualizations.")
             self.logger.info(f"Results saved to: {output_dir}")
             self.logger.info("=" * 60)
+            
+            # Create HTML gallery for display_result
+            self.logger.info("Generating HTML visualization gallery...")
+            html_content = self._generate_html_gallery(output_dir, viz_count, analysis_summary)
+            
+            self.display_result = {
+                "file_type": "html",
+                "value": html_content
+            }
             
             return OutputModel(
                 statistics=statistics,
