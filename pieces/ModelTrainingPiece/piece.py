@@ -53,6 +53,13 @@ class PituitaryPatchDataset(Dataset):
         if self.logger:
             self.logger.info(message)
     
+    def _load_volume(self, path):
+        """Load volume from either NIfTI or NumPy format"""
+        if path.endswith('.npy'):
+            return np.load(path)
+        else:
+            return nib.load(path).get_fdata()
+    
     def _precompute_fg_locations(self):
         """Precompute foreground voxel locations for efficient sampling"""
         self._log("Precomputing foreground locations...")
@@ -68,7 +75,7 @@ class PituitaryPatchDataset(Dataset):
                 fg_locs[sub] = None
                 continue
                 
-            msk = nib.load(msk_path).get_fdata().astype(np.int64)
+            msk = self._load_volume(msk_path).astype(np.int64)
             fg_coords = np.where(msk > 0)
             
             if len(fg_coords[0]) > 0:
@@ -196,8 +203,8 @@ class PituitaryPatchDataset(Dataset):
             msk_path = os.path.join(self.msk_dir, f"{sub}.nii.gz")
         
         # Load volumes
-        img = nib.load(img_path).get_fdata().astype(np.float32)
-        msk = nib.load(msk_path).get_fdata().astype(np.int64)
+        img = self._load_volume(img_path).astype(np.float32)
+        msk = self._load_volume(msk_path).astype(np.int64)
         
         # Normalize image
         p1, p99 = np.percentile(img, [1, 99])
