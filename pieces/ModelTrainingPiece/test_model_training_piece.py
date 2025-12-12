@@ -2,12 +2,14 @@ import pytest
 import sys
 import os
 import json
-
-# Add parent directory to path for imports
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
-from models import InputModel, ModelArchitecture
 import tempfile
+
+# Add pieces directory to path
+pieces_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if pieces_dir not in sys.path:
+    sys.path.insert(0, pieces_dir)
+
+from ModelTrainingPiece.models import InputModel, ModelArchitecture
 
 
 def test_model_training_piece():
