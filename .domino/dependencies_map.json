@@ -5,16 +5,17 @@
             "requirements_file": "requirements.txt"
         },
         "pieces": [
-            "NiftiDataLoaderPiece",
-            "NiftiVisualizationPiece",
-            "ModelTrainingPiece",
-            "HelloWorldPiece",
-            "DataSplitPiece",
             "NiftiPreprocessingPiece",
+            "DataSplitPiece",
             "PituitaryDatasetPiece",
+            "NiftiDataLoaderPiece",
+            "ModelTrainingPiece",
+            "NiftiVisualizationPiece",
+            "HelloWorldPiece",
             "NiftiEDAPiece"
         ],
-        "secrets": []
+        "secrets": [],
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.2.7-group0"
     },
     "group1": {
         "dependency": {
@@ -24,6 +25,7 @@
         "pieces": [
             "GenerativeShapesPiece"
         ],
-        "secrets": []
+        "secrets": [],
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.2.7-group1"
     }
 }
