@@ -5,13 +5,13 @@
             "requirements_file": "requirements.txt"
         },
         "pieces": [
-            "NiftiDataLoaderPiece",
-            "NiftiVisualizationPiece",
-            "ModelTrainingPiece",
-            "HelloWorldPiece",
-            "DataSplitPiece",
             "NiftiPreprocessingPiece",
+            "DataSplitPiece",
             "PituitaryDatasetPiece",
+            "NiftiDataLoaderPiece",
+            "ModelTrainingPiece",
+            "NiftiVisualizationPiece",
+            "HelloWorldPiece",
             "NiftiEDAPiece"
         ],
         "secrets": [],
