@@ -4,3 +4,4 @@ numpy==1.23.5
 scipy==1.11.4
 seaborn==0.12.2
 pandas==2.0.3
+tqdm==4.66.1
