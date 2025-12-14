@@ -2,8 +2,8 @@
     "NiftiDataLoaderPiece": {
         "name": "NiftiDataLoaderPiece",
         "dependency": {
-            "dockerfile": null,
-            "requirements_file": "requirements.txt"
+            "dockerfile": "Dockerfile_base",
+            "requirements_file": null
         },
         "tags": [
             "medical-imaging",
@@ -144,8 +144,8 @@
     "NiftiVisualizationPiece": {
         "name": "NiftiVisualizationPiece",
         "dependency": {
-            "dockerfile": null,
-            "requirements_file": "requirements.txt"
+            "dockerfile": "Dockerfile_base",
+            "requirements_file": null
         },
         "tags": [
             "Medical Imaging",
@@ -299,8 +299,8 @@
     "ModelInferencePiece": {
         "name": "ModelInferencePiece",
         "dependency": {
-            "dockerfile": null,
-            "requirements_file": "requirements.txt"
+            "dockerfile": "Dockerfile_torch",
+            "requirements_file": null
         },
         "tags": [
             "Medical Imaging",
@@ -632,8 +632,8 @@
     "ModelTrainingPiece": {
         "name": "ModelTrainingPiece",
         "dependency": {
-            "dockerfile": null,
-            "requirements_file": "requirements.txt"
+            "dockerfile": "Dockerfile_torch",
+            "requirements_file": null
         },
         "tags": [
             "Medical Imaging",
@@ -907,6 +907,37 @@
         },
         "output_schema": {
             "$defs": {
+                "SubjectInfo": {
+                    "description": "Information about a single subject - compatible with upstream pieces",
+                    "properties": {
+                        "subject_id": {
+                            "title": "Subject Id",
+                            "type": "string"
+                        },
+                        "image_path": {
+                            "title": "Image Path",
+                            "type": "string"
+                        },
+                        "mask_path": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "default": null,
+                            "title": "Mask Path"
+                        }
+                    },
+                    "required": [
+                        "subject_id",
+                        "image_path"
+                    ],
+                    "title": "SubjectInfo",
+                    "type": "object"
+                },
                 "TrainingMetrics": {
                     "description": "Training metrics for a single epoch",
                     "properties": {
@@ -1010,6 +1041,40 @@
                     "description": "Directory containing training plots",
                     "title": "Plots Dir",
                     "type": "string"
+                },
+                "validation_subjects": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/SubjectInfo"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "List of validation subjects for downstream inference",
+                    "title": "Validation Subjects"
+                },
+                "num_classes": {
+                    "default": 6,
+                    "description": "Number of classes used in training (for inference configuration)",
+                    "title": "Num Classes",
+                    "type": "integer"
+                },
+                "patch_size": {
+                    "default": 64,
+                    "description": "Patch size used in training (for inference configuration)",
+                    "title": "Patch Size",
+                    "type": "integer"
+                },
+                "model_architecture": {
+                    "default": "unet",
+                    "description": "Model architecture used (for inference configuration)",
+                    "title": "Model Architecture",
+                    "type": "string"
                 }
             },
             "required": [
@@ -1033,8 +1098,8 @@
     "HelloWorldPiece": {
         "name": "HelloWorldPiece",
         "dependency": {
-            "dockerfile": null,
-            "requirements_file": "requirements.txt"
+            "dockerfile": "Dockerfile_base",
+            "requirements_file": null
         },
         "tags": [
             "example",
@@ -1093,8 +1158,8 @@
     "DataSplitPiece": {
         "name": "DataSplitPiece",
         "dependency": {
-            "dockerfile": null,
-            "requirements_file": "requirements.txt"
+            "dockerfile": "Dockerfile_base",
+            "requirements_file": null
         },
         "tags": [
             "data-processing",
@@ -1331,8 +1396,8 @@
     "NiftiPreprocessingPiece": {
         "name": "NiftiPreprocessingPiece",
         "dependency": {
-            "dockerfile": null,
-            "requirements_file": "requirements.txt"
+            "dockerfile": "Dockerfile_base",
+            "requirements_file": null
         },
         "tags": [
             "medical-imaging",
@@ -1581,8 +1646,8 @@
     "PituitaryDatasetPiece": {
         "name": "PituitaryDatasetPiece",
         "dependency": {
-            "dockerfile": null,
-            "requirements_file": "requirements.txt"
+            "dockerfile": "Dockerfile_base",
+            "requirements_file": null
         },
         "tags": [
             "medical-imaging",
@@ -1905,7 +1970,7 @@
     "GenerativeShapesPiece": {
         "name": "GenerativeShapesPiece",
         "dependency": {
-            "dockerfile": "Dockerfile",
+            "dockerfile": "Dockerfile_base",
             "requirements_file": null
         },
         "tags": [
@@ -2030,8 +2095,8 @@
     "NiftiEDAPiece": {
         "name": "NiftiEDAPiece",
         "dependency": {
-            "dockerfile": null,
-            "requirements_file": "requirements.txt"
+            "dockerfile": "Dockerfile_base",
+            "requirements_file": null
         },
         "tags": [
             "Medical Imaging",

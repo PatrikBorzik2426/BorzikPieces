@@ -3,7 +3,7 @@
     "title": "Data Split",
     "description": "Splits dataset subjects into train/validation/test sets with configurable ratios. Supports random and sequential splitting strategies.",
     "dependency": {
-        "requirements_file": "requirements.txt"
+        "dockerfile": "Dockerfile_base"
     },
     "container_resources": {
         "cpu": 100,

@@ -609,6 +609,19 @@ Hyperparameters:
             self.logger.info("Training completed successfully")
             self.logger.info("=" * 80)
             
+            # Prepare validation subjects for downstream inference
+            validation_subjects_list = None
+            if subject_paths:
+                # Convert val_subjects back to SubjectInfo objects
+                validation_subjects_list = [
+                    SubjectInfo(
+                        subject_id=subj_id,
+                        image_path=subject_paths[subj_id]['image'],
+                        mask_path=subject_paths[subj_id]['mask']
+                    )
+                    for subj_id in val_subjects
+                ]
+            
             return OutputModel(
                 model_path=final_model_path,
                 checkpoint_dir=checkpoint_dir,
@@ -619,7 +632,11 @@ Hyperparameters:
                 total_epochs_trained=len(training_history),
                 training_history=training_history,
                 training_summary=training_summary.strip(),
-                plots_dir=plots_dir
+                plots_dir=plots_dir,
+                validation_subjects=validation_subjects_list,
+                num_classes=input_data.num_classes,
+                patch_size=input_data.patch_size,
+                model_architecture=input_data.model_architecture.value
             )
             
         except Exception as e:

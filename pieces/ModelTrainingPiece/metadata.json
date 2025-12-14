@@ -2,7 +2,7 @@
   "name": "ModelTrainingPiece",
   "description": "Trains 3D medical image segmentation models (UNet/SwinUNETR) with patch-based training, data augmentation, and runs inference with confidence visualization",
   "dependency": {
-    "requirements_file": "requirements.txt"
+    "dockerfile": "Dockerfile_torch"
   },
   "tags": [
     "Medical Imaging",

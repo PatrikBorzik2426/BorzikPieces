@@ -205,3 +205,19 @@ class OutputModel(BaseModel):
     plots_dir: str = Field(
         description="Directory containing training plots"
     )
+    validation_subjects: Optional[List[SubjectInfo]] = Field(
+        description="List of validation subjects for downstream inference",
+        default=None
+    )
+    num_classes: int = Field(
+        description="Number of classes used in training (for inference configuration)",
+        default=6
+    )
+    patch_size: int = Field(
+        description="Patch size used in training (for inference configuration)",
+        default=64
+    )
+    model_architecture: str = Field(
+        description="Model architecture used (for inference configuration)",
+        default="unet"
+    )

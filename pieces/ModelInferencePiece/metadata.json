@@ -2,7 +2,7 @@
   "name": "ModelInferencePiece",
   "description": "Loads trained segmentation models and performs inference on samples with confidence visualization and detailed metrics",
   "dependency": {
-    "requirements_file": "requirements.txt"
+    "dockerfile": "Dockerfile_torch"
   },
   "tags": [
     "Medical Imaging",

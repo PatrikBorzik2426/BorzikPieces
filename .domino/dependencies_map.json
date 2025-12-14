@@ -1,29 +1,29 @@
 {
     "group0": {
         "dependency": {
-            "dockerfile": null,
-            "requirements_file": "requirements.txt"
+            "dockerfile": "Dockerfile_base",
+            "requirements_file": null
         },
         "pieces": [
             "NiftiDataLoaderPiece",
             "NiftiVisualizationPiece",
-            "ModelInferencePiece",
-            "ModelTrainingPiece",
             "HelloWorldPiece",
             "DataSplitPiece",
             "NiftiPreprocessingPiece",
             "PituitaryDatasetPiece",
+            "GenerativeShapesPiece",
             "NiftiEDAPiece"
         ],
         "secrets": []
     },
     "group1": {
         "dependency": {
-            "dockerfile": "Dockerfile",
+            "dockerfile": "Dockerfile_torch",
             "requirements_file": null
         },
         "pieces": [
-            "GenerativeShapesPiece"
+            "ModelInferencePiece",
+            "ModelTrainingPiece"
         ],
         "secrets": []
     }

@@ -3,7 +3,7 @@
     "title": "NIfTI Data Loader",
     "description": "Discovers and loads NIfTI medical imaging data (.nii.gz files). Pairs images with corresponding segmentation masks based on filename matching.",
     "dependency": {
-        "requirements_file": "requirements.txt"
+        "dockerfile": "Dockerfile_base"
     },
     "container_resources": {
         "cpu": 100,

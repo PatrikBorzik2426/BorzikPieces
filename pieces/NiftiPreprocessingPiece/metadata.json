@@ -3,7 +3,7 @@
     "title": "NIfTI Preprocessing",
     "description": "Preprocesses NIfTI medical imaging data with normalization (z-score, min-max, percentile), optional resizing, and conversion to NumPy format for efficient ML training.",
     "dependency": {
-        "requirements_file": "requirements.txt"
+        "dockerfile": "Dockerfile_base"
     },
     "container_resources": {
         "cpu": 500,

@@ -3,7 +3,7 @@
     "title": "Pituitary Dataset Creator",
     "description": "Creates PyTorch-compatible dataset configurations for pituitary gland segmentation. Generates dataset configs and provides code for creating DataLoaders.",
     "dependency": {
-        "requirements_file": "requirements.txt"
+        "dockerfile": "Dockerfile_base"
     },
     "container_resources": {
         "cpu": 200,

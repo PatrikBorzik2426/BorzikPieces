@@ -3,7 +3,7 @@
   "title": "Generative Shapes Piece",
   "description": "Generates a PNG image containing simple geometric shapes (circles, squares, triangles).",
   "dependency": {
-        "dockerfile": "Dockerfile"
+        "dockerfile": "Dockerfile_base"
     },
   "container_resources": {
     "cpu": 500,

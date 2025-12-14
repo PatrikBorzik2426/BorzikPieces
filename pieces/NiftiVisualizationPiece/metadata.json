@@ -2,7 +2,7 @@
   "name": "NiftiVisualizationPiece",
   "description": "Visualizes NIfTI medical imaging data with optional mask overlay in axial, sagittal, or coronal planes",
   "dependency": {
-    "requirements_file": "requirements.txt"
+    "dockerfile": "Dockerfile_base"
   },
   "tags": [
     "Medical Imaging",

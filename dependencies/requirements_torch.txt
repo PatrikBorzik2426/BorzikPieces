@@ -1,0 +1,13 @@
+# Deep learning dependencies (used by Dockerfile_torch)
+# For ModelTrainingPiece and ModelInferencePiece
+numpy>=1.24.0,<2.0.0
+scipy==1.11.4
+pandas==2.0.3
+plotly==5.18.0
+Pillow==10.1.0
+nibabel==5.2.0
+matplotlib==3.7.5
+seaborn==0.12.2
+einops==0.7.0
+torch
+monai
