@@ -421,8 +421,7 @@ class ModelTrainingPiece(BasePiece):
                 optimizer,
                 mode='max',
                 factor=0.5,
-                patience=input_data.lr_scheduler_patience,
-                verbose=True
+                patience=input_data.lr_scheduler_patience
             )
             
             # Setup metrics
