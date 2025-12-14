@@ -498,6 +498,12 @@ class ModelTrainingPiece(BasePiece):
                             # Calculate Dice
                             preds_post = post_pred(preds)
                             preds_onehot = post_label(preds_post)
+                            # Debug shapes
+                            if num_val_batches == 0:
+                                self.logger.info(f"DEBUG - preds shape: {preds.shape}")
+                                self.logger.info(f"DEBUG - preds_post shape: {preds_post.shape}")
+                                self.logger.info(f"DEBUG - preds_onehot shape: {preds_onehot.shape}")
+                                self.logger.info(f"DEBUG - msk shape: {msk.shape}")
                             # Convert mask to one-hot (expects [B, 1, D, H, W])
                             labels_onehot = post_label(msk)
                             dice_metric(preds_onehot, labels_onehot)

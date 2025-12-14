@@ -2201,7 +2201,7 @@
         "output_schema": {
             "$defs": {
                 "EDAStatistics": {
-                    "description": "Summary statistics from EDA",
+                    "description": "Summary statistics from comprehensive EDA",
                     "properties": {
                         "total_subjects": {
                             "title": "Total Subjects",
@@ -2211,46 +2211,61 @@
                             "title": "Analyzed Subjects",
                             "type": "integer"
                         },
-                        "volume_shape_mean": {
-                            "items": {
-                                "type": "number"
-                            },
-                            "title": "Volume Shape Mean",
-                            "type": "array"
+                        "unique_shapes": {
+                            "description": "Number of unique volume shapes found",
+                            "title": "Unique Shapes",
+                            "type": "integer"
                         },
-                        "volume_shape_std": {
-                            "items": {
-                                "type": "number"
-                            },
-                            "title": "Volume Shape Std",
-                            "type": "array"
+                        "unique_spacings": {
+                            "description": "Number of unique voxel spacing protocols",
+                            "title": "Unique Spacings",
+                            "type": "integer"
                         },
-                        "intensity_mean": {
-                            "title": "Intensity Mean",
-                            "type": "number"
-                        },
-                        "intensity_std": {
-                            "title": "Intensity Std",
-                            "type": "number"
-                        },
-                        "mask_coverage_mean": {
-                            "title": "Mask Coverage Mean",
-                            "type": "number"
+                        "num_classes": {
+                            "description": "Number of unique classes in masks",
+                            "title": "Num Classes",
+                            "type": "integer"
                         },
                         "class_distribution": {
+                            "additionalProperties": {
+                                "type": "integer"
+                            },
+                            "description": "Voxel count per class",
                             "title": "Class Distribution",
                             "type": "object"
+                        },
+                        "mean_lesion_coverage": {
+                            "description": "Mean ratio of lesion voxels to total voxels",
+                            "title": "Mean Lesion Coverage",
+                            "type": "number"
+                        },
+                        "slice_lesion_ratio": {
+                            "description": "Ratio of slices containing lesions",
+                            "title": "Slice Lesion Ratio",
+                            "type": "number"
+                        },
+                        "mean_intensity": {
+                            "description": "Mean intensity across all volumes",
+                            "title": "Mean Intensity",
+                            "type": "number"
+                        },
+                        "std_intensity": {
+                            "description": "Mean standard deviation across all volumes",
+                            "title": "Std Intensity",
+                            "type": "number"
                         }
                     },
                     "required": [
                         "total_subjects",
                         "analyzed_subjects",
-                        "volume_shape_mean",
-                        "volume_shape_std",
-                        "intensity_mean",
-                        "intensity_std",
-                        "mask_coverage_mean",
-                        "class_distribution"
+                        "unique_shapes",
+                        "unique_spacings",
+                        "num_classes",
+                        "class_distribution",
+                        "mean_lesion_coverage",
+                        "slice_lesion_ratio",
+                        "mean_intensity",
+                        "std_intensity"
                     ],
                     "title": "EDAStatistics",
                     "type": "object"
@@ -2264,10 +2279,10 @@
                             "$ref": "#/$defs/EDAStatistics"
                         }
                     ],
-                    "description": "Summary statistics from the analysis"
+                    "description": "Summary statistics from the comprehensive analysis"
                 },
                 "report_path": {
-                    "description": "Path to the generated EDA report (HTML or markdown)",
+                    "description": "Path to the generated EDA text report",
                     "title": "Report Path",
                     "type": "string"
                 },
@@ -2285,6 +2300,15 @@
                     "description": "Text summary of key findings",
                     "title": "Analysis Summary",
                     "type": "string"
+                },
+                "analysis_texts": {
+                    "default": [],
+                    "description": "Detailed Slovak text descriptions for each analysis section",
+                    "items": {
+                        "type": "object"
+                    },
+                    "title": "Analysis Texts",
+                    "type": "array"
                 }
             },
             "required": [

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 from enum import Enum
 
 
@@ -39,16 +39,24 @@ class InputModel(BaseModel):
     )
 
 
+class AnalysisText(BaseModel):
+    """Text description of analysis findings in Slovak (matching research notebook style)"""
+    section: str = Field(description="Section name/title")
+    finding: str = Field(description="Detailed Slovak text describing the finding and its implications")
+
+
 class EDAStatistics(BaseModel):
-    """Summary statistics from EDA"""
+    """Summary statistics from comprehensive EDA"""
     total_subjects: int
     analyzed_subjects: int
-    volume_shape_mean: List[float]
-    volume_shape_std: List[float]
-    intensity_mean: float
-    intensity_std: float
-    mask_coverage_mean: float
-    class_distribution: dict
+    unique_shapes: int = Field(description="Number of unique volume shapes found")
+    unique_spacings: int = Field(description="Number of unique voxel spacing protocols")
+    num_classes: int = Field(description="Number of unique classes in masks")
+    class_distribution: Dict[str, int] = Field(description="Voxel count per class")
+    mean_lesion_coverage: float = Field(description="Mean ratio of lesion voxels to total voxels")
+    slice_lesion_ratio: float = Field(description="Ratio of slices containing lesions")
+    mean_intensity: float = Field(description="Mean intensity across all volumes")
+    std_intensity: float = Field(description="Mean standard deviation across all volumes")
 
 
 class OutputModel(BaseModel):
@@ -56,10 +64,10 @@ class OutputModel(BaseModel):
     NIfTI EDA Piece Output Model
     """
     statistics: EDAStatistics = Field(
-        description="Summary statistics from the analysis"
+        description="Summary statistics from the comprehensive analysis"
     )
     report_path: str = Field(
-        description="Path to the generated EDA report (HTML or markdown)"
+        description="Path to the generated EDA text report"
     )
     visualization_dir: str = Field(
         description="Directory containing all generated visualizations"
@@ -69,4 +77,8 @@ class OutputModel(BaseModel):
     )
     analysis_summary: str = Field(
         description="Text summary of key findings"
+    )
+    analysis_texts: List[Dict[str, Any]] = Field(
+        description="Detailed Slovak text descriptions for each analysis section",
+        default=[]
     )
