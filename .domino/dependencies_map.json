@@ -5,13 +5,13 @@
             "requirements_file": null
         },
         "pieces": [
+            "NiftiPreprocessingPiece",
+            "DataSplitPiece",
+            "PituitaryDatasetPiece",
             "NiftiDataLoaderPiece",
             "NiftiVisualizationPiece",
-            "HelloWorldPiece",
-            "DataSplitPiece",
-            "NiftiPreprocessingPiece",
-            "PituitaryDatasetPiece",
             "GenerativeShapesPiece",
+            "HelloWorldPiece",
             "NiftiEDAPiece"
         ],
         "secrets": [],
@@ -23,8 +23,8 @@
             "requirements_file": null
         },
         "pieces": [
-            "ModelInferencePiece",
-            "ModelTrainingPiece"
+            "ModelTrainingPiece",
+            "ModelInferencePiece"
         ],
         "secrets": [],
         "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.5-group1"
