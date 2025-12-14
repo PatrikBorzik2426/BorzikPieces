@@ -5,16 +5,17 @@
             "requirements_file": null
         },
         "pieces": [
+            "NiftiPreprocessingPiece",
+            "DataSplitPiece",
+            "PituitaryDatasetPiece",
             "NiftiDataLoaderPiece",
             "NiftiVisualizationPiece",
-            "HelloWorldPiece",
-            "DataSplitPiece",
-            "NiftiPreprocessingPiece",
-            "PituitaryDatasetPiece",
             "GenerativeShapesPiece",
+            "HelloWorldPiece",
             "NiftiEDAPiece"
         ],
-        "secrets": []
+        "secrets": [],
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.3-group0"
     },
     "group1": {
         "dependency": {
@@ -22,9 +23,10 @@
             "requirements_file": null
         },
         "pieces": [
-            "ModelInferencePiece",
-            "ModelTrainingPiece"
+            "ModelTrainingPiece",
+            "ModelInferencePiece"
         ],
-        "secrets": []
+        "secrets": [],
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.3-group1"
     }
 }
