@@ -8,5 +8,6 @@ Pillow==10.1.0
 nibabel==5.2.0
 matplotlib==3.7.5
 seaborn==0.12.2
+tqdm==4.66.1
 
 einops==0.7.0

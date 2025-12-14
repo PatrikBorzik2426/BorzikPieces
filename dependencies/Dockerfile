@@ -11,7 +11,8 @@ RUN pip install --no-cache-dir \
     Pillow==10.1.0 \
     nibabel==5.2.0 \
     matplotlib==3.7.5 \
-    seaborn==0.12.2
+    seaborn==0.12.2 \
+    tqdm==4.66.1
 
 # Copy the piece source code and config
 COPY config.toml domino/pieces_repository/
