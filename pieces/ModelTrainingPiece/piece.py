@@ -498,8 +498,8 @@ class ModelTrainingPiece(BasePiece):
                             # Calculate Dice
                             preds_post = post_pred(preds)
                             preds_onehot = post_label(preds_post)
-                            # Remove channel dimension from mask before converting to one-hot
-                            labels_onehot = post_label(msk.squeeze(1))
+                            # Convert mask to one-hot (expects [B, 1, D, H, W])
+                            labels_onehot = post_label(msk)
                             dice_metric(preds_onehot, labels_onehot)
                     
                     val_loss = val_loss_sum / num_val_batches if num_val_batches > 0 else 0.0

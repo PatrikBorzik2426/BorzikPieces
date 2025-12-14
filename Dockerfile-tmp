@@ -1,7 +1,9 @@
 FROM ghcr.io/tauffer-consulting/domino-base-piece:latest
 
-# Dependencies for deep learning pieces (PyTorch + MONAI)
-# Used by: ModelTrainingPiece, ModelInferencePiece
+# Basic dependencies for data processing and visualization pieces
+# Used by: NiftiDataLoaderPiece, NiftiVisualizationPiece, NiftiEDAPiece, 
+#          NiftiPreprocessingPiece, DataSplitPiece, PituitaryDatasetPiece,
+#          HelloWorldPiece, GenerativeShapesPiece
 
 RUN pip install --no-cache-dir \
     "numpy>=1.24.0,<2.0.0" \
@@ -11,10 +13,7 @@ RUN pip install --no-cache-dir \
     Pillow==10.1.0 \
     nibabel==5.2.0 \
     matplotlib==3.7.5 \
-    seaborn==0.12.2 \
-    einops==0.7.0 \
-    torch \
-    monai
+    seaborn==0.12.2
 
 # Copy the piece source code and config
 COPY config.toml domino/pieces_repository/
