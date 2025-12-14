@@ -296,6 +296,339 @@
         "source_url": null,
         "secrets_schema": null
     },
+    "ModelInferencePiece": {
+        "name": "ModelInferencePiece",
+        "dependency": {
+            "dockerfile": null,
+            "requirements_file": "requirements.txt"
+        },
+        "tags": [
+            "Medical Imaging",
+            "Deep Learning",
+            "Inference",
+            "Segmentation",
+            "PyTorch",
+            "Visualization",
+            "Confidence"
+        ],
+        "style": {
+            "node_label": "Model Inference",
+            "node_type": "default",
+            "node_style": {
+                "backgroundColor": "#ffcc99"
+            },
+            "useIcon": true,
+            "icon_class_name": "fa-solid:search",
+            "iconStyle": {
+                "cursor": "pointer"
+            }
+        },
+        "description": "Loads trained segmentation models and performs inference on samples with confidence visualization and detailed metrics",
+        "input_schema": {
+            "$defs": {
+                "ModelArchitecture": {
+                    "description": "Supported model architectures",
+                    "enum": [
+                        "unet",
+                        "swin_unetr"
+                    ],
+                    "title": "ModelArchitecture",
+                    "type": "string"
+                },
+                "SubjectInfo": {
+                    "description": "Information about a single subject for inference",
+                    "properties": {
+                        "subject_id": {
+                            "title": "Subject Id",
+                            "type": "string"
+                        },
+                        "image_path": {
+                            "title": "Image Path",
+                            "type": "string"
+                        },
+                        "mask_path": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "default": null,
+                            "title": "Mask Path"
+                        }
+                    },
+                    "required": [
+                        "subject_id",
+                        "image_path"
+                    ],
+                    "title": "SubjectInfo",
+                    "type": "object"
+                }
+            },
+            "description": "Model Inference Piece Input Model",
+            "properties": {
+                "model_path": {
+                    "description": "Path to the trained model (.pth file)",
+                    "title": "Model Path",
+                    "type": "string"
+                },
+                "model_architecture": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ModelArchitecture"
+                        }
+                    ],
+                    "default": "unet",
+                    "description": "Model architecture used during training"
+                },
+                "num_classes": {
+                    "default": 6,
+                    "description": "Number of segmentation classes (including background)",
+                    "minimum": 2,
+                    "title": "Num Classes",
+                    "type": "integer"
+                },
+                "patch_size": {
+                    "default": 64,
+                    "description": "Size of 3D patches used during training",
+                    "maximum": 128,
+                    "minimum": 32,
+                    "title": "Patch Size",
+                    "type": "integer"
+                },
+                "subjects": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/SubjectInfo"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "List of subjects from upstream piece. If provided, image_paths and mask_paths are ignored.",
+                    "title": "Subjects"
+                },
+                "image_paths": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "List of paths to NIfTI image files for inference",
+                    "title": "Image Paths"
+                },
+                "mask_paths": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Optional list of paths to ground truth masks for metric calculation",
+                    "title": "Mask Paths"
+                },
+                "num_samples": {
+                    "default": 5,
+                    "description": "Number of samples to run inference on (0 = all)",
+                    "maximum": 100,
+                    "minimum": 0,
+                    "title": "Num Samples",
+                    "type": "integer"
+                },
+                "samples_per_volume": {
+                    "default": 5,
+                    "description": "Number of patches to extract per volume",
+                    "maximum": 50,
+                    "minimum": 1,
+                    "title": "Samples Per Volume",
+                    "type": "integer"
+                },
+                "output_dir": {
+                    "default": "/home/shared_storage/inference_results",
+                    "description": "Directory to save inference results and visualizations",
+                    "title": "Output Dir",
+                    "type": "string"
+                },
+                "save_predictions": {
+                    "default": false,
+                    "description": "Whether to save prediction masks as NIfTI files",
+                    "title": "Save Predictions",
+                    "type": "boolean"
+                },
+                "save_visualizations": {
+                    "default": true,
+                    "description": "Whether to save visualization images",
+                    "title": "Save Visualizations",
+                    "type": "boolean"
+                },
+                "use_gpu": {
+                    "default": true,
+                    "description": "Whether to use GPU if available",
+                    "title": "Use Gpu",
+                    "type": "boolean"
+                },
+                "batch_size": {
+                    "default": 4,
+                    "description": "Batch size for inference",
+                    "maximum": 32,
+                    "minimum": 1,
+                    "title": "Batch Size",
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "model_path"
+            ],
+            "title": "InputModel",
+            "type": "object"
+        },
+        "output_schema": {
+            "$defs": {
+                "InferenceMetrics": {
+                    "description": "Metrics for a single inference sample",
+                    "properties": {
+                        "subject_id": {
+                            "title": "Subject Id",
+                            "type": "string"
+                        },
+                        "dice_score": {
+                            "title": "Dice Score",
+                            "type": "number"
+                        },
+                        "mean_confidence": {
+                            "title": "Mean Confidence",
+                            "type": "number"
+                        },
+                        "max_confidence": {
+                            "title": "Max Confidence",
+                            "type": "number"
+                        },
+                        "min_confidence": {
+                            "title": "Min Confidence",
+                            "type": "number"
+                        },
+                        "class_confidences": {
+                            "additionalProperties": {
+                                "type": "number"
+                            },
+                            "title": "Class Confidences",
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "subject_id",
+                        "dice_score",
+                        "mean_confidence",
+                        "max_confidence",
+                        "min_confidence",
+                        "class_confidences"
+                    ],
+                    "title": "InferenceMetrics",
+                    "type": "object"
+                }
+            },
+            "description": "Model Inference Piece Output Model",
+            "properties": {
+                "output_dir": {
+                    "description": "Directory containing all inference results",
+                    "title": "Output Dir",
+                    "type": "string"
+                },
+                "num_samples_processed": {
+                    "description": "Total number of samples processed",
+                    "title": "Num Samples Processed",
+                    "type": "integer"
+                },
+                "mean_dice_score": {
+                    "anyOf": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Average Dice score across all samples (if masks provided)",
+                    "title": "Mean Dice Score"
+                },
+                "mean_confidence": {
+                    "description": "Average confidence score across all samples",
+                    "title": "Mean Confidence",
+                    "type": "number"
+                },
+                "inference_metrics": {
+                    "description": "Detailed metrics for each sample",
+                    "items": {
+                        "$ref": "#/$defs/InferenceMetrics"
+                    },
+                    "title": "Inference Metrics",
+                    "type": "array"
+                },
+                "visualization_dir": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Directory containing visualization images",
+                    "title": "Visualization Dir"
+                },
+                "predictions_dir": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Directory containing saved prediction masks",
+                    "title": "Predictions Dir"
+                },
+                "summary_report": {
+                    "description": "Text summary of inference results",
+                    "title": "Summary Report",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "output_dir",
+                "num_samples_processed",
+                "mean_confidence",
+                "inference_metrics",
+                "summary_report"
+            ],
+            "title": "OutputModel",
+            "type": "object"
+        },
+        "secrets_schema": null,
+        "source_url": null
+    },
     "ModelTrainingPiece": {
         "name": "ModelTrainingPiece",
         "dependency": {
@@ -567,20 +900,6 @@
                     "description": "Whether to use GPU if available",
                     "title": "Use Gpu",
                     "type": "boolean"
-                },
-                "run_inference": {
-                    "default": true,
-                    "description": "Whether to run inference on validation samples after training",
-                    "title": "Run Inference",
-                    "type": "boolean"
-                },
-                "num_inference_samples": {
-                    "default": 5,
-                    "description": "Number of validation samples to use for inference visualization",
-                    "maximum": 20,
-                    "minimum": 1,
-                    "title": "Num Inference Samples",
-                    "type": "integer"
                 }
             },
             "title": "InputModel",
@@ -691,19 +1010,6 @@
                     "description": "Directory containing training plots",
                     "title": "Plots Dir",
                     "type": "string"
-                },
-                "inference_results_dir": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Directory containing inference results and visualizations",
-                    "title": "Inference Results Dir"
                 }
             },
             "required": [

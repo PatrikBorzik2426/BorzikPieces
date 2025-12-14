@@ -1,0 +1,25 @@
+{
+  "name": "ModelInferencePiece",
+  "description": "Loads trained segmentation models and performs inference on samples with confidence visualization and detailed metrics",
+  "dependency": {
+    "requirements_file": "requirements.txt"
+  },
+  "tags": [
+    "Medical Imaging",
+    "Deep Learning",
+    "Inference",
+    "Segmentation",
+    "PyTorch",
+    "Visualization",
+    "Confidence"
+  ],
+  "style": {
+    "node_label": "Model Inference",
+    "node_type": "default",
+    "node_style": {
+      "backgroundColor": "#ffcc99"
+    },
+    "useIcon": true,
+    "icon_class_name": "fa-solid:search"
+  }
+}

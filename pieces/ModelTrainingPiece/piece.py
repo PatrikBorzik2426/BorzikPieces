@@ -499,7 +499,8 @@ class ModelTrainingPiece(BasePiece):
                             # Calculate Dice
                             preds_post = post_pred(preds)
                             preds_onehot = post_label(preds_post)
-                            labels_onehot = post_label(msk)
+                            # Remove channel dimension from mask before converting to one-hot
+                            labels_onehot = post_label(msk.squeeze(1))
                             dice_metric(preds_onehot, labels_onehot)
                     
                     val_loss = val_loss_sum / num_val_batches if num_val_batches > 0 else 0.0
@@ -608,30 +609,6 @@ Hyperparameters:
             self.logger.info("Training completed successfully")
             self.logger.info("=" * 80)
             
-            # Run inference on validation samples
-            inference_dir = os.path.join(input_data.output_dir, "inference_results")
-            os.makedirs(inference_dir, exist_ok=True)
-            
-            if input_data.run_inference:
-                self.logger.info("=" * 80)
-                self.logger.info("Running inference on validation samples")
-                self.logger.info("=" * 80)
-                
-                # Load best model for inference
-                if best_model_path and os.path.exists(best_model_path):
-                    checkpoint = torch.load(best_model_path, map_location=device)
-                    model.load_state_dict(checkpoint['model_state_dict'])
-                    self.logger.info(f"Loaded best model from epoch {best_epoch}")
-                
-                self._run_inference_and_visualize(
-                    model=model,
-                    val_loader=val_loader,
-                    device=device,
-                    num_classes=input_data.num_classes,
-                    output_dir=inference_dir,
-                    num_samples=input_data.num_inference_samples
-                )
-            
             return OutputModel(
                 model_path=final_model_path,
                 checkpoint_dir=checkpoint_dir,
@@ -642,8 +619,7 @@ Hyperparameters:
                 total_epochs_trained=len(training_history),
                 training_history=training_history,
                 training_summary=training_summary.strip(),
-                plots_dir=plots_dir,
-                inference_results_dir=inference_dir if input_data.run_inference else None
+                plots_dir=plots_dir
             )
             
         except Exception as e:
@@ -689,194 +665,3 @@ Hyperparameters:
             plt.tight_layout()
             plt.savefig(os.path.join(plots_dir, 'dice_curve.png'), dpi=150)
             plt.close()
-    
-    def _run_inference_and_visualize(self, model, val_loader, device, num_classes, output_dir, num_samples=5):
-        """Run inference on validation samples and visualize results with confidence scores"""
-        model.eval()
-        
-        samples_processed = 0
-        dice_metric = DiceMetric(include_background=False, reduction="mean_batch")
-        post_pred = AsDiscrete(argmax=True)
-        post_label = AsDiscrete(to_onehot=num_classes)
-        
-        self.logger.info(f"Processing {num_samples} validation samples for inference...")
-        
-        with torch.no_grad():
-            for batch_idx, (img, msk, subject_ids) in enumerate(val_loader):
-                if samples_processed >= num_samples:
-                    break
-                
-                img = img.to(device)
-                msk = msk.to(device)
-                
-                # Run inference
-                logits = model(img)
-                probs = torch.softmax(logits, dim=1)  # Convert to probabilities
-                preds = torch.argmax(logits, dim=1)  # Get predictions
-                
-                # Calculate Dice scores for this batch
-                preds_post = post_pred(logits)
-                preds_onehot = post_label(preds_post)
-                labels_onehot = post_label(msk)
-                dice_scores = dice_metric(preds_onehot, labels_onehot)
-                
-                # Process each sample in batch
-                batch_size = img.shape[0]
-                for i in range(min(batch_size, num_samples - samples_processed)):
-                    subject_id = subject_ids[i] if isinstance(subject_ids, (list, tuple)) else f"sample_{samples_processed}"
-                    
-                    # Get confidence scores (max probability for each voxel)
-                    confidence_map = torch.max(probs[i], dim=0)[0]  # Shape: [D, H, W]
-                    mean_confidence = confidence_map.mean().item()
-                    max_confidence = confidence_map.max().item()
-                    min_confidence = confidence_map.min().item()
-                    
-                    # Get class-specific confidences
-                    class_confidences = {}
-                    for class_idx in range(num_classes):
-                        class_mask = (preds[i] == class_idx)
-                        if class_mask.sum() > 0:
-                            class_conf = probs[i, class_idx][class_mask].mean().item()
-                            class_confidences[f"class_{class_idx}"] = class_conf
-                        else:
-                            class_confidences[f"class_{class_idx}"] = 0.0
-                    
-                    # Calculate Dice score
-                    dice_score = dice_scores[i].item() if dice_scores.dim() > 0 else dice_scores.item()
-                    
-                    # Log confidence information
-                    self.logger.info(f"\nInference for {subject_id}:")
-                    self.logger.info(f"  Dice Score: {dice_score:.4f}")
-                    self.logger.info(f"  Mean Confidence: {mean_confidence:.4f}")
-                    self.logger.info(f"  Max Confidence: {max_confidence:.4f}")
-                    self.logger.info(f"  Min Confidence: {min_confidence:.4f}")
-                    self.logger.info(f"  Per-class Confidences:")
-                    for class_name, conf in class_confidences.items():
-                        self.logger.info(f"    {class_name}: {conf:.4f}")
-                    
-                    # Visualize and save
-                    self._visualize_inference_result(
-                        image=img[i, 0].cpu().numpy(),
-                        ground_truth=msk[i, 0].cpu().numpy(),
-                        prediction=preds[i].cpu().numpy(),
-                        confidence_map=confidence_map.cpu().numpy(),
-                        probabilities=probs[i].cpu().numpy(),
-                        subject_id=subject_id,
-                        dice_score=dice_score,
-                        mean_confidence=mean_confidence,
-                        class_confidences=class_confidences,
-                        output_dir=output_dir,
-                        num_classes=num_classes
-                    )
-                    
-                    # Save confidence data to JSON
-                    confidence_data = {
-                        "subject_id": subject_id,
-                        "dice_score": float(dice_score),
-                        "mean_confidence": float(mean_confidence),
-                        "max_confidence": float(max_confidence),
-                        "min_confidence": float(min_confidence),
-                        "class_confidences": {k: float(v) for k, v in class_confidences.items()}
-                    }
-                    
-                    confidence_json_path = os.path.join(output_dir, f"{subject_id}_confidence.json")
-                    with open(confidence_json_path, 'w') as f:
-                        json.dump(confidence_data, f, indent=2)
-                    
-                    samples_processed += 1
-                
-                if samples_processed >= num_samples:
-                    break
-        
-        self.logger.info(f"\nInference completed. Results saved to: {output_dir}")
-    
-    def _visualize_inference_result(self, image, ground_truth, prediction, confidence_map, 
-                                   probabilities, subject_id, dice_score, mean_confidence,
-                                   class_confidences, output_dir, num_classes):
-        """Create comprehensive visualization of inference results"""
-        
-        # Select middle slice for visualization
-        depth = image.shape[0]
-        mid_slice = depth // 2
-        
-        # Create figure with multiple subplots
-        fig = plt.figure(figsize=(20, 12))
-        gs = fig.add_gridspec(3, 4, hspace=0.3, wspace=0.3)
-        
-        # Row 1: Image, Ground Truth, Prediction, Confidence Map
-        ax1 = fig.add_subplot(gs[0, 0])
-        ax1.imshow(image[mid_slice], cmap='gray')
-        ax1.set_title('Input Image', fontsize=12)
-        ax1.axis('off')
-        
-        ax2 = fig.add_subplot(gs[0, 1])
-        ax2.imshow(ground_truth[mid_slice], cmap='tab10', vmin=0, vmax=num_classes-1)
-        ax2.set_title('Ground Truth', fontsize=12)
-        ax2.axis('off')
-        
-        ax3 = fig.add_subplot(gs[0, 2])
-        ax3.imshow(prediction[mid_slice], cmap='tab10', vmin=0, vmax=num_classes-1)
-        ax3.set_title(f'Prediction (Dice: {dice_score:.3f})', fontsize=12)
-        ax3.axis('off')
-        
-        ax4 = fig.add_subplot(gs[0, 3])
-        im4 = ax4.imshow(confidence_map[mid_slice], cmap='viridis', vmin=0, vmax=1)
-        ax4.set_title(f'Confidence Map (μ={mean_confidence:.3f})', fontsize=12)
-        ax4.axis('off')
-        plt.colorbar(im4, ax=ax4, fraction=0.046, pad=0.04)
-        
-        # Row 2: Overlay visualizations
-        ax5 = fig.add_subplot(gs[1, 0])
-        ax5.imshow(image[mid_slice], cmap='gray')
-        # Overlay ground truth with transparency
-        gt_overlay = np.ma.masked_where(ground_truth[mid_slice] == 0, ground_truth[mid_slice])
-        ax5.imshow(gt_overlay, cmap='tab10', alpha=0.5, vmin=0, vmax=num_classes-1)
-        ax5.set_title('GT Overlay', fontsize=12)
-        ax5.axis('off')
-        
-        ax6 = fig.add_subplot(gs[1, 1])
-        ax6.imshow(image[mid_slice], cmap='gray')
-        # Overlay prediction with transparency
-        pred_overlay = np.ma.masked_where(prediction[mid_slice] == 0, prediction[mid_slice])
-        ax6.imshow(pred_overlay, cmap='tab10', alpha=0.5, vmin=0, vmax=num_classes-1)
-        ax6.set_title('Prediction Overlay', fontsize=12)
-        ax6.axis('off')
-        
-        # Error map (differences between GT and prediction)
-        ax7 = fig.add_subplot(gs[1, 2])
-        error_map = (ground_truth[mid_slice] != prediction[mid_slice]).astype(float)
-        im7 = ax7.imshow(error_map, cmap='Reds', vmin=0, vmax=1)
-        ax7.set_title('Error Map', fontsize=12)
-        ax7.axis('off')
-        plt.colorbar(im7, ax=ax7, fraction=0.046, pad=0.04)
-        
-        # Confidence histogram
-        ax8 = fig.add_subplot(gs[1, 3])
-        ax8.hist(confidence_map.flatten(), bins=50, color='steelblue', alpha=0.7, edgecolor='black')
-        ax8.axvline(mean_confidence, color='red', linestyle='--', linewidth=2, label=f'Mean: {mean_confidence:.3f}')
-        ax8.set_xlabel('Confidence', fontsize=10)
-        ax8.set_ylabel('Frequency', fontsize=10)
-        ax8.set_title('Confidence Distribution', fontsize=12)
-        ax8.legend()
-        ax8.grid(True, alpha=0.3)
-        
-        # Row 3: Class probability maps for first 4 classes
-        for class_idx in range(min(4, num_classes)):
-            ax = fig.add_subplot(gs[2, class_idx])
-            class_prob_map = probabilities[class_idx, mid_slice]
-            im = ax.imshow(class_prob_map, cmap='hot', vmin=0, vmax=1)
-            conf_val = class_confidences.get(f"class_{class_idx}", 0.0)
-            ax.set_title(f'Class {class_idx} Prob\n(conf={conf_val:.3f})', fontsize=10)
-            ax.axis('off')
-            plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
-        
-        # Add overall title
-        fig.suptitle(f'Inference Results: {subject_id}\nDice Score: {dice_score:.4f} | Mean Confidence: {mean_confidence:.4f}',
-                    fontsize=14, fontweight='bold')
-        
-        # Save figure
-        output_path = os.path.join(output_dir, f"{subject_id}_inference.png")
-        plt.savefig(output_path, dpi=150, bbox_inches='tight')
-        plt.close()
-        
-        self.logger.info(f"  Visualization saved: {output_path}")

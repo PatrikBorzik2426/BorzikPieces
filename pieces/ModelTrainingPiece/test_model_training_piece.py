@@ -57,8 +57,6 @@ def test_model_training_piece():
         assert input_data.num_classes == 6
         assert input_data.use_augmentation is True
         assert input_data.foreground_oversample == 0.9
-        assert input_data.run_inference is True  # New inference field
-        assert input_data.num_inference_samples == 5  # New inference field
         
         # Note: Full execution test requires actual NIfTI files and significant compute
         # This test validates the input model structure
