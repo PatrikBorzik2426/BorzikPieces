@@ -9,8 +9,11 @@ RUN pip install --no-cache-dir plotly==5.18.0 Pillow==10.1.0 matplotlib==3.7.5 s
 # Install medical imaging packages
 RUN pip install --no-cache-dir nibabel==5.2.0
 
-# Install medical AI packages (MONAI will install PyTorch as dependency)
-RUN pip install --no-cache-dir monai==1.3.0 einops==0.7.0
+# Install PyTorch CPU version (lighter and more compatible)
+RUN pip install --no-cache-dir torch==2.0.0 --index-url https://download.pytorch.org/whl/cpu
+
+# Install medical AI packages
+RUN pip install --no-cache-dir "monai[all]==1.2.0" einops==0.7.0
 
 # Copy the piece source code and config
 COPY config.toml domino/pieces_repository/
