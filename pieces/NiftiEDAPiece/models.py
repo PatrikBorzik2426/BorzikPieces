@@ -15,6 +15,7 @@ class InputModel(BaseModel):
     NIfTI EDA Piece Input Model
     """
     subjects: List[SubjectInfo] = Field(
+        default=[],
         description="List of subjects to analyze"
     )
     output_dir: str = Field(

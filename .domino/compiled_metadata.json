@@ -2156,6 +2156,7 @@
             "description": "NIfTI EDA Piece Input Model",
             "properties": {
                 "subjects": {
+                    "default": [],
                     "description": "List of subjects to analyze",
                     "items": {
                         "$ref": "#/$defs/SubjectInfo"
@@ -2192,9 +2193,6 @@
                     "type": "integer"
                 }
             },
-            "required": [
-                "subjects"
-            ],
             "title": "InputModel",
             "type": "object"
         },

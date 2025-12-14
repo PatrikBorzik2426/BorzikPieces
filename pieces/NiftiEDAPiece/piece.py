@@ -501,6 +501,12 @@ class NiftiEDAPiece(BasePiece):
             os.makedirs(output_dir, exist_ok=True)
             self.logger.info(f"Output directory: {output_dir}")
             
+            # Validate subjects input
+            if not input_data.subjects:
+                error_msg = "No subjects provided. Please connect this piece to NiftiDataLoaderPiece or provide subjects list."
+                self.logger.error(error_msg)
+                raise ValueError(error_msg)
+            
             # Limit subjects for performance
             subjects = input_data.subjects[:input_data.max_subjects]
             self.logger.info(f"Analyzing {len(subjects)} subjects (max: {input_data.max_subjects})")
