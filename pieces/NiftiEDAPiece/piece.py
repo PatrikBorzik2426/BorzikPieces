@@ -495,9 +495,11 @@ class NiftiEDAPiece(BasePiece):
             self.logger.info("Starting Comprehensive NIfTI EDA Analysis")
             self.logger.info("=" * 80)
             
-            # Create output directory
-            output_dir = input_data.output_dir
+            # Use Domino's tracked results path instead of hardcoded output_dir
+            # This ensures files are properly tracked and accessible
+            output_dir = self.results_path
             os.makedirs(output_dir, exist_ok=True)
+            self.logger.info(f"Output directory: {output_dir}")
             
             # Limit subjects for performance
             subjects = input_data.subjects[:input_data.max_subjects]

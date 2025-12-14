@@ -17,10 +17,6 @@ class InputModel(BaseModel):
     subjects: List[SubjectInfo] = Field(
         description="List of subjects to analyze"
     )
-    output_dir: str = Field(
-        description="Directory to save EDA visualizations and reports",
-        default="/home/shared_storage/eda_results"
-    )
     max_subjects: int = Field(
         description="Maximum number of subjects to analyze (for performance)",
         default=50,

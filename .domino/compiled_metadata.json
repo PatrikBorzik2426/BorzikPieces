@@ -2163,12 +2163,6 @@
                     "title": "Subjects",
                     "type": "array"
                 },
-                "output_dir": {
-                    "default": "/home/shared_storage/eda_results",
-                    "description": "Directory to save EDA visualizations and reports",
-                    "title": "Output Dir",
-                    "type": "string"
-                },
                 "max_subjects": {
                     "default": 50,
                     "description": "Maximum number of subjects to analyze (for performance)",
