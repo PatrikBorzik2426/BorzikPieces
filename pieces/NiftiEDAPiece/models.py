@@ -17,6 +17,10 @@ class InputModel(BaseModel):
     subjects: List[SubjectInfo] = Field(
         description="List of subjects to analyze"
     )
+    output_dir: str = Field(
+        description="[DEPRECATED - ignored] Directory to save EDA visualizations and reports. Files are now automatically saved to Domino's tracked storage.",
+        default="/home/shared_storage/eda_results"
+    )
     max_subjects: int = Field(
         description="Maximum number of subjects to analyze (for performance)",
         default=50,

@@ -2163,6 +2163,12 @@
                     "title": "Subjects",
                     "type": "array"
                 },
+                "output_dir": {
+                    "default": "/home/shared_storage/eda_results",
+                    "description": "[DEPRECATED - ignored] Directory to save EDA visualizations and reports. Files are now automatically saved to Domino's tracked storage.",
+                    "title": "Output Dir",
+                    "type": "string"
+                },
                 "max_subjects": {
                     "default": 50,
                     "description": "Maximum number of subjects to analyze (for performance)",

@@ -14,7 +14,8 @@
             "GenerativeShapesPiece",
             "NiftiEDAPiece"
         ],
-        "secrets": []
+        "secrets": [],
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.5-group0"
     },
     "group1": {
         "dependency": {
@@ -25,6 +26,7 @@
             "ModelInferencePiece",
             "ModelTrainingPiece"
         ],
-        "secrets": []
+        "secrets": [],
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.5-group1"
     }
 }
