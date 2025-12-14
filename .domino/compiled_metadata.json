@@ -306,10 +306,12 @@
             "Medical Imaging",
             "Deep Learning",
             "Training",
+            "Inference",
             "UNet",
             "SwinUNETR",
             "Segmentation",
-            "PyTorch"
+            "PyTorch",
+            "Visualization"
         ],
         "style": {
             "node_label": "Model Training",
@@ -323,7 +325,7 @@
                 "cursor": "pointer"
             }
         },
-        "description": "Trains 3D medical image segmentation models (UNet/SwinUNETR) using patch-based training with data augmentation and comprehensive metrics tracking",
+        "description": "Trains 3D medical image segmentation models (UNet/SwinUNETR) with patch-based training, data augmentation, and runs inference with confidence visualization",
         "input_schema": {
             "$defs": {
                 "ModelArchitecture": {
@@ -565,6 +567,20 @@
                     "description": "Whether to use GPU if available",
                     "title": "Use Gpu",
                     "type": "boolean"
+                },
+                "run_inference": {
+                    "default": true,
+                    "description": "Whether to run inference on validation samples after training",
+                    "title": "Run Inference",
+                    "type": "boolean"
+                },
+                "num_inference_samples": {
+                    "default": 5,
+                    "description": "Number of validation samples to use for inference visualization",
+                    "maximum": 20,
+                    "minimum": 1,
+                    "title": "Num Inference Samples",
+                    "type": "integer"
                 }
             },
             "title": "InputModel",
@@ -675,6 +691,19 @@
                     "description": "Directory containing training plots",
                     "title": "Plots Dir",
                     "type": "string"
+                },
+                "inference_results_dir": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Directory containing inference results and visualizations",
+                    "title": "Inference Results Dir"
                 }
             },
             "required": [

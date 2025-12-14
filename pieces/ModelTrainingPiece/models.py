@@ -158,6 +158,18 @@ class InputModel(BaseModel):
         description="Whether to use GPU if available",
         default=True
     )
+    
+    # Inference configuration
+    run_inference: bool = Field(
+        description="Whether to run inference on validation samples after training",
+        default=True
+    )
+    num_inference_samples: int = Field(
+        description="Number of validation samples to use for inference visualization",
+        default=5,
+        ge=1,
+        le=20
+    )
 
 
 class TrainingMetrics(BaseModel):
@@ -204,4 +216,8 @@ class OutputModel(BaseModel):
     )
     plots_dir: str = Field(
         description="Directory containing training plots"
+    )
+    inference_results_dir: Optional[str] = Field(
+        description="Directory containing inference results and visualizations",
+        default=None
     )
