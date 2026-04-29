@@ -159,15 +159,38 @@ If pull fails with "not found" even after `docker login`, the CI push itself fai
 
 ---
 
-## Known Bugs Fixed (2026-04-28)
+## Known Bugs Fixed
 
-| Piece | Bug | Fix Applied |
-|-------|-----|-------------|
-| `NiftiEDAPiece` | Duplicate `_generate_html_gallery` method (dead code) | Removed stub |
-| `ModelTrainingPiece` | `os.path.exists(None)` crash on missing mask | Added None guard in `_precompute_fg_locations` and `__getitem__` |
-| `ModelInferencePiece` | Mask list misaligned with image list for mixed-mask subjects | Keep all mask paths (incl. None) aligned with images; added None guard |
-| `NiftiPreprocessingPiece` | Three parallel instances defaulted to same output_dir | Updated default + warning in field description |
-| `Dockerfile_torch` | Unpinned `torch`/`monai` versions | Pinned `torch==2.1.2`, `monai[all]==1.3.0`, added `scikit-learn==1.3.2` |
+| Date | Piece / Area | Bug | Fix Applied |
+|------|-------------|-----|-------------|
+| 2026-04-28 | `NiftiEDAPiece` | Duplicate `_generate_html_gallery` method (dead code) | Removed stub |
+| 2026-04-28 | `ModelTrainingPiece` | `os.path.exists(None)` crash on missing mask | Added None guard in `_precompute_fg_locations` and `__getitem__` |
+| 2026-04-28 | `ModelInferencePiece` | Mask list misaligned with image list for mixed-mask subjects | Keep all mask paths (incl. None) aligned with images; added None guard |
+| 2026-04-28 | `NiftiPreprocessingPiece` | Three parallel instances defaulted to same output_dir | Updated default + warning in field description |
+| 2026-04-28 | `Dockerfile_torch` | Unpinned `torch`/`monai` versions | Pinned `torch==2.1.2`, `monai[all]==1.3.0`, added `scikit-learn==1.3.2` |
+| 2026-04-29 | CI (`validate-and-organize.yml`) | `domino piece publish-images` Python SDK has a hard read timeout — the multi-GB group0 (torch) image consistently timed out mid-upload | Replaced with `docker push` CLI calls in a shell loop with 3 retries and 15 s backoff. The Docker CLI has no read timeout. |
+
+---
+
+## Notable Features Added
+
+### ModelTrainingPiece — `dry_run` checkbox
+`InputModel` has a `dry_run: bool` field (default `False`). When checked in the Domino UI it overrides:
+- `epochs = 1`
+- `batch_size = 1`
+- `samples_per_volume = 1`
+
+This lets the full pipeline be validated end-to-end in minutes without waiting for real training. Use it whenever you want to confirm the piece wiring is correct before a real run.
+
+### startup.sh — automatic container log dump
+Every time `bash startup.sh` runs it dumps logs into `logs/containers/` (gitignored):
+
+| Path | Contents |
+|------|----------|
+| `logs/containers/<container>.txt` | Last 2000 lines from each of the 5 main containers |
+| `logs/containers/airflow_tasks/` | Copies of the 5 most recent Airflow task `attempt=1.log` files (flat filenames) |
+
+Containers captured: `airflow-domino-worker`, `airflow-domino-scheduler`, `airflow-webserver`, `domino-rest`, `domino-frontend`. Containers that are not running are skipped silently.
 
 ---
 
@@ -284,8 +307,9 @@ git push
 # NOTE: the CI will push its own auto-bump commit back; always pull --rebase before your next push
 
 # 4. GitHub Actions builds and pushes new Docker images to:
-#    ghcr.io/patrikborzik2426/borzikpieces:VERSION-group0
-#    ghcr.io/patrikborzik2426/borzikpieces:VERSION-group1
+#    ghcr.io/patrikborzik2426/borzikpieces:VERSION-group0  (torch — ModelTrainingPiece, ModelInferencePiece)
+#    ghcr.io/patrikborzik2426/borzikpieces:VERSION-group1  (base — all other pieces)
+#    Push uses docker push CLI (3 retries, 15 s backoff) — NOT the domino SDK which times out on group0.
 #    Verify with: docker pull ghcr.io/patrikborzik2426/borzikpieces:VERSION-group0
 
 # 5. Re-register the piece repository with the new version (API — Domino UI also works):
