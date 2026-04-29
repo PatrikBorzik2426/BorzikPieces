@@ -32,6 +32,20 @@ jobs:
           python -m pip install -U pip
           pip install --no-cache-dir domino-py[cli]
 
+      - name: Auto-bump patch version
+        if: "!contains(github.event.head_commit.message, 'auto-organize')"
+        run: |
+          python - <<'EOF'
+          import re, pathlib
+          text = pathlib.Path("config.toml").read_text()
+          match = re.search(r'VERSION = "(\d+)\.(\d+)\.(\d+)"', text)
+          major, minor, patch = match.groups()
+          new_version = f'{major}.{minor}.{int(patch)+1}'
+          new_text = re.sub(r'VERSION = "\d+\.\d+\.\d+"', f'VERSION = "{new_version}"', text)
+          pathlib.Path("config.toml").write_text(new_text)
+          print(f"Bumped version to {new_version}")
+          EOF
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
@@ -71,7 +85,7 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           GIT_STATUS=$(git status -s)
-          [[ ! -z "$GIT_STATUS" ]] && git add .domino/* && git commit -m "auto-organize" -a || echo "No changes to commit"
+          [[ ! -z "$GIT_STATUS" ]] && git add .domino/* config.toml && git commit -m "auto-organize" -a || echo "No changes to commit"
 
       - name: Push changes
         uses: ad-m/github-push-action@master
