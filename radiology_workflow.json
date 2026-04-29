@@ -1,0 +1,4816 @@
+{
+  "workflow": {
+    "name": "RadiologySegmentation",
+    "scheduleInterval": "none",
+    "selectStartDate": "now",
+    "startDateTime": "2026-04-28T00:00:00",
+    "selectEndDate": "never",
+    "endDateTime": null,
+    "catchup": false,
+    "generateReport": false,
+    "description": "Radiology MRI pituitary/brain lesion segmentation pipeline: Load NIfTI \u2192 EDA \u2192 Split \u2192 Preprocess \u2192 Train (3D MONAI UNet) \u2192 Inference"
+  },
+  "tasks": {
+    "NiftiDL_aaaaaaaa0001": {
+      "task_id": "NiftiDL_aaaaaaaa0001",
+      "piece": {
+        "name": "NiftiDataLoaderPiece",
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0"
+      },
+      "workflow_shared_storage": {
+        "source": "Local",
+        "mode": "Read/Write",
+        "provider_options": {}
+      },
+      "dependencies": [],
+      "container_resources": {
+        "requests": {
+          "cpu": 200,
+          "memory": 256
+        },
+        "limits": {
+          "cpu": 500,
+          "memory": 512
+        },
+        "use_gpu": false
+      },
+      "piece_input_kwargs": {
+        "images_path": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": "/home/shared_storage/medical_data/images"
+        },
+        "masks_path": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": "/home/shared_storage/medical_data/masks"
+        },
+        "file_pattern": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": "*.nii.gz"
+        }
+      }
+    },
+    "DataSplit_aaaaaaaa0002": {
+      "task_id": "DataSplit_aaaaaaaa0002",
+      "piece": {
+        "name": "DataSplitPiece",
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0"
+      },
+      "workflow_shared_storage": {
+        "source": "Local",
+        "mode": "Read/Write",
+        "provider_options": {}
+      },
+      "dependencies": [
+        "NiftiDL_aaaaaaaa0001"
+      ],
+      "container_resources": {
+        "requests": {
+          "cpu": 200,
+          "memory": 256
+        },
+        "limits": {
+          "cpu": 500,
+          "memory": 512
+        },
+        "use_gpu": false
+      },
+      "piece_input_kwargs": {
+        "subjects": {
+          "fromUpstream": true,
+          "upstreamTaskId": "NiftiDL_aaaaaaaa0001",
+          "upstreamArgument": "subjects",
+          "value": ""
+        },
+        "train_ratio": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 0.7
+        },
+        "val_ratio": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 0.15
+        },
+        "test_ratio": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 0.15
+        },
+        "random_seed": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 42
+        },
+        "split_strategy": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": "random"
+        }
+      }
+    },
+    "NiftiPP_aaaaaaaa0003": {
+      "task_id": "NiftiPP_aaaaaaaa0003",
+      "piece": {
+        "name": "NiftiPreprocessingPiece",
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0"
+      },
+      "workflow_shared_storage": {
+        "source": "Local",
+        "mode": "Read/Write",
+        "provider_options": {}
+      },
+      "dependencies": [
+        "DataSplit_aaaaaaaa0002"
+      ],
+      "container_resources": {
+        "requests": {
+          "cpu": 500,
+          "memory": 512
+        },
+        "limits": {
+          "cpu": 1000,
+          "memory": 1024
+        },
+        "use_gpu": false
+      },
+      "piece_input_kwargs": {
+        "subjects": {
+          "fromUpstream": true,
+          "upstreamTaskId": "DataSplit_aaaaaaaa0002",
+          "upstreamArgument": "train_subjects",
+          "value": ""
+        },
+        "output_dir": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": "/home/shared_storage/medical_data/preprocessed/train"
+        },
+        "normalization": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": "percentile"
+        },
+        "lower_percentile": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 1.0
+        },
+        "upper_percentile": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 99.0
+        },
+        "save_as_numpy": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": true
+        },
+        "target_shape": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": null
+        }
+      }
+    },
+    "NiftiPP_aaaaaaaa0004": {
+      "task_id": "NiftiPP_aaaaaaaa0004",
+      "piece": {
+        "name": "NiftiPreprocessingPiece",
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0"
+      },
+      "workflow_shared_storage": {
+        "source": "Local",
+        "mode": "Read/Write",
+        "provider_options": {}
+      },
+      "dependencies": [
+        "DataSplit_aaaaaaaa0002"
+      ],
+      "container_resources": {
+        "requests": {
+          "cpu": 500,
+          "memory": 512
+        },
+        "limits": {
+          "cpu": 1000,
+          "memory": 1024
+        },
+        "use_gpu": false
+      },
+      "piece_input_kwargs": {
+        "subjects": {
+          "fromUpstream": true,
+          "upstreamTaskId": "DataSplit_aaaaaaaa0002",
+          "upstreamArgument": "val_subjects",
+          "value": ""
+        },
+        "output_dir": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": "/home/shared_storage/medical_data/preprocessed/val"
+        },
+        "normalization": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": "percentile"
+        },
+        "lower_percentile": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 1.0
+        },
+        "upper_percentile": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 99.0
+        },
+        "save_as_numpy": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": true
+        },
+        "target_shape": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": null
+        }
+      }
+    },
+    "NiftiPP_aaaaaaaa0005": {
+      "task_id": "NiftiPP_aaaaaaaa0005",
+      "piece": {
+        "name": "NiftiPreprocessingPiece",
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0"
+      },
+      "workflow_shared_storage": {
+        "source": "Local",
+        "mode": "Read/Write",
+        "provider_options": {}
+      },
+      "dependencies": [
+        "DataSplit_aaaaaaaa0002"
+      ],
+      "container_resources": {
+        "requests": {
+          "cpu": 500,
+          "memory": 512
+        },
+        "limits": {
+          "cpu": 1000,
+          "memory": 1024
+        },
+        "use_gpu": false
+      },
+      "piece_input_kwargs": {
+        "subjects": {
+          "fromUpstream": true,
+          "upstreamTaskId": "DataSplit_aaaaaaaa0002",
+          "upstreamArgument": "test_subjects",
+          "value": ""
+        },
+        "output_dir": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": "/home/shared_storage/medical_data/preprocessed/test"
+        },
+        "normalization": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": "percentile"
+        },
+        "lower_percentile": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 1.0
+        },
+        "upper_percentile": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 99.0
+        },
+        "save_as_numpy": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": true
+        },
+        "target_shape": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": null
+        }
+      }
+    },
+    "PituitDS_aaaaaaaa0006": {
+      "task_id": "PituitDS_aaaaaaaa0006",
+      "piece": {
+        "name": "PituitaryDatasetPiece",
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0"
+      },
+      "workflow_shared_storage": {
+        "source": "Local",
+        "mode": "Read/Write",
+        "provider_options": {}
+      },
+      "dependencies": [
+        "NiftiPP_aaaaaaaa0003",
+        "NiftiPP_aaaaaaaa0004",
+        "NiftiPP_aaaaaaaa0005"
+      ],
+      "container_resources": {
+        "requests": {
+          "cpu": 200,
+          "memory": 256
+        },
+        "limits": {
+          "cpu": 500,
+          "memory": 512
+        },
+        "use_gpu": false
+      },
+      "piece_input_kwargs": {
+        "train_subjects": {
+          "fromUpstream": true,
+          "upstreamTaskId": "NiftiPP_aaaaaaaa0003",
+          "upstreamArgument": "preprocessed_subjects",
+          "value": ""
+        },
+        "val_subjects": {
+          "fromUpstream": true,
+          "upstreamTaskId": "NiftiPP_aaaaaaaa0004",
+          "upstreamArgument": "preprocessed_subjects",
+          "value": ""
+        },
+        "test_subjects": {
+          "fromUpstream": true,
+          "upstreamTaskId": "NiftiPP_aaaaaaaa0005",
+          "upstreamArgument": "preprocessed_subjects",
+          "value": ""
+        },
+        "batch_size": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 2
+        },
+        "num_workers": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 0
+        },
+        "shuffle_train": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": true
+        }
+      }
+    },
+    "ModelTR_aaaaaaaa0007": {
+      "task_id": "ModelTR_aaaaaaaa0007",
+      "piece": {
+        "name": "ModelTrainingPiece",
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group1"
+      },
+      "workflow_shared_storage": {
+        "source": "Local",
+        "mode": "Read/Write",
+        "provider_options": {}
+      },
+      "dependencies": [
+        "PituitDS_aaaaaaaa0006"
+      ],
+      "container_resources": {
+        "requests": {
+          "cpu": 1000,
+          "memory": 2048
+        },
+        "limits": {
+          "cpu": 2000,
+          "memory": 8192
+        },
+        "use_gpu": true
+      },
+      "piece_input_kwargs": {
+        "subjects": {
+          "fromUpstream": true,
+          "upstreamTaskId": "PituitDS_aaaaaaaa0006",
+          "upstreamArgument": "subjects",
+          "value": ""
+        },
+        "dataset_config_path": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": null
+        },
+        "data_root": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": "/home/shared_storage/medical_data"
+        },
+        "train_val_split": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 0.8
+        },
+        "output_dir": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": "/home/shared_storage/models"
+        },
+        "model_architecture": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": "unet"
+        },
+        "num_classes": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 2
+        },
+        "epochs": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 50
+        },
+        "batch_size": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 2
+        },
+        "learning_rate": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 0.0001
+        },
+        "weight_decay": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 1e-05
+        },
+        "patch_size": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 64
+        },
+        "samples_per_volume": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 20
+        },
+        "foreground_oversample": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 0.9
+        },
+        "use_augmentation": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": true
+        },
+        "augmentation_probability": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 0.5
+        },
+        "class_weights": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": null
+        },
+        "lr_scheduler_patience": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 10
+        },
+        "early_stopping_patience": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 20
+        },
+        "eval_interval": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 1
+        },
+        "save_checkpoint_interval": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 5
+        },
+        "num_workers": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 0
+        },
+        "random_seed": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 42
+        },
+        "use_gpu": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": true
+        }
+      }
+    },
+    "ModelINF_aaaaaaaa0008": {
+      "task_id": "ModelINF_aaaaaaaa0008",
+      "piece": {
+        "name": "ModelInferencePiece",
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group1"
+      },
+      "workflow_shared_storage": {
+        "source": "Local",
+        "mode": "Read/Write",
+        "provider_options": {}
+      },
+      "dependencies": [
+        "ModelTR_aaaaaaaa0007"
+      ],
+      "container_resources": {
+        "requests": {
+          "cpu": 1000,
+          "memory": 2048
+        },
+        "limits": {
+          "cpu": 2000,
+          "memory": 8192
+        },
+        "use_gpu": true
+      },
+      "piece_input_kwargs": {
+        "subjects": {
+          "fromUpstream": true,
+          "upstreamTaskId": "ModelTR_aaaaaaaa0007",
+          "upstreamArgument": "validation_subjects",
+          "value": ""
+        },
+        "image_paths": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": null
+        },
+        "mask_paths": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": null
+        },
+        "model_path": {
+          "fromUpstream": true,
+          "upstreamTaskId": "ModelTR_aaaaaaaa0007",
+          "upstreamArgument": "best_model_path",
+          "value": ""
+        },
+        "model_architecture": {
+          "fromUpstream": true,
+          "upstreamTaskId": "ModelTR_aaaaaaaa0007",
+          "upstreamArgument": "model_architecture",
+          "value": ""
+        },
+        "num_classes": {
+          "fromUpstream": true,
+          "upstreamTaskId": "ModelTR_aaaaaaaa0007",
+          "upstreamArgument": "num_classes",
+          "value": ""
+        },
+        "patch_size": {
+          "fromUpstream": true,
+          "upstreamTaskId": "ModelTR_aaaaaaaa0007",
+          "upstreamArgument": "patch_size",
+          "value": ""
+        },
+        "output_dir": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": "/home/shared_storage/inference_results"
+        },
+        "save_visualizations": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": true
+        },
+        "save_predictions": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": true
+        },
+        "num_samples": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 0
+        },
+        "samples_per_volume": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 5
+        },
+        "batch_size": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 1
+        },
+        "use_gpu": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": true
+        }
+      }
+    },
+    "NiftiEDA_aaaaaaaa0009": {
+      "task_id": "NiftiEDA_aaaaaaaa0009",
+      "piece": {
+        "name": "NiftiEDAPiece",
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0"
+      },
+      "workflow_shared_storage": {
+        "source": "Local",
+        "mode": "Read/Write",
+        "provider_options": {}
+      },
+      "dependencies": [
+        "NiftiDL_aaaaaaaa0001"
+      ],
+      "container_resources": {
+        "requests": {
+          "cpu": 500,
+          "memory": 512
+        },
+        "limits": {
+          "cpu": 1000,
+          "memory": 1024
+        },
+        "use_gpu": false
+      },
+      "piece_input_kwargs": {
+        "subjects": {
+          "fromUpstream": true,
+          "upstreamTaskId": "NiftiDL_aaaaaaaa0001",
+          "upstreamArgument": "subjects",
+          "value": ""
+        },
+        "max_subjects": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 50
+        }
+      }
+    },
+    "NiftiVIZ_aaaaaaaa0010": {
+      "task_id": "NiftiVIZ_aaaaaaaa0010",
+      "piece": {
+        "name": "NiftiVisualizationPiece",
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0"
+      },
+      "workflow_shared_storage": {
+        "source": "Local",
+        "mode": "Read/Write",
+        "provider_options": {}
+      },
+      "dependencies": [
+        "NiftiDL_aaaaaaaa0001"
+      ],
+      "container_resources": {
+        "requests": {
+          "cpu": 200,
+          "memory": 256
+        },
+        "limits": {
+          "cpu": 500,
+          "memory": 512
+        },
+        "use_gpu": false
+      },
+      "piece_input_kwargs": {
+        "images_path": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": "/home/shared_storage/medical_data/images"
+        },
+        "masks_path": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": "/home/shared_storage/medical_data/masks"
+        },
+        "file_pattern": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": "*.nii.gz"
+        },
+        "max_subjects": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": 6
+        },
+        "view_plane": {
+          "fromUpstream": false,
+          "upstreamTaskId": null,
+          "upstreamArgument": null,
+          "value": "axial"
+        }
+      }
+    }
+  },
+  "ui_schema": {
+    "nodes": {
+      "NiftiDL_aaaaaaaa0001": {
+        "id": "NiftiDL_aaaaaaaa0001",
+        "type": "CustomNode",
+        "position": {
+          "x": 100,
+          "y": 200
+        },
+        "data": {
+          "name": "NiftiDataLoaderPiece",
+          "style": {},
+          "validationError": false,
+          "orientation": "horizontal"
+        },
+        "width": 160,
+        "height": 70,
+        "selected": false,
+        "dragging": false
+      },
+      "DataSplit_aaaaaaaa0002": {
+        "id": "DataSplit_aaaaaaaa0002",
+        "type": "CustomNode",
+        "position": {
+          "x": 350,
+          "y": 200
+        },
+        "data": {
+          "name": "DataSplitPiece",
+          "style": {},
+          "validationError": false,
+          "orientation": "horizontal"
+        },
+        "width": 160,
+        "height": 70,
+        "selected": false,
+        "dragging": false
+      },
+      "NiftiPP_aaaaaaaa0003": {
+        "id": "NiftiPP_aaaaaaaa0003",
+        "type": "CustomNode",
+        "position": {
+          "x": 600,
+          "y": 80
+        },
+        "data": {
+          "name": "NiftiPreprocessingPiece",
+          "style": {},
+          "validationError": false,
+          "orientation": "horizontal"
+        },
+        "width": 160,
+        "height": 70,
+        "selected": false,
+        "dragging": false
+      },
+      "NiftiPP_aaaaaaaa0004": {
+        "id": "NiftiPP_aaaaaaaa0004",
+        "type": "CustomNode",
+        "position": {
+          "x": 600,
+          "y": 200
+        },
+        "data": {
+          "name": "NiftiPreprocessingPiece",
+          "style": {},
+          "validationError": false,
+          "orientation": "horizontal"
+        },
+        "width": 160,
+        "height": 70,
+        "selected": false,
+        "dragging": false
+      },
+      "NiftiPP_aaaaaaaa0005": {
+        "id": "NiftiPP_aaaaaaaa0005",
+        "type": "CustomNode",
+        "position": {
+          "x": 600,
+          "y": 320
+        },
+        "data": {
+          "name": "NiftiPreprocessingPiece",
+          "style": {},
+          "validationError": false,
+          "orientation": "horizontal"
+        },
+        "width": 160,
+        "height": 70,
+        "selected": false,
+        "dragging": false
+      },
+      "PituitDS_aaaaaaaa0006": {
+        "id": "PituitDS_aaaaaaaa0006",
+        "type": "CustomNode",
+        "position": {
+          "x": 850,
+          "y": 200
+        },
+        "data": {
+          "name": "PituitaryDatasetPiece",
+          "style": {},
+          "validationError": false,
+          "orientation": "horizontal"
+        },
+        "width": 160,
+        "height": 70,
+        "selected": false,
+        "dragging": false
+      },
+      "ModelTR_aaaaaaaa0007": {
+        "id": "ModelTR_aaaaaaaa0007",
+        "type": "CustomNode",
+        "position": {
+          "x": 1100,
+          "y": 200
+        },
+        "data": {
+          "name": "ModelTrainingPiece",
+          "style": {},
+          "validationError": false,
+          "orientation": "horizontal"
+        },
+        "width": 160,
+        "height": 70,
+        "selected": false,
+        "dragging": false
+      },
+      "ModelINF_aaaaaaaa0008": {
+        "id": "ModelINF_aaaaaaaa0008",
+        "type": "CustomNode",
+        "position": {
+          "x": 1350,
+          "y": 200
+        },
+        "data": {
+          "name": "ModelInferencePiece",
+          "style": {},
+          "validationError": false,
+          "orientation": "horizontal"
+        },
+        "width": 160,
+        "height": 70,
+        "selected": false,
+        "dragging": false
+      },
+      "NiftiEDA_aaaaaaaa0009": {
+        "id": "NiftiEDA_aaaaaaaa0009",
+        "type": "CustomNode",
+        "position": {
+          "x": 350,
+          "y": 460
+        },
+        "data": {
+          "name": "NiftiEDAPiece",
+          "style": {},
+          "validationError": false,
+          "orientation": "horizontal"
+        },
+        "width": 160,
+        "height": 70,
+        "selected": false,
+        "dragging": false
+      },
+      "NiftiVIZ_aaaaaaaa0010": {
+        "id": "NiftiVIZ_aaaaaaaa0010",
+        "type": "CustomNode",
+        "position": {
+          "x": 600,
+          "y": 460
+        },
+        "data": {
+          "name": "NiftiVisualizationPiece",
+          "style": {},
+          "validationError": false,
+          "orientation": "horizontal"
+        },
+        "width": 160,
+        "height": 70,
+        "selected": false,
+        "dragging": false
+      }
+    },
+    "edges": [
+      {
+        "id": "e_NiftiDL_aaaaaaaa0001-DataSplit_aaaaaaaa0002",
+        "source": "NiftiDL_aaaaaaaa0001",
+        "target": "DataSplit_aaaaaaaa0002",
+        "label": "subjects",
+        "animated": true,
+        "type": "default"
+      },
+      {
+        "id": "e_DataSplit_aaaaaaaa0002-NiftiPP_aaaaaaaa0003",
+        "source": "DataSplit_aaaaaaaa0002",
+        "target": "NiftiPP_aaaaaaaa0003",
+        "label": "train_subjects",
+        "animated": true,
+        "type": "default"
+      },
+      {
+        "id": "e_DataSplit_aaaaaaaa0002-NiftiPP_aaaaaaaa0004",
+        "source": "DataSplit_aaaaaaaa0002",
+        "target": "NiftiPP_aaaaaaaa0004",
+        "label": "val_subjects",
+        "animated": true,
+        "type": "default"
+      },
+      {
+        "id": "e_DataSplit_aaaaaaaa0002-NiftiPP_aaaaaaaa0005",
+        "source": "DataSplit_aaaaaaaa0002",
+        "target": "NiftiPP_aaaaaaaa0005",
+        "label": "test_subjects",
+        "animated": true,
+        "type": "default"
+      },
+      {
+        "id": "e_NiftiPP_aaaaaaaa0003-PituitDS_aaaaaaaa0006",
+        "source": "NiftiPP_aaaaaaaa0003",
+        "target": "PituitDS_aaaaaaaa0006",
+        "label": "preprocessed",
+        "animated": true,
+        "type": "default"
+      },
+      {
+        "id": "e_NiftiPP_aaaaaaaa0004-PituitDS_aaaaaaaa0006",
+        "source": "NiftiPP_aaaaaaaa0004",
+        "target": "PituitDS_aaaaaaaa0006",
+        "label": "preprocessed",
+        "animated": true,
+        "type": "default"
+      },
+      {
+        "id": "e_NiftiPP_aaaaaaaa0005-PituitDS_aaaaaaaa0006",
+        "source": "NiftiPP_aaaaaaaa0005",
+        "target": "PituitDS_aaaaaaaa0006",
+        "label": "preprocessed",
+        "animated": true,
+        "type": "default"
+      },
+      {
+        "id": "e_PituitDS_aaaaaaaa0006-ModelTR_aaaaaaaa0007",
+        "source": "PituitDS_aaaaaaaa0006",
+        "target": "ModelTR_aaaaaaaa0007",
+        "label": "subjects",
+        "animated": true,
+        "type": "default"
+      },
+      {
+        "id": "e_ModelTR_aaaaaaaa0007-ModelINF_aaaaaaaa0008",
+        "source": "ModelTR_aaaaaaaa0007",
+        "target": "ModelINF_aaaaaaaa0008",
+        "label": "model+subjects",
+        "animated": true,
+        "type": "default"
+      },
+      {
+        "id": "e_NiftiDL_aaaaaaaa0001-NiftiEDA_aaaaaaaa0009",
+        "source": "NiftiDL_aaaaaaaa0001",
+        "target": "NiftiEDA_aaaaaaaa0009",
+        "label": "subjects",
+        "animated": true,
+        "type": "default"
+      },
+      {
+        "id": "e_NiftiDL_aaaaaaaa0001-NiftiVIZ_aaaaaaaa0010",
+        "source": "NiftiDL_aaaaaaaa0001",
+        "target": "NiftiVIZ_aaaaaaaa0010",
+        "label": "subjects",
+        "animated": true,
+        "type": "default"
+      }
+    ]
+  },
+  "forageSchema": {
+    "workflowPieces": {
+      "NiftiDL_aaaaaaaa0001": {
+        "id": 21,
+        "name": "NiftiDataLoaderPiece",
+        "description": "Discovers and loads NIfTI medical imaging data (.nii.gz files). Pairs images with corresponding segmentation masks based on filename matching.",
+        "dependency": {
+          "dockerfile": "Dockerfile_base",
+          "requirements_file": null
+        },
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0",
+        "input_schema": {
+          "description": "NIfTI Data Loader Piece Input Model",
+          "properties": {
+            "images_path": {
+              "default": "/home/shared_storage/medical_data/images",
+              "description": "Path to the directory containing NIfTI image files (.nii.gz)",
+              "title": "Images Path",
+              "type": "string"
+            },
+            "masks_path": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "/home/shared_storage/medical_data/masks",
+              "description": "Path to the directory containing NIfTI mask/segmentation files (.nii.gz). Optional for inference-only mode.",
+              "title": "Masks Path"
+            },
+            "file_pattern": {
+              "default": "*.nii.gz",
+              "description": "Glob pattern to match NIfTI files (e.g., 'sub-*.nii.gz')",
+              "title": "File Pattern",
+              "type": "string"
+            }
+          },
+          "title": "NiftiDataLoaderPiece",
+          "type": "object"
+        },
+        "output_schema": {
+          "$defs": {
+            "SubjectInfo": {
+              "description": "Information about a single subject/scan",
+              "properties": {
+                "subject_id": {
+                  "title": "Subject Id",
+                  "type": "string"
+                },
+                "image_path": {
+                  "title": "Image Path",
+                  "type": "string"
+                },
+                "mask_path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Mask Path"
+                }
+              },
+              "required": [
+                "subject_id",
+                "image_path"
+              ],
+              "title": "SubjectInfo",
+              "type": "object"
+            }
+          },
+          "description": "NIfTI Data Loader Piece Output Model",
+          "properties": {
+            "subjects": {
+              "description": "List of discovered subjects with their image and mask paths",
+              "items": {
+                "$ref": "#/$defs/SubjectInfo"
+              },
+              "title": "Subjects",
+              "type": "array"
+            },
+            "num_subjects": {
+              "description": "Total number of subjects found",
+              "title": "Num Subjects",
+              "type": "integer"
+            },
+            "images_dir": {
+              "description": "Path to images directory",
+              "title": "Images Dir",
+              "type": "string"
+            },
+            "masks_dir": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Path to masks directory (if provided)",
+              "title": "Masks Dir"
+            }
+          },
+          "required": [
+            "subjects",
+            "num_subjects",
+            "images_dir",
+            "masks_dir"
+          ],
+          "title": "OutputModel",
+          "type": "object"
+        },
+        "secrets_schema": {},
+        "style": {
+          "module": "NiftiDataLoaderPiece",
+          "label": "NIfTI Loader",
+          "nodeType": "default",
+          "nodeStyle": {
+            "backgroundColor": "#ebebeb"
+          },
+          "useIcon": true,
+          "iconClassName": "fa-solid:file-medical",
+          "iconStyle": {
+            "cursor": "pointer"
+          }
+        },
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/NiftiDataLoaderPiece",
+        "repository_id": 3
+      },
+      "DataSplit_aaaaaaaa0002": {
+        "id": 19,
+        "name": "DataSplitPiece",
+        "description": "Splits dataset subjects into train/validation/test sets with configurable ratios. Supports random and sequential splitting strategies.",
+        "dependency": {
+          "dockerfile": "Dockerfile_base",
+          "requirements_file": null
+        },
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0",
+        "input_schema": {
+          "$defs": {
+            "SplitStrategy": {
+              "description": "Strategy for splitting data",
+              "enum": [
+                "random",
+                "sequential"
+              ],
+              "title": "SplitStrategy",
+              "type": "string"
+            },
+            "SubjectInfo": {
+              "description": "Information about a single subject/scan",
+              "properties": {
+                "subject_id": {
+                  "title": "Subject Id",
+                  "type": "string"
+                },
+                "image_path": {
+                  "title": "Image Path",
+                  "type": "string"
+                },
+                "mask_path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Mask Path"
+                }
+              },
+              "required": [
+                "subject_id",
+                "image_path"
+              ],
+              "title": "SubjectInfo",
+              "type": "object"
+            }
+          },
+          "description": "Data Split Piece Input Model",
+          "properties": {
+            "subjects": {
+              "description": "List of subjects to split (from NiftiDataLoaderPiece)",
+              "items": {
+                "$ref": "#/$defs/SubjectInfo"
+              },
+              "title": "Subjects",
+              "type": "array"
+            },
+            "train_ratio": {
+              "default": 0.7,
+              "description": "Proportion of data for training (0.0-1.0)",
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "title": "Train Ratio",
+              "type": "number"
+            },
+            "val_ratio": {
+              "default": 0.15,
+              "description": "Proportion of data for validation (0.0-1.0)",
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "title": "Val Ratio",
+              "type": "number"
+            },
+            "test_ratio": {
+              "default": 0.15,
+              "description": "Proportion of data for testing (0.0-1.0). If not specified, uses remaining data.",
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "title": "Test Ratio",
+              "type": "number"
+            },
+            "random_seed": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": 42,
+              "description": "Random seed for reproducible splits",
+              "title": "Random Seed"
+            },
+            "split_strategy": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/SplitStrategy"
+                }
+              ],
+              "default": "random",
+              "description": "Strategy for splitting: 'random' shuffles data, 'sequential' keeps order"
+            }
+          },
+          "required": [
+            "subjects"
+          ],
+          "title": "DataSplitPiece",
+          "type": "object"
+        },
+        "output_schema": {
+          "$defs": {
+            "SubjectInfo": {
+              "description": "Information about a single subject/scan",
+              "properties": {
+                "subject_id": {
+                  "title": "Subject Id",
+                  "type": "string"
+                },
+                "image_path": {
+                  "title": "Image Path",
+                  "type": "string"
+                },
+                "mask_path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Mask Path"
+                }
+              },
+              "required": [
+                "subject_id",
+                "image_path"
+              ],
+              "title": "SubjectInfo",
+              "type": "object"
+            }
+          },
+          "description": "Data Split Piece Output Model",
+          "properties": {
+            "train_subjects": {
+              "description": "Subjects assigned to training set",
+              "items": {
+                "$ref": "#/$defs/SubjectInfo"
+              },
+              "title": "Train Subjects",
+              "type": "array"
+            },
+            "val_subjects": {
+              "description": "Subjects assigned to validation set",
+              "items": {
+                "$ref": "#/$defs/SubjectInfo"
+              },
+              "title": "Val Subjects",
+              "type": "array"
+            },
+            "test_subjects": {
+              "description": "Subjects assigned to test set",
+              "items": {
+                "$ref": "#/$defs/SubjectInfo"
+              },
+              "title": "Test Subjects",
+              "type": "array"
+            },
+            "train_count": {
+              "description": "Number of training subjects",
+              "title": "Train Count",
+              "type": "integer"
+            },
+            "val_count": {
+              "description": "Number of validation subjects",
+              "title": "Val Count",
+              "type": "integer"
+            },
+            "test_count": {
+              "description": "Number of test subjects",
+              "title": "Test Count",
+              "type": "integer"
+            },
+            "total_count": {
+              "description": "Total number of subjects",
+              "title": "Total Count",
+              "type": "integer"
+            },
+            "split_info": {
+              "description": "Summary information about the split",
+              "title": "Split Info",
+              "type": "object"
+            }
+          },
+          "required": [
+            "train_subjects",
+            "val_subjects",
+            "test_subjects",
+            "train_count",
+            "val_count",
+            "test_count",
+            "total_count",
+            "split_info"
+          ],
+          "title": "OutputModel",
+          "type": "object"
+        },
+        "secrets_schema": {},
+        "style": {
+          "module": "DataSplitPiece",
+          "label": "Data Split",
+          "nodeType": "default",
+          "nodeStyle": {
+            "backgroundColor": "#ebebeb"
+          },
+          "useIcon": true,
+          "iconClassName": "fa-solid:code-branch",
+          "iconStyle": {
+            "cursor": "pointer"
+          }
+        },
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/DataSplitPiece",
+        "repository_id": 3
+      },
+      "NiftiPP_aaaaaaaa0003": {
+        "id": 18,
+        "name": "NiftiPreprocessingPiece",
+        "description": "Preprocesses NIfTI medical imaging data with normalization (z-score, min-max, percentile), optional resizing, and conversion to NumPy format for efficient ML training.",
+        "dependency": {
+          "dockerfile": "Dockerfile_base",
+          "requirements_file": null
+        },
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0",
+        "input_schema": {
+          "$defs": {
+            "NormalizationMethod": {
+              "description": "Normalization methods for medical images",
+              "enum": [
+                "zscore",
+                "minmax",
+                "percentile",
+                "none"
+              ],
+              "title": "NormalizationMethod",
+              "type": "string"
+            },
+            "SubjectInfo": {
+              "description": "Information about a single subject/scan",
+              "properties": {
+                "subject_id": {
+                  "title": "Subject Id",
+                  "type": "string"
+                },
+                "image_path": {
+                  "title": "Image Path",
+                  "type": "string"
+                },
+                "mask_path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Mask Path"
+                }
+              },
+              "required": [
+                "subject_id",
+                "image_path"
+              ],
+              "title": "SubjectInfo",
+              "type": "object"
+            }
+          },
+          "description": "NIfTI Preprocessing Piece Input Model",
+          "properties": {
+            "subjects": {
+              "description": "List of subjects to preprocess",
+              "items": {
+                "$ref": "#/$defs/SubjectInfo"
+              },
+              "title": "Subjects",
+              "type": "array"
+            },
+            "output_dir": {
+              "default": "/home/shared_storage/medical_data/preprocessed",
+              "description": "Directory to save preprocessed data",
+              "title": "Output Dir",
+              "type": "string"
+            },
+            "normalization": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/NormalizationMethod"
+                }
+              ],
+              "default": "zscore",
+              "description": "Normalization method to apply"
+            },
+            "lower_percentile": {
+              "default": 1.0,
+              "description": "Lower percentile for clipping (used with 'percentile' normalization)",
+              "maximum": 50.0,
+              "minimum": 0.0,
+              "title": "Lower Percentile",
+              "type": "number"
+            },
+            "upper_percentile": {
+              "default": 99.0,
+              "description": "Upper percentile for clipping (used with 'percentile' normalization)",
+              "maximum": 100.0,
+              "minimum": 50.0,
+              "title": "Upper Percentile",
+              "type": "number"
+            },
+            "save_as_numpy": {
+              "default": true,
+              "description": "Save preprocessed data as NumPy arrays (.npy) for faster loading",
+              "title": "Save As Numpy",
+              "type": "boolean"
+            },
+            "target_shape": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "integer"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Target shape for resizing (e.g., [128, 128, 64]). None = keep original.",
+              "title": "Target Shape"
+            }
+          },
+          "required": [
+            "subjects"
+          ],
+          "title": "NiftiPreprocessingPiece",
+          "type": "object"
+        },
+        "output_schema": {
+          "$defs": {
+            "PreprocessedSubject": {
+              "description": "Information about a preprocessed subject",
+              "properties": {
+                "subject_id": {
+                  "title": "Subject Id",
+                  "type": "string"
+                },
+                "original_image_path": {
+                  "title": "Original Image Path",
+                  "type": "string"
+                },
+                "preprocessed_image_path": {
+                  "title": "Preprocessed Image Path",
+                  "type": "string"
+                },
+                "preprocessed_mask_path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Preprocessed Mask Path"
+                },
+                "original_shape": {
+                  "items": {
+                    "type": "integer"
+                  },
+                  "title": "Original Shape",
+                  "type": "array"
+                },
+                "preprocessed_shape": {
+                  "items": {
+                    "type": "integer"
+                  },
+                  "title": "Preprocessed Shape",
+                  "type": "array"
+                },
+                "image_stats": {
+                  "title": "Image Stats",
+                  "type": "object"
+                }
+              },
+              "required": [
+                "subject_id",
+                "original_image_path",
+                "preprocessed_image_path",
+                "original_shape",
+                "preprocessed_shape",
+                "image_stats"
+              ],
+              "title": "PreprocessedSubject",
+              "type": "object"
+            }
+          },
+          "description": "NIfTI Preprocessing Piece Output Model",
+          "properties": {
+            "preprocessed_subjects": {
+              "description": "List of preprocessed subjects with paths and statistics",
+              "items": {
+                "$ref": "#/$defs/PreprocessedSubject"
+              },
+              "title": "Preprocessed Subjects",
+              "type": "array"
+            },
+            "output_dir": {
+              "description": "Directory containing preprocessed data",
+              "title": "Output Dir",
+              "type": "string"
+            },
+            "num_processed": {
+              "description": "Number of successfully preprocessed subjects",
+              "title": "Num Processed",
+              "type": "integer"
+            },
+            "num_failed": {
+              "description": "Number of subjects that failed preprocessing",
+              "title": "Num Failed",
+              "type": "integer"
+            },
+            "preprocessing_config": {
+              "description": "Configuration used for preprocessing",
+              "title": "Preprocessing Config",
+              "type": "object"
+            }
+          },
+          "required": [
+            "preprocessed_subjects",
+            "output_dir",
+            "num_processed",
+            "num_failed",
+            "preprocessing_config"
+          ],
+          "title": "OutputModel",
+          "type": "object"
+        },
+        "secrets_schema": {},
+        "style": {
+          "module": "NiftiPreprocessingPiece",
+          "label": "Preprocess NIfTI",
+          "nodeType": "default",
+          "nodeStyle": {
+            "backgroundColor": "#ebebeb"
+          },
+          "useIcon": true,
+          "iconClassName": "fa-solid:filter",
+          "iconStyle": {
+            "cursor": "pointer"
+          }
+        },
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/NiftiPreprocessingPiece",
+        "repository_id": 3
+      },
+      "NiftiPP_aaaaaaaa0004": {
+        "id": 18,
+        "name": "NiftiPreprocessingPiece",
+        "description": "Preprocesses NIfTI medical imaging data with normalization (z-score, min-max, percentile), optional resizing, and conversion to NumPy format for efficient ML training.",
+        "dependency": {
+          "dockerfile": "Dockerfile_base",
+          "requirements_file": null
+        },
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0",
+        "input_schema": {
+          "$defs": {
+            "NormalizationMethod": {
+              "description": "Normalization methods for medical images",
+              "enum": [
+                "zscore",
+                "minmax",
+                "percentile",
+                "none"
+              ],
+              "title": "NormalizationMethod",
+              "type": "string"
+            },
+            "SubjectInfo": {
+              "description": "Information about a single subject/scan",
+              "properties": {
+                "subject_id": {
+                  "title": "Subject Id",
+                  "type": "string"
+                },
+                "image_path": {
+                  "title": "Image Path",
+                  "type": "string"
+                },
+                "mask_path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Mask Path"
+                }
+              },
+              "required": [
+                "subject_id",
+                "image_path"
+              ],
+              "title": "SubjectInfo",
+              "type": "object"
+            }
+          },
+          "description": "NIfTI Preprocessing Piece Input Model",
+          "properties": {
+            "subjects": {
+              "description": "List of subjects to preprocess",
+              "items": {
+                "$ref": "#/$defs/SubjectInfo"
+              },
+              "title": "Subjects",
+              "type": "array"
+            },
+            "output_dir": {
+              "default": "/home/shared_storage/medical_data/preprocessed",
+              "description": "Directory to save preprocessed data",
+              "title": "Output Dir",
+              "type": "string"
+            },
+            "normalization": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/NormalizationMethod"
+                }
+              ],
+              "default": "zscore",
+              "description": "Normalization method to apply"
+            },
+            "lower_percentile": {
+              "default": 1.0,
+              "description": "Lower percentile for clipping (used with 'percentile' normalization)",
+              "maximum": 50.0,
+              "minimum": 0.0,
+              "title": "Lower Percentile",
+              "type": "number"
+            },
+            "upper_percentile": {
+              "default": 99.0,
+              "description": "Upper percentile for clipping (used with 'percentile' normalization)",
+              "maximum": 100.0,
+              "minimum": 50.0,
+              "title": "Upper Percentile",
+              "type": "number"
+            },
+            "save_as_numpy": {
+              "default": true,
+              "description": "Save preprocessed data as NumPy arrays (.npy) for faster loading",
+              "title": "Save As Numpy",
+              "type": "boolean"
+            },
+            "target_shape": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "integer"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Target shape for resizing (e.g., [128, 128, 64]). None = keep original.",
+              "title": "Target Shape"
+            }
+          },
+          "required": [
+            "subjects"
+          ],
+          "title": "NiftiPreprocessingPiece",
+          "type": "object"
+        },
+        "output_schema": {
+          "$defs": {
+            "PreprocessedSubject": {
+              "description": "Information about a preprocessed subject",
+              "properties": {
+                "subject_id": {
+                  "title": "Subject Id",
+                  "type": "string"
+                },
+                "original_image_path": {
+                  "title": "Original Image Path",
+                  "type": "string"
+                },
+                "preprocessed_image_path": {
+                  "title": "Preprocessed Image Path",
+                  "type": "string"
+                },
+                "preprocessed_mask_path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Preprocessed Mask Path"
+                },
+                "original_shape": {
+                  "items": {
+                    "type": "integer"
+                  },
+                  "title": "Original Shape",
+                  "type": "array"
+                },
+                "preprocessed_shape": {
+                  "items": {
+                    "type": "integer"
+                  },
+                  "title": "Preprocessed Shape",
+                  "type": "array"
+                },
+                "image_stats": {
+                  "title": "Image Stats",
+                  "type": "object"
+                }
+              },
+              "required": [
+                "subject_id",
+                "original_image_path",
+                "preprocessed_image_path",
+                "original_shape",
+                "preprocessed_shape",
+                "image_stats"
+              ],
+              "title": "PreprocessedSubject",
+              "type": "object"
+            }
+          },
+          "description": "NIfTI Preprocessing Piece Output Model",
+          "properties": {
+            "preprocessed_subjects": {
+              "description": "List of preprocessed subjects with paths and statistics",
+              "items": {
+                "$ref": "#/$defs/PreprocessedSubject"
+              },
+              "title": "Preprocessed Subjects",
+              "type": "array"
+            },
+            "output_dir": {
+              "description": "Directory containing preprocessed data",
+              "title": "Output Dir",
+              "type": "string"
+            },
+            "num_processed": {
+              "description": "Number of successfully preprocessed subjects",
+              "title": "Num Processed",
+              "type": "integer"
+            },
+            "num_failed": {
+              "description": "Number of subjects that failed preprocessing",
+              "title": "Num Failed",
+              "type": "integer"
+            },
+            "preprocessing_config": {
+              "description": "Configuration used for preprocessing",
+              "title": "Preprocessing Config",
+              "type": "object"
+            }
+          },
+          "required": [
+            "preprocessed_subjects",
+            "output_dir",
+            "num_processed",
+            "num_failed",
+            "preprocessing_config"
+          ],
+          "title": "OutputModel",
+          "type": "object"
+        },
+        "secrets_schema": {},
+        "style": {
+          "module": "NiftiPreprocessingPiece",
+          "label": "Preprocess NIfTI",
+          "nodeType": "default",
+          "nodeStyle": {
+            "backgroundColor": "#ebebeb"
+          },
+          "useIcon": true,
+          "iconClassName": "fa-solid:filter",
+          "iconStyle": {
+            "cursor": "pointer"
+          }
+        },
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/NiftiPreprocessingPiece",
+        "repository_id": 3
+      },
+      "NiftiPP_aaaaaaaa0005": {
+        "id": 18,
+        "name": "NiftiPreprocessingPiece",
+        "description": "Preprocesses NIfTI medical imaging data with normalization (z-score, min-max, percentile), optional resizing, and conversion to NumPy format for efficient ML training.",
+        "dependency": {
+          "dockerfile": "Dockerfile_base",
+          "requirements_file": null
+        },
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0",
+        "input_schema": {
+          "$defs": {
+            "NormalizationMethod": {
+              "description": "Normalization methods for medical images",
+              "enum": [
+                "zscore",
+                "minmax",
+                "percentile",
+                "none"
+              ],
+              "title": "NormalizationMethod",
+              "type": "string"
+            },
+            "SubjectInfo": {
+              "description": "Information about a single subject/scan",
+              "properties": {
+                "subject_id": {
+                  "title": "Subject Id",
+                  "type": "string"
+                },
+                "image_path": {
+                  "title": "Image Path",
+                  "type": "string"
+                },
+                "mask_path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Mask Path"
+                }
+              },
+              "required": [
+                "subject_id",
+                "image_path"
+              ],
+              "title": "SubjectInfo",
+              "type": "object"
+            }
+          },
+          "description": "NIfTI Preprocessing Piece Input Model",
+          "properties": {
+            "subjects": {
+              "description": "List of subjects to preprocess",
+              "items": {
+                "$ref": "#/$defs/SubjectInfo"
+              },
+              "title": "Subjects",
+              "type": "array"
+            },
+            "output_dir": {
+              "default": "/home/shared_storage/medical_data/preprocessed",
+              "description": "Directory to save preprocessed data",
+              "title": "Output Dir",
+              "type": "string"
+            },
+            "normalization": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/NormalizationMethod"
+                }
+              ],
+              "default": "zscore",
+              "description": "Normalization method to apply"
+            },
+            "lower_percentile": {
+              "default": 1.0,
+              "description": "Lower percentile for clipping (used with 'percentile' normalization)",
+              "maximum": 50.0,
+              "minimum": 0.0,
+              "title": "Lower Percentile",
+              "type": "number"
+            },
+            "upper_percentile": {
+              "default": 99.0,
+              "description": "Upper percentile for clipping (used with 'percentile' normalization)",
+              "maximum": 100.0,
+              "minimum": 50.0,
+              "title": "Upper Percentile",
+              "type": "number"
+            },
+            "save_as_numpy": {
+              "default": true,
+              "description": "Save preprocessed data as NumPy arrays (.npy) for faster loading",
+              "title": "Save As Numpy",
+              "type": "boolean"
+            },
+            "target_shape": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "integer"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Target shape for resizing (e.g., [128, 128, 64]). None = keep original.",
+              "title": "Target Shape"
+            }
+          },
+          "required": [
+            "subjects"
+          ],
+          "title": "NiftiPreprocessingPiece",
+          "type": "object"
+        },
+        "output_schema": {
+          "$defs": {
+            "PreprocessedSubject": {
+              "description": "Information about a preprocessed subject",
+              "properties": {
+                "subject_id": {
+                  "title": "Subject Id",
+                  "type": "string"
+                },
+                "original_image_path": {
+                  "title": "Original Image Path",
+                  "type": "string"
+                },
+                "preprocessed_image_path": {
+                  "title": "Preprocessed Image Path",
+                  "type": "string"
+                },
+                "preprocessed_mask_path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Preprocessed Mask Path"
+                },
+                "original_shape": {
+                  "items": {
+                    "type": "integer"
+                  },
+                  "title": "Original Shape",
+                  "type": "array"
+                },
+                "preprocessed_shape": {
+                  "items": {
+                    "type": "integer"
+                  },
+                  "title": "Preprocessed Shape",
+                  "type": "array"
+                },
+                "image_stats": {
+                  "title": "Image Stats",
+                  "type": "object"
+                }
+              },
+              "required": [
+                "subject_id",
+                "original_image_path",
+                "preprocessed_image_path",
+                "original_shape",
+                "preprocessed_shape",
+                "image_stats"
+              ],
+              "title": "PreprocessedSubject",
+              "type": "object"
+            }
+          },
+          "description": "NIfTI Preprocessing Piece Output Model",
+          "properties": {
+            "preprocessed_subjects": {
+              "description": "List of preprocessed subjects with paths and statistics",
+              "items": {
+                "$ref": "#/$defs/PreprocessedSubject"
+              },
+              "title": "Preprocessed Subjects",
+              "type": "array"
+            },
+            "output_dir": {
+              "description": "Directory containing preprocessed data",
+              "title": "Output Dir",
+              "type": "string"
+            },
+            "num_processed": {
+              "description": "Number of successfully preprocessed subjects",
+              "title": "Num Processed",
+              "type": "integer"
+            },
+            "num_failed": {
+              "description": "Number of subjects that failed preprocessing",
+              "title": "Num Failed",
+              "type": "integer"
+            },
+            "preprocessing_config": {
+              "description": "Configuration used for preprocessing",
+              "title": "Preprocessing Config",
+              "type": "object"
+            }
+          },
+          "required": [
+            "preprocessed_subjects",
+            "output_dir",
+            "num_processed",
+            "num_failed",
+            "preprocessing_config"
+          ],
+          "title": "OutputModel",
+          "type": "object"
+        },
+        "secrets_schema": {},
+        "style": {
+          "module": "NiftiPreprocessingPiece",
+          "label": "Preprocess NIfTI",
+          "nodeType": "default",
+          "nodeStyle": {
+            "backgroundColor": "#ebebeb"
+          },
+          "useIcon": true,
+          "iconClassName": "fa-solid:filter",
+          "iconStyle": {
+            "cursor": "pointer"
+          }
+        },
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/NiftiPreprocessingPiece",
+        "repository_id": 3
+      },
+      "PituitDS_aaaaaaaa0006": {
+        "id": 20,
+        "name": "PituitaryDatasetPiece",
+        "description": "Creates PyTorch-compatible dataset configurations for pituitary gland segmentation. Generates dataset configs and provides code for creating DataLoaders.",
+        "dependency": {
+          "dockerfile": "Dockerfile_base",
+          "requirements_file": null
+        },
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0",
+        "input_schema": {
+          "$defs": {
+            "PreprocessedSubject": {
+              "description": "Information about a preprocessed subject",
+              "properties": {
+                "subject_id": {
+                  "title": "Subject Id",
+                  "type": "string"
+                },
+                "original_image_path": {
+                  "title": "Original Image Path",
+                  "type": "string"
+                },
+                "preprocessed_image_path": {
+                  "title": "Preprocessed Image Path",
+                  "type": "string"
+                },
+                "preprocessed_mask_path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Preprocessed Mask Path"
+                },
+                "original_shape": {
+                  "items": {
+                    "type": "integer"
+                  },
+                  "title": "Original Shape",
+                  "type": "array"
+                },
+                "preprocessed_shape": {
+                  "items": {
+                    "type": "integer"
+                  },
+                  "title": "Preprocessed Shape",
+                  "type": "array"
+                },
+                "image_stats": {
+                  "title": "Image Stats",
+                  "type": "object"
+                }
+              },
+              "required": [
+                "subject_id",
+                "original_image_path",
+                "preprocessed_image_path",
+                "original_shape",
+                "preprocessed_shape",
+                "image_stats"
+              ],
+              "title": "PreprocessedSubject",
+              "type": "object"
+            }
+          },
+          "description": "Pituitary Dataset Piece Input Model",
+          "properties": {
+            "train_subjects": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/$defs/PreprocessedSubject"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Preprocessed training subjects",
+              "title": "Train Subjects"
+            },
+            "val_subjects": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/$defs/PreprocessedSubject"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Preprocessed validation subjects",
+              "title": "Val Subjects"
+            },
+            "test_subjects": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/$defs/PreprocessedSubject"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Preprocessed test subjects",
+              "title": "Test Subjects"
+            },
+            "data_dir": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "/home/shared_storage/medical_data/preprocessed",
+              "description": "Directory containing preprocessed 'images' and 'masks' subdirectories",
+              "title": "Data Dir"
+            },
+            "batch_size": {
+              "default": 2,
+              "description": "Batch size for DataLoader",
+              "minimum": 1,
+              "title": "Batch Size",
+              "type": "integer"
+            },
+            "num_workers": {
+              "default": 0,
+              "description": "Number of workers for DataLoader",
+              "minimum": 0,
+              "title": "Num Workers",
+              "type": "integer"
+            },
+            "shuffle_train": {
+              "default": true,
+              "description": "Whether to shuffle training data",
+              "title": "Shuffle Train",
+              "type": "boolean"
+            }
+          },
+          "title": "PituitaryDatasetPiece",
+          "type": "object"
+        },
+        "output_schema": {
+          "$defs": {
+            "DatasetInfo": {
+              "description": "Information about a created dataset",
+              "properties": {
+                "split_name": {
+                  "title": "Split Name",
+                  "type": "string"
+                },
+                "num_samples": {
+                  "title": "Num Samples",
+                  "type": "integer"
+                },
+                "batch_size": {
+                  "title": "Batch Size",
+                  "type": "integer"
+                },
+                "num_batches": {
+                  "title": "Num Batches",
+                  "type": "integer"
+                },
+                "subject_ids": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Subject Ids",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "split_name",
+                "num_samples",
+                "batch_size",
+                "num_batches",
+                "subject_ids"
+              ],
+              "title": "DatasetInfo",
+              "type": "object"
+            },
+            "SubjectInfo": {
+              "description": "Information about a single subject/scan",
+              "properties": {
+                "subject_id": {
+                  "title": "Subject Id",
+                  "type": "string"
+                },
+                "image_path": {
+                  "title": "Image Path",
+                  "type": "string"
+                },
+                "mask_path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Mask Path"
+                }
+              },
+              "required": [
+                "subject_id",
+                "image_path"
+              ],
+              "title": "SubjectInfo",
+              "type": "object"
+            }
+          },
+          "description": "Pituitary Dataset Piece Output Model",
+          "properties": {
+            "train_info": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/DatasetInfo"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Information about training dataset"
+            },
+            "val_info": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/DatasetInfo"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Information about validation dataset"
+            },
+            "test_info": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/DatasetInfo"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Information about test dataset"
+            },
+            "data_dir": {
+              "description": "Directory containing the data",
+              "title": "Data Dir",
+              "type": "string"
+            },
+            "dataset_config_path": {
+              "description": "Path to saved dataset configuration JSON file",
+              "title": "Dataset Config Path",
+              "type": "string"
+            },
+            "subjects": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/$defs/SubjectInfo"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Combined list of all subjects for downstream pieces (e.g., ModelTrainingPiece)",
+              "title": "Subjects"
+            }
+          },
+          "required": [
+            "train_info",
+            "val_info",
+            "test_info",
+            "data_dir",
+            "dataset_config_path"
+          ],
+          "title": "OutputModel",
+          "type": "object"
+        },
+        "secrets_schema": {},
+        "style": {
+          "module": "PituitaryDatasetPiece",
+          "label": "Pituitary Dataset",
+          "nodeType": "default",
+          "nodeStyle": {
+            "backgroundColor": "#ebebeb"
+          },
+          "useIcon": true,
+          "iconClassName": "fa-solid:database",
+          "iconStyle": {
+            "cursor": "pointer"
+          }
+        },
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/PituitaryDatasetPiece",
+        "repository_id": 3
+      },
+      "ModelTR_aaaaaaaa0007": {
+        "id": 22,
+        "name": "ModelTrainingPiece",
+        "description": "Trains 3D medical image segmentation models (UNet/SwinUNETR) with patch-based training, data augmentation, and runs inference with confidence visualization",
+        "dependency": {
+          "dockerfile": "Dockerfile_torch",
+          "requirements_file": null
+        },
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group1",
+        "input_schema": {
+          "$defs": {
+            "ModelArchitecture": {
+              "description": "Supported model architectures",
+              "enum": [
+                "unet",
+                "swin_unetr"
+              ],
+              "title": "ModelArchitecture",
+              "type": "string"
+            },
+            "SubjectInfo": {
+              "description": "Information about a single subject - compatible with upstream pieces",
+              "properties": {
+                "subject_id": {
+                  "title": "Subject Id",
+                  "type": "string"
+                },
+                "image_path": {
+                  "title": "Image Path",
+                  "type": "string"
+                },
+                "mask_path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Mask Path"
+                }
+              },
+              "required": [
+                "subject_id",
+                "image_path"
+              ],
+              "title": "SubjectInfo",
+              "type": "object"
+            }
+          },
+          "description": "Model Training Piece Input Model",
+          "properties": {
+            "subjects": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/$defs/SubjectInfo"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "List of subjects from upstream piece (e.g., NiftiDataLoaderPiece, PituitaryDatasetPiece). If provided, dataset_config_path is ignored.",
+              "title": "Subjects"
+            },
+            "dataset_config_path": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Path to dataset_config.json generated by PituitaryDatasetPiece. Used only if subjects is None.",
+              "title": "Dataset Config Path"
+            },
+            "data_root": {
+              "default": "/home/shared_storage/medical_data",
+              "description": "Root directory containing images and masks subdirectories (used when loading from config file)",
+              "title": "Data Root",
+              "type": "string"
+            },
+            "train_val_split": {
+              "default": 0.8,
+              "description": "Train/validation split ratio when using subjects input (0.0-1.0). E.g., 0.8 means 80% train, 20% val.",
+              "maximum": 0.95,
+              "minimum": 0.1,
+              "title": "Train Val Split",
+              "type": "number"
+            },
+            "output_dir": {
+              "default": "/home/shared_storage/models",
+              "description": "Directory to save trained models and training logs",
+              "title": "Output Dir",
+              "type": "string"
+            },
+            "model_architecture": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ModelArchitecture"
+                }
+              ],
+              "default": "unet",
+              "description": "Model architecture to use"
+            },
+            "num_classes": {
+              "default": 6,
+              "description": "Number of segmentation classes (including background)",
+              "minimum": 2,
+              "title": "Num Classes",
+              "type": "integer"
+            },
+            "epochs": {
+              "default": 100,
+              "description": "Number of training epochs",
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Epochs",
+              "type": "integer"
+            },
+            "batch_size": {
+              "default": 4,
+              "description": "Batch size for training",
+              "maximum": 32,
+              "minimum": 1,
+              "title": "Batch Size",
+              "type": "integer"
+            },
+            "learning_rate": {
+              "default": 0.0001,
+              "description": "Initial learning rate",
+              "exclusiveMaximum": 1.0,
+              "exclusiveMinimum": 0.0,
+              "title": "Learning Rate",
+              "type": "number"
+            },
+            "weight_decay": {
+              "default": 1e-05,
+              "description": "Weight decay for optimizer",
+              "minimum": 0.0,
+              "title": "Weight Decay",
+              "type": "number"
+            },
+            "patch_size": {
+              "default": 64,
+              "description": "Size of 3D patches to extract (cubic patches)",
+              "maximum": 128,
+              "minimum": 32,
+              "title": "Patch Size",
+              "type": "integer"
+            },
+            "samples_per_volume": {
+              "default": 20,
+              "description": "Number of patches to sample per volume per epoch",
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Samples Per Volume",
+              "type": "integer"
+            },
+            "foreground_oversample": {
+              "default": 0.9,
+              "description": "Probability of sampling foreground patches (0.0-1.0)",
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "title": "Foreground Oversample",
+              "type": "number"
+            },
+            "use_augmentation": {
+              "default": true,
+              "description": "Whether to apply data augmentation during training",
+              "title": "Use Augmentation",
+              "type": "boolean"
+            },
+            "augmentation_probability": {
+              "default": 0.5,
+              "description": "Probability of applying each augmentation",
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "title": "Augmentation Probability",
+              "type": "number"
+            },
+            "class_weights": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "number"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Class weights for loss function (length must match num_classes). If None, uses default weights.",
+              "title": "Class Weights"
+            },
+            "lr_scheduler_patience": {
+              "default": 10,
+              "description": "Patience for ReduceLROnPlateau scheduler",
+              "minimum": 1,
+              "title": "Lr Scheduler Patience",
+              "type": "integer"
+            },
+            "early_stopping_patience": {
+              "default": 20,
+              "description": "Number of epochs with no improvement before stopping (0 = disabled)",
+              "minimum": 0,
+              "title": "Early Stopping Patience",
+              "type": "integer"
+            },
+            "eval_interval": {
+              "default": 1,
+              "description": "Evaluate on validation set every N epochs",
+              "minimum": 1,
+              "title": "Eval Interval",
+              "type": "integer"
+            },
+            "save_checkpoint_interval": {
+              "default": 5,
+              "description": "Save model checkpoint every N epochs",
+              "minimum": 1,
+              "title": "Save Checkpoint Interval",
+              "type": "integer"
+            },
+            "num_workers": {
+              "default": 0,
+              "description": "Number of data loader workers (set to 0 to avoid Docker shared memory issues)",
+              "minimum": 0,
+              "title": "Num Workers",
+              "type": "integer"
+            },
+            "random_seed": {
+              "default": 42,
+              "description": "Random seed for reproducibility",
+              "title": "Random Seed",
+              "type": "integer"
+            },
+            "use_gpu": {
+              "default": true,
+              "description": "Whether to use GPU if available",
+              "title": "Use Gpu",
+              "type": "boolean"
+            }
+          },
+          "title": "ModelTrainingPiece",
+          "type": "object"
+        },
+        "output_schema": {
+          "$defs": {
+            "SubjectInfo": {
+              "description": "Information about a single subject - compatible with upstream pieces",
+              "properties": {
+                "subject_id": {
+                  "title": "Subject Id",
+                  "type": "string"
+                },
+                "image_path": {
+                  "title": "Image Path",
+                  "type": "string"
+                },
+                "mask_path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Mask Path"
+                }
+              },
+              "required": [
+                "subject_id",
+                "image_path"
+              ],
+              "title": "SubjectInfo",
+              "type": "object"
+            },
+            "TrainingMetrics": {
+              "description": "Training metrics for a single epoch",
+              "properties": {
+                "epoch": {
+                  "title": "Epoch",
+                  "type": "integer"
+                },
+                "train_loss": {
+                  "title": "Train Loss",
+                  "type": "number"
+                },
+                "val_loss": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Val Loss"
+                },
+                "val_dice": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Val Dice"
+                },
+                "learning_rate": {
+                  "title": "Learning Rate",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "epoch",
+                "train_loss",
+                "learning_rate"
+              ],
+              "title": "TrainingMetrics",
+              "type": "object"
+            }
+          },
+          "description": "Model Training Piece Output Model",
+          "properties": {
+            "model_path": {
+              "description": "Path to the saved trained model",
+              "title": "Model Path",
+              "type": "string"
+            },
+            "checkpoint_dir": {
+              "description": "Directory containing all checkpoints",
+              "title": "Checkpoint Dir",
+              "type": "string"
+            },
+            "best_model_path": {
+              "description": "Path to the best model (highest validation Dice)",
+              "title": "Best Model Path",
+              "type": "string"
+            },
+            "best_val_dice": {
+              "description": "Best validation Dice score achieved",
+              "title": "Best Val Dice",
+              "type": "number"
+            },
+            "best_epoch": {
+              "description": "Epoch number where best validation Dice was achieved",
+              "title": "Best Epoch",
+              "type": "integer"
+            },
+            "final_train_loss": {
+              "description": "Final training loss",
+              "title": "Final Train Loss",
+              "type": "number"
+            },
+            "total_epochs_trained": {
+              "description": "Total number of epochs trained",
+              "title": "Total Epochs Trained",
+              "type": "integer"
+            },
+            "training_history": {
+              "description": "Complete training history",
+              "items": {
+                "$ref": "#/$defs/TrainingMetrics"
+              },
+              "title": "Training History",
+              "type": "array"
+            },
+            "training_summary": {
+              "description": "Text summary of training process",
+              "title": "Training Summary",
+              "type": "string"
+            },
+            "plots_dir": {
+              "description": "Directory containing training plots",
+              "title": "Plots Dir",
+              "type": "string"
+            },
+            "validation_subjects": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/$defs/SubjectInfo"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "List of validation subjects for downstream inference",
+              "title": "Validation Subjects"
+            },
+            "num_classes": {
+              "default": 6,
+              "description": "Number of classes used in training (for inference configuration)",
+              "title": "Num Classes",
+              "type": "integer"
+            },
+            "patch_size": {
+              "default": 64,
+              "description": "Patch size used in training (for inference configuration)",
+              "title": "Patch Size",
+              "type": "integer"
+            },
+            "model_architecture": {
+              "default": "unet",
+              "description": "Model architecture used (for inference configuration)",
+              "title": "Model Architecture",
+              "type": "string"
+            }
+          },
+          "required": [
+            "model_path",
+            "checkpoint_dir",
+            "best_model_path",
+            "best_val_dice",
+            "best_epoch",
+            "final_train_loss",
+            "total_epochs_trained",
+            "training_history",
+            "training_summary",
+            "plots_dir"
+          ],
+          "title": "OutputModel",
+          "type": "object"
+        },
+        "secrets_schema": {},
+        "style": {
+          "module": "ModelTrainingPiece",
+          "label": "Model Training",
+          "nodeType": "default",
+          "nodeStyle": {
+            "backgroundColor": "#99ccff"
+          },
+          "useIcon": true,
+          "iconClassName": "fa-solid:brain",
+          "iconStyle": {
+            "cursor": "pointer"
+          }
+        },
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/ModelTrainingPiece",
+        "repository_id": 3
+      },
+      "ModelINF_aaaaaaaa0008": {
+        "id": 26,
+        "name": "ModelInferencePiece",
+        "description": "Loads trained segmentation models and performs inference on samples with confidence visualization and detailed metrics",
+        "dependency": {
+          "dockerfile": "Dockerfile_torch",
+          "requirements_file": null
+        },
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group1",
+        "input_schema": {
+          "$defs": {
+            "ModelArchitecture": {
+              "description": "Supported model architectures",
+              "enum": [
+                "unet",
+                "swin_unetr"
+              ],
+              "title": "ModelArchitecture",
+              "type": "string"
+            },
+            "SubjectInfo": {
+              "description": "Information about a single subject for inference",
+              "properties": {
+                "subject_id": {
+                  "title": "Subject Id",
+                  "type": "string"
+                },
+                "image_path": {
+                  "title": "Image Path",
+                  "type": "string"
+                },
+                "mask_path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Mask Path"
+                }
+              },
+              "required": [
+                "subject_id",
+                "image_path"
+              ],
+              "title": "SubjectInfo",
+              "type": "object"
+            }
+          },
+          "description": "Model Inference Piece Input Model",
+          "properties": {
+            "model_path": {
+              "description": "Path to the trained model (.pth file)",
+              "title": "Model Path",
+              "type": "string"
+            },
+            "model_architecture": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ModelArchitecture"
+                }
+              ],
+              "default": "unet",
+              "description": "Model architecture used during training"
+            },
+            "num_classes": {
+              "default": 6,
+              "description": "Number of segmentation classes (including background)",
+              "minimum": 2,
+              "title": "Num Classes",
+              "type": "integer"
+            },
+            "patch_size": {
+              "default": 64,
+              "description": "Size of 3D patches used during training",
+              "maximum": 128,
+              "minimum": 32,
+              "title": "Patch Size",
+              "type": "integer"
+            },
+            "subjects": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/$defs/SubjectInfo"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "List of subjects from upstream piece. If provided, image_paths and mask_paths are ignored.",
+              "title": "Subjects"
+            },
+            "image_paths": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "List of paths to NIfTI image files for inference",
+              "title": "Image Paths"
+            },
+            "mask_paths": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Optional list of paths to ground truth masks for metric calculation",
+              "title": "Mask Paths"
+            },
+            "num_samples": {
+              "default": 5,
+              "description": "Number of samples to run inference on (0 = all)",
+              "maximum": 100,
+              "minimum": 0,
+              "title": "Num Samples",
+              "type": "integer"
+            },
+            "samples_per_volume": {
+              "default": 5,
+              "description": "Number of patches to extract per volume",
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Samples Per Volume",
+              "type": "integer"
+            },
+            "output_dir": {
+              "default": "/home/shared_storage/inference_results",
+              "description": "Directory to save inference results and visualizations",
+              "title": "Output Dir",
+              "type": "string"
+            },
+            "save_predictions": {
+              "default": false,
+              "description": "Whether to save prediction masks as NIfTI files",
+              "title": "Save Predictions",
+              "type": "boolean"
+            },
+            "save_visualizations": {
+              "default": true,
+              "description": "Whether to save visualization images",
+              "title": "Save Visualizations",
+              "type": "boolean"
+            },
+            "use_gpu": {
+              "default": true,
+              "description": "Whether to use GPU if available",
+              "title": "Use Gpu",
+              "type": "boolean"
+            },
+            "batch_size": {
+              "default": 4,
+              "description": "Batch size for inference",
+              "maximum": 32,
+              "minimum": 1,
+              "title": "Batch Size",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "model_path"
+          ],
+          "title": "ModelInferencePiece",
+          "type": "object"
+        },
+        "output_schema": {
+          "$defs": {
+            "InferenceMetrics": {
+              "description": "Metrics for a single inference sample",
+              "properties": {
+                "subject_id": {
+                  "title": "Subject Id",
+                  "type": "string"
+                },
+                "dice_score": {
+                  "title": "Dice Score",
+                  "type": "number"
+                },
+                "mean_confidence": {
+                  "title": "Mean Confidence",
+                  "type": "number"
+                },
+                "max_confidence": {
+                  "title": "Max Confidence",
+                  "type": "number"
+                },
+                "min_confidence": {
+                  "title": "Min Confidence",
+                  "type": "number"
+                },
+                "class_confidences": {
+                  "additionalProperties": {
+                    "type": "number"
+                  },
+                  "title": "Class Confidences",
+                  "type": "object"
+                }
+              },
+              "required": [
+                "subject_id",
+                "dice_score",
+                "mean_confidence",
+                "max_confidence",
+                "min_confidence",
+                "class_confidences"
+              ],
+              "title": "InferenceMetrics",
+              "type": "object"
+            }
+          },
+          "description": "Model Inference Piece Output Model",
+          "properties": {
+            "output_dir": {
+              "description": "Directory containing all inference results",
+              "title": "Output Dir",
+              "type": "string"
+            },
+            "num_samples_processed": {
+              "description": "Total number of samples processed",
+              "title": "Num Samples Processed",
+              "type": "integer"
+            },
+            "mean_dice_score": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Average Dice score across all samples (if masks provided)",
+              "title": "Mean Dice Score"
+            },
+            "mean_confidence": {
+              "description": "Average confidence score across all samples",
+              "title": "Mean Confidence",
+              "type": "number"
+            },
+            "inference_metrics": {
+              "description": "Detailed metrics for each sample",
+              "items": {
+                "$ref": "#/$defs/InferenceMetrics"
+              },
+              "title": "Inference Metrics",
+              "type": "array"
+            },
+            "visualization_dir": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Directory containing visualization images",
+              "title": "Visualization Dir"
+            },
+            "predictions_dir": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Directory containing saved prediction masks",
+              "title": "Predictions Dir"
+            },
+            "summary_report": {
+              "description": "Text summary of inference results",
+              "title": "Summary Report",
+              "type": "string"
+            }
+          },
+          "required": [
+            "output_dir",
+            "num_samples_processed",
+            "mean_confidence",
+            "inference_metrics",
+            "summary_report"
+          ],
+          "title": "OutputModel",
+          "type": "object"
+        },
+        "secrets_schema": {},
+        "style": {
+          "module": "ModelInferencePiece",
+          "label": "Model Inference",
+          "nodeType": "default",
+          "nodeStyle": {
+            "backgroundColor": "#ffcc99"
+          },
+          "useIcon": true,
+          "iconClassName": "fa-solid:search",
+          "iconStyle": {
+            "cursor": "pointer"
+          }
+        },
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/ModelInferencePiece",
+        "repository_id": 3
+      },
+      "NiftiEDA_aaaaaaaa0009": {
+        "id": 27,
+        "name": "NiftiEDAPiece",
+        "description": "Performs comprehensive Exploratory Data Analysis (EDA) on NIfTI medical imaging datasets with visual graphs and statistics",
+        "dependency": {
+          "dockerfile": "Dockerfile_base",
+          "requirements_file": null
+        },
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0",
+        "input_schema": {
+          "$defs": {
+            "SubjectInfo": {
+              "description": "Information about a single subject/scan",
+              "properties": {
+                "subject_id": {
+                  "title": "Subject Id",
+                  "type": "string"
+                },
+                "image_path": {
+                  "title": "Image Path",
+                  "type": "string"
+                },
+                "mask_path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Mask Path"
+                }
+              },
+              "required": [
+                "subject_id",
+                "image_path"
+              ],
+              "title": "SubjectInfo",
+              "type": "object"
+            }
+          },
+          "description": "NIfTI EDA Piece Input Model",
+          "properties": {
+            "subjects": {
+              "default": [],
+              "description": "List of subjects to analyze",
+              "items": {
+                "$ref": "#/$defs/SubjectInfo"
+              },
+              "title": "Subjects",
+              "type": "array"
+            },
+            "output_dir": {
+              "default": "/home/shared_storage/eda_results",
+              "description": "[DEPRECATED - ignored] Directory to save EDA visualizations and reports. Files are now automatically saved to Domino's tracked storage.",
+              "title": "Output Dir",
+              "type": "string"
+            },
+            "max_subjects": {
+              "default": 50,
+              "description": "Maximum number of subjects to analyze (for performance)",
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Max Subjects",
+              "type": "integer"
+            },
+            "generate_3d_plots": {
+              "default": false,
+              "description": "Whether to generate 3D volume visualizations (computationally expensive)",
+              "title": "Generate 3D Plots",
+              "type": "boolean"
+            },
+            "num_sample_slices": {
+              "default": 10,
+              "description": "Number of random slices to sample for intensity distribution analysis",
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Num Sample Slices",
+              "type": "integer"
+            }
+          },
+          "title": "NiftiEDAPiece",
+          "type": "object"
+        },
+        "output_schema": {
+          "$defs": {
+            "EDAStatistics": {
+              "description": "Summary statistics from comprehensive EDA",
+              "properties": {
+                "total_subjects": {
+                  "title": "Total Subjects",
+                  "type": "integer"
+                },
+                "analyzed_subjects": {
+                  "title": "Analyzed Subjects",
+                  "type": "integer"
+                },
+                "unique_shapes": {
+                  "description": "Number of unique volume shapes found",
+                  "title": "Unique Shapes",
+                  "type": "integer"
+                },
+                "unique_spacings": {
+                  "description": "Number of unique voxel spacing protocols",
+                  "title": "Unique Spacings",
+                  "type": "integer"
+                },
+                "num_classes": {
+                  "description": "Number of unique classes in masks",
+                  "title": "Num Classes",
+                  "type": "integer"
+                },
+                "class_distribution": {
+                  "additionalProperties": {
+                    "type": "integer"
+                  },
+                  "description": "Voxel count per class",
+                  "title": "Class Distribution",
+                  "type": "object"
+                },
+                "mean_lesion_coverage": {
+                  "description": "Mean ratio of lesion voxels to total voxels",
+                  "title": "Mean Lesion Coverage",
+                  "type": "number"
+                },
+                "slice_lesion_ratio": {
+                  "description": "Ratio of slices containing lesions",
+                  "title": "Slice Lesion Ratio",
+                  "type": "number"
+                },
+                "mean_intensity": {
+                  "description": "Mean intensity across all volumes",
+                  "title": "Mean Intensity",
+                  "type": "number"
+                },
+                "std_intensity": {
+                  "description": "Mean standard deviation across all volumes",
+                  "title": "Std Intensity",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "total_subjects",
+                "analyzed_subjects",
+                "unique_shapes",
+                "unique_spacings",
+                "num_classes",
+                "class_distribution",
+                "mean_lesion_coverage",
+                "slice_lesion_ratio",
+                "mean_intensity",
+                "std_intensity"
+              ],
+              "title": "EDAStatistics",
+              "type": "object"
+            }
+          },
+          "description": "NIfTI EDA Piece Output Model",
+          "properties": {
+            "statistics": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/EDAStatistics"
+                }
+              ],
+              "description": "Summary statistics from the comprehensive analysis"
+            },
+            "report_path": {
+              "description": "Path to the generated EDA text report",
+              "title": "Report Path",
+              "type": "string"
+            },
+            "visualization_dir": {
+              "description": "Directory containing all generated visualizations",
+              "title": "Visualization Dir",
+              "type": "string"
+            },
+            "num_visualizations": {
+              "description": "Number of visualization files created",
+              "title": "Num Visualizations",
+              "type": "integer"
+            },
+            "analysis_summary": {
+              "description": "Text summary of key findings",
+              "title": "Analysis Summary",
+              "type": "string"
+            },
+            "analysis_texts": {
+              "default": [],
+              "description": "Detailed Slovak text descriptions for each analysis section",
+              "items": {
+                "type": "object"
+              },
+              "title": "Analysis Texts",
+              "type": "array"
+            }
+          },
+          "required": [
+            "statistics",
+            "report_path",
+            "visualization_dir",
+            "num_visualizations",
+            "analysis_summary"
+          ],
+          "title": "OutputModel",
+          "type": "object"
+        },
+        "secrets_schema": {},
+        "style": {
+          "module": "NiftiEDAPiece",
+          "label": "NIfTI EDA",
+          "nodeType": "default",
+          "nodeStyle": {
+            "backgroundColor": "#ffcc99"
+          },
+          "useIcon": true,
+          "iconClassName": "fa-solid:chart-bar",
+          "iconStyle": {
+            "cursor": "pointer"
+          }
+        },
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/NiftiEDAPiece",
+        "repository_id": 3
+      },
+      "NiftiVIZ_aaaaaaaa0010": {
+        "id": 23,
+        "name": "NiftiVisualizationPiece",
+        "description": "Visualizes NIfTI medical imaging data with optional mask overlay in axial, sagittal, or coronal planes",
+        "dependency": {
+          "dockerfile": "Dockerfile_base",
+          "requirements_file": null
+        },
+        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0",
+        "input_schema": {
+          "description": "NIfTI Visualization Piece Input Model\n\nStandalone piece that loads NIfTI files directly from directories\nand creates a grid visualization. No upstream connection required.",
+          "properties": {
+            "images_path": {
+              "default": "/home/shared_storage/medical_data/images",
+              "description": "Path to directory containing NIfTI image files (.nii.gz)",
+              "title": "Images Path",
+              "type": "string"
+            },
+            "masks_path": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "/home/shared_storage/medical_data/masks",
+              "description": "Path to directory containing NIfTI mask files (.nii.gz). Optional.",
+              "title": "Masks Path"
+            },
+            "file_pattern": {
+              "default": "*.nii.gz",
+              "description": "Glob pattern to match NIfTI files (e.g., '*.nii.gz')",
+              "title": "File Pattern",
+              "type": "string"
+            },
+            "max_subjects": {
+              "default": 50,
+              "description": "Maximum number of subjects to visualize",
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Max Subjects",
+              "type": "integer"
+            },
+            "slice_index": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Slice index to visualize. If None, uses middle slice.",
+              "title": "Slice Index"
+            },
+            "view_plane": {
+              "default": "axial",
+              "description": "Anatomical plane to visualize",
+              "enum": [
+                "axial",
+                "sagittal",
+                "coronal"
+              ],
+              "title": "View Plane",
+              "type": "string"
+            },
+            "show_mask_overlay": {
+              "default": true,
+              "description": "Whether to overlay mask on image",
+              "title": "Show Mask Overlay",
+              "type": "boolean"
+            },
+            "mask_alpha": {
+              "default": 0.5,
+              "description": "Transparency of mask overlay (0.0 = transparent, 1.0 = opaque)",
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "title": "Mask Alpha",
+              "type": "number"
+            },
+            "color_map": {
+              "default": "gray",
+              "description": "Matplotlib colormap for image (e.g., 'gray', 'viridis', 'bone')",
+              "title": "Color Map",
+              "type": "string"
+            }
+          },
+          "title": "NiftiVisualizationPiece",
+          "type": "object"
+        },
+        "output_schema": {
+          "description": "NIfTI Visualization Piece Output Model",
+          "properties": {
+            "num_subjects": {
+              "description": "Number of subjects visualized",
+              "title": "Num Subjects",
+              "type": "integer"
+            },
+            "subject_ids": {
+              "description": "List of subject IDs that were visualized",
+              "items": {
+                "type": "string"
+              },
+              "title": "Subject Ids",
+              "type": "array"
+            },
+            "view_plane": {
+              "description": "Anatomical plane that was visualized",
+              "title": "View Plane",
+              "type": "string"
+            },
+            "grid_size": {
+              "description": "Grid size (rows x columns)",
+              "title": "Grid Size",
+              "type": "string"
+            },
+            "visualization_summary": {
+              "description": "Summary of visualization",
+              "title": "Visualization Summary",
+              "type": "string"
+            }
+          },
+          "required": [
+            "num_subjects",
+            "subject_ids",
+            "view_plane",
+            "grid_size",
+            "visualization_summary"
+          ],
+          "title": "OutputModel",
+          "type": "object"
+        },
+        "secrets_schema": {},
+        "style": {
+          "module": "NiftiVisualizationPiece",
+          "label": "NIfTI Visualization",
+          "nodeType": "default",
+          "nodeStyle": {
+            "backgroundColor": "#b3e0ff"
+          },
+          "useIcon": true,
+          "iconClassName": "fa-solid:image",
+          "iconStyle": {
+            "cursor": "pointer"
+          }
+        },
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/NiftiVisualizationPiece",
+        "repository_id": 3
+      }
+    },
+    "workflowPiecesData": {
+      "NiftiDL_aaaaaaaa0001": {
+        "storage": {
+          "storageAccessMode": "Read/Write"
+        },
+        "containerResources": {
+          "cpu": {
+            "min": 200,
+            "max": 500
+          },
+          "memory": {
+            "min": 256,
+            "max": 512
+          },
+          "useGpu": false
+        },
+        "inputs": {
+          "images_path": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": "/home/shared_storage/medical_data/images"
+          },
+          "masks_path": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": "/home/shared_storage/medical_data/masks"
+          },
+          "file_pattern": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": "*.nii.gz"
+          }
+        }
+      },
+      "DataSplit_aaaaaaaa0002": {
+        "storage": {
+          "storageAccessMode": "Read/Write"
+        },
+        "containerResources": {
+          "cpu": {
+            "min": 200,
+            "max": 500
+          },
+          "memory": {
+            "min": 256,
+            "max": 512
+          },
+          "useGpu": false
+        },
+        "inputs": {
+          "subjects": {
+            "fromUpstream": true,
+            "upstreamId": "NiftiDL_aaaaaaaa0001",
+            "upstreamArgument": "subjects",
+            "upstreamValue": "",
+            "value": ""
+          },
+          "train_ratio": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 0.7
+          },
+          "val_ratio": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 0.15
+          },
+          "test_ratio": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 0.15
+          },
+          "random_seed": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 42
+          },
+          "split_strategy": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": "random"
+          }
+        }
+      },
+      "NiftiPP_aaaaaaaa0003": {
+        "storage": {
+          "storageAccessMode": "Read/Write"
+        },
+        "containerResources": {
+          "cpu": {
+            "min": 500,
+            "max": 1000
+          },
+          "memory": {
+            "min": 512,
+            "max": 1024
+          },
+          "useGpu": false
+        },
+        "inputs": {
+          "subjects": {
+            "fromUpstream": true,
+            "upstreamId": "DataSplit_aaaaaaaa0002",
+            "upstreamArgument": "train_subjects",
+            "upstreamValue": "",
+            "value": ""
+          },
+          "output_dir": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": "/home/shared_storage/medical_data/preprocessed/train"
+          },
+          "normalization": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": "percentile"
+          },
+          "lower_percentile": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 1.0
+          },
+          "upper_percentile": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 99.0
+          },
+          "save_as_numpy": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": true
+          },
+          "target_shape": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": null
+          }
+        }
+      },
+      "NiftiPP_aaaaaaaa0004": {
+        "storage": {
+          "storageAccessMode": "Read/Write"
+        },
+        "containerResources": {
+          "cpu": {
+            "min": 500,
+            "max": 1000
+          },
+          "memory": {
+            "min": 512,
+            "max": 1024
+          },
+          "useGpu": false
+        },
+        "inputs": {
+          "subjects": {
+            "fromUpstream": true,
+            "upstreamId": "DataSplit_aaaaaaaa0002",
+            "upstreamArgument": "val_subjects",
+            "upstreamValue": "",
+            "value": ""
+          },
+          "output_dir": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": "/home/shared_storage/medical_data/preprocessed/val"
+          },
+          "normalization": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": "percentile"
+          },
+          "lower_percentile": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 1.0
+          },
+          "upper_percentile": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 99.0
+          },
+          "save_as_numpy": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": true
+          },
+          "target_shape": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": null
+          }
+        }
+      },
+      "NiftiPP_aaaaaaaa0005": {
+        "storage": {
+          "storageAccessMode": "Read/Write"
+        },
+        "containerResources": {
+          "cpu": {
+            "min": 500,
+            "max": 1000
+          },
+          "memory": {
+            "min": 512,
+            "max": 1024
+          },
+          "useGpu": false
+        },
+        "inputs": {
+          "subjects": {
+            "fromUpstream": true,
+            "upstreamId": "DataSplit_aaaaaaaa0002",
+            "upstreamArgument": "test_subjects",
+            "upstreamValue": "",
+            "value": ""
+          },
+          "output_dir": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": "/home/shared_storage/medical_data/preprocessed/test"
+          },
+          "normalization": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": "percentile"
+          },
+          "lower_percentile": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 1.0
+          },
+          "upper_percentile": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 99.0
+          },
+          "save_as_numpy": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": true
+          },
+          "target_shape": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": null
+          }
+        }
+      },
+      "PituitDS_aaaaaaaa0006": {
+        "storage": {
+          "storageAccessMode": "Read/Write"
+        },
+        "containerResources": {
+          "cpu": {
+            "min": 200,
+            "max": 500
+          },
+          "memory": {
+            "min": 256,
+            "max": 512
+          },
+          "useGpu": false
+        },
+        "inputs": {
+          "train_subjects": {
+            "fromUpstream": true,
+            "upstreamId": "NiftiPP_aaaaaaaa0003",
+            "upstreamArgument": "preprocessed_subjects",
+            "upstreamValue": "",
+            "value": ""
+          },
+          "val_subjects": {
+            "fromUpstream": true,
+            "upstreamId": "NiftiPP_aaaaaaaa0004",
+            "upstreamArgument": "preprocessed_subjects",
+            "upstreamValue": "",
+            "value": ""
+          },
+          "test_subjects": {
+            "fromUpstream": true,
+            "upstreamId": "NiftiPP_aaaaaaaa0005",
+            "upstreamArgument": "preprocessed_subjects",
+            "upstreamValue": "",
+            "value": ""
+          },
+          "batch_size": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 2
+          },
+          "num_workers": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 0
+          },
+          "shuffle_train": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": true
+          }
+        }
+      },
+      "ModelTR_aaaaaaaa0007": {
+        "storage": {
+          "storageAccessMode": "Read/Write"
+        },
+        "containerResources": {
+          "cpu": {
+            "min": 1000,
+            "max": 2000
+          },
+          "memory": {
+            "min": 2048,
+            "max": 8192
+          },
+          "useGpu": true
+        },
+        "inputs": {
+          "subjects": {
+            "fromUpstream": true,
+            "upstreamId": "PituitDS_aaaaaaaa0006",
+            "upstreamArgument": "subjects",
+            "upstreamValue": "",
+            "value": ""
+          },
+          "dataset_config_path": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": null
+          },
+          "data_root": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": "/home/shared_storage/medical_data"
+          },
+          "train_val_split": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 0.8
+          },
+          "output_dir": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": "/home/shared_storage/models"
+          },
+          "model_architecture": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": "unet"
+          },
+          "num_classes": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 2
+          },
+          "epochs": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 50
+          },
+          "batch_size": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 2
+          },
+          "learning_rate": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 0.0001
+          },
+          "weight_decay": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 1e-05
+          },
+          "patch_size": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 64
+          },
+          "samples_per_volume": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 20
+          },
+          "foreground_oversample": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 0.9
+          },
+          "use_augmentation": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": true
+          },
+          "augmentation_probability": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 0.5
+          },
+          "class_weights": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": null
+          },
+          "lr_scheduler_patience": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 10
+          },
+          "early_stopping_patience": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 20
+          },
+          "eval_interval": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 1
+          },
+          "save_checkpoint_interval": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 5
+          },
+          "num_workers": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 0
+          },
+          "random_seed": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 42
+          },
+          "use_gpu": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": true
+          }
+        }
+      },
+      "ModelINF_aaaaaaaa0008": {
+        "storage": {
+          "storageAccessMode": "Read/Write"
+        },
+        "containerResources": {
+          "cpu": {
+            "min": 1000,
+            "max": 2000
+          },
+          "memory": {
+            "min": 2048,
+            "max": 8192
+          },
+          "useGpu": true
+        },
+        "inputs": {
+          "subjects": {
+            "fromUpstream": true,
+            "upstreamId": "ModelTR_aaaaaaaa0007",
+            "upstreamArgument": "validation_subjects",
+            "upstreamValue": "",
+            "value": ""
+          },
+          "image_paths": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": null
+          },
+          "mask_paths": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": null
+          },
+          "model_path": {
+            "fromUpstream": true,
+            "upstreamId": "ModelTR_aaaaaaaa0007",
+            "upstreamArgument": "best_model_path",
+            "upstreamValue": "",
+            "value": ""
+          },
+          "model_architecture": {
+            "fromUpstream": true,
+            "upstreamId": "ModelTR_aaaaaaaa0007",
+            "upstreamArgument": "model_architecture",
+            "upstreamValue": "",
+            "value": ""
+          },
+          "num_classes": {
+            "fromUpstream": true,
+            "upstreamId": "ModelTR_aaaaaaaa0007",
+            "upstreamArgument": "num_classes",
+            "upstreamValue": "",
+            "value": ""
+          },
+          "patch_size": {
+            "fromUpstream": true,
+            "upstreamId": "ModelTR_aaaaaaaa0007",
+            "upstreamArgument": "patch_size",
+            "upstreamValue": "",
+            "value": ""
+          },
+          "output_dir": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": "/home/shared_storage/inference_results"
+          },
+          "save_visualizations": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": true
+          },
+          "save_predictions": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": true
+          },
+          "num_samples": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 0
+          },
+          "samples_per_volume": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 5
+          },
+          "batch_size": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 1
+          },
+          "use_gpu": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": true
+          }
+        }
+      },
+      "NiftiEDA_aaaaaaaa0009": {
+        "storage": {
+          "storageAccessMode": "Read/Write"
+        },
+        "containerResources": {
+          "cpu": {
+            "min": 500,
+            "max": 1000
+          },
+          "memory": {
+            "min": 512,
+            "max": 1024
+          },
+          "useGpu": false
+        },
+        "inputs": {
+          "subjects": {
+            "fromUpstream": true,
+            "upstreamId": "NiftiDL_aaaaaaaa0001",
+            "upstreamArgument": "subjects",
+            "upstreamValue": "",
+            "value": ""
+          },
+          "max_subjects": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 50
+          }
+        }
+      },
+      "NiftiVIZ_aaaaaaaa0010": {
+        "storage": {
+          "storageAccessMode": "Read/Write"
+        },
+        "containerResources": {
+          "cpu": {
+            "min": 200,
+            "max": 500
+          },
+          "memory": {
+            "min": 256,
+            "max": 512
+          },
+          "useGpu": false
+        },
+        "inputs": {
+          "images_path": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": "/home/shared_storage/medical_data/images"
+          },
+          "masks_path": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": "/home/shared_storage/medical_data/masks"
+          },
+          "file_pattern": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": "*.nii.gz"
+          },
+          "max_subjects": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": 6
+          },
+          "view_plane": {
+            "fromUpstream": false,
+            "upstreamId": "",
+            "upstreamArgument": "",
+            "upstreamValue": "",
+            "value": "axial"
+          }
+        }
+      }
+    },
+    "workflowNodes": [
+      {
+        "id": "NiftiDL_aaaaaaaa0001",
+        "type": "CustomNode",
+        "position": {
+          "x": 100,
+          "y": 200
+        },
+        "data": {
+          "name": "NiftiDataLoaderPiece",
+          "style": {
+            "module": "NiftiDataLoaderPiece",
+            "label": "NIfTI Loader",
+            "nodeType": "default",
+            "nodeStyle": {
+              "backgroundColor": "#ebebeb"
+            },
+            "useIcon": true,
+            "iconClassName": "fa-solid:file-medical",
+            "iconStyle": {
+              "cursor": "pointer"
+            }
+          },
+          "validationError": false,
+          "orientation": "horizontal"
+        },
+        "width": 160,
+        "height": 70,
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "DataSplit_aaaaaaaa0002",
+        "type": "CustomNode",
+        "position": {
+          "x": 350,
+          "y": 200
+        },
+        "data": {
+          "name": "DataSplitPiece",
+          "style": {
+            "module": "DataSplitPiece",
+            "label": "Data Split",
+            "nodeType": "default",
+            "nodeStyle": {
+              "backgroundColor": "#ebebeb"
+            },
+            "useIcon": true,
+            "iconClassName": "fa-solid:code-branch",
+            "iconStyle": {
+              "cursor": "pointer"
+            }
+          },
+          "validationError": false,
+          "orientation": "horizontal"
+        },
+        "width": 160,
+        "height": 70,
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "NiftiPP_aaaaaaaa0003",
+        "type": "CustomNode",
+        "position": {
+          "x": 600,
+          "y": 80
+        },
+        "data": {
+          "name": "NiftiPreprocessingPiece",
+          "style": {
+            "module": "NiftiPreprocessingPiece",
+            "label": "Preprocess NIfTI",
+            "nodeType": "default",
+            "nodeStyle": {
+              "backgroundColor": "#ebebeb"
+            },
+            "useIcon": true,
+            "iconClassName": "fa-solid:filter",
+            "iconStyle": {
+              "cursor": "pointer"
+            }
+          },
+          "validationError": false,
+          "orientation": "horizontal"
+        },
+        "width": 160,
+        "height": 70,
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "NiftiPP_aaaaaaaa0004",
+        "type": "CustomNode",
+        "position": {
+          "x": 600,
+          "y": 200
+        },
+        "data": {
+          "name": "NiftiPreprocessingPiece",
+          "style": {
+            "module": "NiftiPreprocessingPiece",
+            "label": "Preprocess NIfTI",
+            "nodeType": "default",
+            "nodeStyle": {
+              "backgroundColor": "#ebebeb"
+            },
+            "useIcon": true,
+            "iconClassName": "fa-solid:filter",
+            "iconStyle": {
+              "cursor": "pointer"
+            }
+          },
+          "validationError": false,
+          "orientation": "horizontal"
+        },
+        "width": 160,
+        "height": 70,
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "NiftiPP_aaaaaaaa0005",
+        "type": "CustomNode",
+        "position": {
+          "x": 600,
+          "y": 320
+        },
+        "data": {
+          "name": "NiftiPreprocessingPiece",
+          "style": {
+            "module": "NiftiPreprocessingPiece",
+            "label": "Preprocess NIfTI",
+            "nodeType": "default",
+            "nodeStyle": {
+              "backgroundColor": "#ebebeb"
+            },
+            "useIcon": true,
+            "iconClassName": "fa-solid:filter",
+            "iconStyle": {
+              "cursor": "pointer"
+            }
+          },
+          "validationError": false,
+          "orientation": "horizontal"
+        },
+        "width": 160,
+        "height": 70,
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "PituitDS_aaaaaaaa0006",
+        "type": "CustomNode",
+        "position": {
+          "x": 850,
+          "y": 200
+        },
+        "data": {
+          "name": "PituitaryDatasetPiece",
+          "style": {
+            "module": "PituitaryDatasetPiece",
+            "label": "Pituitary Dataset",
+            "nodeType": "default",
+            "nodeStyle": {
+              "backgroundColor": "#ebebeb"
+            },
+            "useIcon": true,
+            "iconClassName": "fa-solid:database",
+            "iconStyle": {
+              "cursor": "pointer"
+            }
+          },
+          "validationError": false,
+          "orientation": "horizontal"
+        },
+        "width": 160,
+        "height": 70,
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "ModelTR_aaaaaaaa0007",
+        "type": "CustomNode",
+        "position": {
+          "x": 1100,
+          "y": 200
+        },
+        "data": {
+          "name": "ModelTrainingPiece",
+          "style": {
+            "module": "ModelTrainingPiece",
+            "label": "Model Training",
+            "nodeType": "default",
+            "nodeStyle": {
+              "backgroundColor": "#99ccff"
+            },
+            "useIcon": true,
+            "iconClassName": "fa-solid:brain",
+            "iconStyle": {
+              "cursor": "pointer"
+            }
+          },
+          "validationError": false,
+          "orientation": "horizontal"
+        },
+        "width": 160,
+        "height": 70,
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "ModelINF_aaaaaaaa0008",
+        "type": "CustomNode",
+        "position": {
+          "x": 1350,
+          "y": 200
+        },
+        "data": {
+          "name": "ModelInferencePiece",
+          "style": {
+            "module": "ModelInferencePiece",
+            "label": "Model Inference",
+            "nodeType": "default",
+            "nodeStyle": {
+              "backgroundColor": "#ffcc99"
+            },
+            "useIcon": true,
+            "iconClassName": "fa-solid:search",
+            "iconStyle": {
+              "cursor": "pointer"
+            }
+          },
+          "validationError": false,
+          "orientation": "horizontal"
+        },
+        "width": 160,
+        "height": 70,
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "NiftiEDA_aaaaaaaa0009",
+        "type": "CustomNode",
+        "position": {
+          "x": 350,
+          "y": 460
+        },
+        "data": {
+          "name": "NiftiEDAPiece",
+          "style": {
+            "module": "NiftiEDAPiece",
+            "label": "NIfTI EDA",
+            "nodeType": "default",
+            "nodeStyle": {
+              "backgroundColor": "#ffcc99"
+            },
+            "useIcon": true,
+            "iconClassName": "fa-solid:chart-bar",
+            "iconStyle": {
+              "cursor": "pointer"
+            }
+          },
+          "validationError": false,
+          "orientation": "horizontal"
+        },
+        "width": 160,
+        "height": 70,
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "NiftiVIZ_aaaaaaaa0010",
+        "type": "CustomNode",
+        "position": {
+          "x": 600,
+          "y": 460
+        },
+        "data": {
+          "name": "NiftiVisualizationPiece",
+          "style": {
+            "module": "NiftiVisualizationPiece",
+            "label": "NIfTI Visualization",
+            "nodeType": "default",
+            "nodeStyle": {
+              "backgroundColor": "#b3e0ff"
+            },
+            "useIcon": true,
+            "iconClassName": "fa-solid:image",
+            "iconStyle": {
+              "cursor": "pointer"
+            }
+          },
+          "validationError": false,
+          "orientation": "horizontal"
+        },
+        "width": 160,
+        "height": 70,
+        "selected": false,
+        "dragging": false
+      }
+    ],
+    "workflowEdges": [
+      {
+        "source": "NiftiDL_aaaaaaaa0001",
+        "sourceHandle": "source-NiftiDL_aaaaaaaa0001",
+        "target": "DataSplit_aaaaaaaa0002",
+        "targetHandle": "target-DataSplit_aaaaaaaa0002",
+        "id": "reactflow__edge-NiftiDL_aaaaaaaa0001source-NiftiDL_aaaaaaaa0001-DataSplit_aaaaaaaa0002target-DataSplit_aaaaaaaa0002",
+        "markerEnd": {
+          "type": "arrowclosed",
+          "width": 20,
+          "height": 20
+        }
+      },
+      {
+        "source": "DataSplit_aaaaaaaa0002",
+        "sourceHandle": "source-DataSplit_aaaaaaaa0002",
+        "target": "NiftiPP_aaaaaaaa0003",
+        "targetHandle": "target-NiftiPP_aaaaaaaa0003",
+        "id": "reactflow__edge-DataSplit_aaaaaaaa0002source-DataSplit_aaaaaaaa0002-NiftiPP_aaaaaaaa0003target-NiftiPP_aaaaaaaa0003",
+        "markerEnd": {
+          "type": "arrowclosed",
+          "width": 20,
+          "height": 20
+        }
+      },
+      {
+        "source": "DataSplit_aaaaaaaa0002",
+        "sourceHandle": "source-DataSplit_aaaaaaaa0002",
+        "target": "NiftiPP_aaaaaaaa0004",
+        "targetHandle": "target-NiftiPP_aaaaaaaa0004",
+        "id": "reactflow__edge-DataSplit_aaaaaaaa0002source-DataSplit_aaaaaaaa0002-NiftiPP_aaaaaaaa0004target-NiftiPP_aaaaaaaa0004",
+        "markerEnd": {
+          "type": "arrowclosed",
+          "width": 20,
+          "height": 20
+        }
+      },
+      {
+        "source": "DataSplit_aaaaaaaa0002",
+        "sourceHandle": "source-DataSplit_aaaaaaaa0002",
+        "target": "NiftiPP_aaaaaaaa0005",
+        "targetHandle": "target-NiftiPP_aaaaaaaa0005",
+        "id": "reactflow__edge-DataSplit_aaaaaaaa0002source-DataSplit_aaaaaaaa0002-NiftiPP_aaaaaaaa0005target-NiftiPP_aaaaaaaa0005",
+        "markerEnd": {
+          "type": "arrowclosed",
+          "width": 20,
+          "height": 20
+        }
+      },
+      {
+        "source": "NiftiPP_aaaaaaaa0003",
+        "sourceHandle": "source-NiftiPP_aaaaaaaa0003",
+        "target": "PituitDS_aaaaaaaa0006",
+        "targetHandle": "target-PituitDS_aaaaaaaa0006",
+        "id": "reactflow__edge-NiftiPP_aaaaaaaa0003source-NiftiPP_aaaaaaaa0003-PituitDS_aaaaaaaa0006target-PituitDS_aaaaaaaa0006",
+        "markerEnd": {
+          "type": "arrowclosed",
+          "width": 20,
+          "height": 20
+        }
+      },
+      {
+        "source": "NiftiPP_aaaaaaaa0004",
+        "sourceHandle": "source-NiftiPP_aaaaaaaa0004",
+        "target": "PituitDS_aaaaaaaa0006",
+        "targetHandle": "target-PituitDS_aaaaaaaa0006",
+        "id": "reactflow__edge-NiftiPP_aaaaaaaa0004source-NiftiPP_aaaaaaaa0004-PituitDS_aaaaaaaa0006target-PituitDS_aaaaaaaa0006",
+        "markerEnd": {
+          "type": "arrowclosed",
+          "width": 20,
+          "height": 20
+        }
+      },
+      {
+        "source": "NiftiPP_aaaaaaaa0005",
+        "sourceHandle": "source-NiftiPP_aaaaaaaa0005",
+        "target": "PituitDS_aaaaaaaa0006",
+        "targetHandle": "target-PituitDS_aaaaaaaa0006",
+        "id": "reactflow__edge-NiftiPP_aaaaaaaa0005source-NiftiPP_aaaaaaaa0005-PituitDS_aaaaaaaa0006target-PituitDS_aaaaaaaa0006",
+        "markerEnd": {
+          "type": "arrowclosed",
+          "width": 20,
+          "height": 20
+        }
+      },
+      {
+        "source": "PituitDS_aaaaaaaa0006",
+        "sourceHandle": "source-PituitDS_aaaaaaaa0006",
+        "target": "ModelTR_aaaaaaaa0007",
+        "targetHandle": "target-ModelTR_aaaaaaaa0007",
+        "id": "reactflow__edge-PituitDS_aaaaaaaa0006source-PituitDS_aaaaaaaa0006-ModelTR_aaaaaaaa0007target-ModelTR_aaaaaaaa0007",
+        "markerEnd": {
+          "type": "arrowclosed",
+          "width": 20,
+          "height": 20
+        }
+      },
+      {
+        "source": "ModelTR_aaaaaaaa0007",
+        "sourceHandle": "source-ModelTR_aaaaaaaa0007",
+        "target": "ModelINF_aaaaaaaa0008",
+        "targetHandle": "target-ModelINF_aaaaaaaa0008",
+        "id": "reactflow__edge-ModelTR_aaaaaaaa0007source-ModelTR_aaaaaaaa0007-ModelINF_aaaaaaaa0008target-ModelINF_aaaaaaaa0008",
+        "markerEnd": {
+          "type": "arrowclosed",
+          "width": 20,
+          "height": 20
+        }
+      },
+      {
+        "source": "NiftiDL_aaaaaaaa0001",
+        "sourceHandle": "source-NiftiDL_aaaaaaaa0001",
+        "target": "NiftiEDA_aaaaaaaa0009",
+        "targetHandle": "target-NiftiEDA_aaaaaaaa0009",
+        "id": "reactflow__edge-NiftiDL_aaaaaaaa0001source-NiftiDL_aaaaaaaa0001-NiftiEDA_aaaaaaaa0009target-NiftiEDA_aaaaaaaa0009",
+        "markerEnd": {
+          "type": "arrowclosed",
+          "width": 20,
+          "height": 20
+        }
+      },
+      {
+        "source": "NiftiDL_aaaaaaaa0001",
+        "sourceHandle": "source-NiftiDL_aaaaaaaa0001",
+        "target": "NiftiVIZ_aaaaaaaa0010",
+        "targetHandle": "target-NiftiVIZ_aaaaaaaa0010",
+        "id": "reactflow__edge-NiftiDL_aaaaaaaa0001source-NiftiDL_aaaaaaaa0001-NiftiVIZ_aaaaaaaa0010target-NiftiVIZ_aaaaaaaa0010",
+        "markerEnd": {
+          "type": "arrowclosed",
+          "width": 20,
+          "height": 20
+        }
+      }
+    ]
+  }
+}
