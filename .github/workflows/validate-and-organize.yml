@@ -2,6 +2,7 @@ name: Validate and organize repo, build and publish Docker images
 
 permissions:
   contents: write
+  packages: write
 
 on:
   push:
