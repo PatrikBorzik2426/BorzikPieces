@@ -13,7 +13,8 @@ An **MLOps pipeline** using [Domino Workflow](https://github.com/Tauffer-Consult
 - **Histopathology** (pending): No data provided yet
 
 **Domino repo (GitHub):** https://github.com/Tauffer-Consulting/domino  
-**Piece repo owner:** `borzikpieces` (see `config.toml`)
+**Piece repo owner:** `patrikborzik2426` (GitHub user, see `config.toml`)  
+**GHCR images:** `ghcr.io/patrikborzik2426/borzikpieces:<version>-group0` / `-group1`
 
 ---
 
@@ -126,6 +127,38 @@ Use `Dockerfile_base` for pieces without PyTorch. Use `Dockerfile_torch` for Mod
 
 ---
 
+## GHCR Authentication — Critical Setup (2026-04-29)
+
+The classic GitHub PAT in `.env` (`GHCR_TOKEN`) belongs to `PatrikBorzik2426`. The `REGISTRY_NAME` in `config.toml` MUST match this GitHub username (lowercase). Previously it was `borzikpieces` (a non-existent account), causing every CI push to fail silently with "owner not found".
+
+**One-time host setup** (must be redone if `~/.docker/config.json` is wiped or on a fresh machine):
+```bash
+echo "YOUR_GITHUB_PAT" | docker login ghcr.io -u patrikborzik2426 --password-stdin
+```
+This authenticates the host Docker daemon. The `domino-docker-proxy` service exposes the host's `/var/run/docker.sock`, so piece containers are pulled using the host's stored credentials.
+
+**`.env` must have:**
+```
+DOMINO_DEFAULT_PIECES_REPOSITORY_TOKEN=YOUR_GITHUB_PAT
+GHCR_USERNAME=patrikborzik2426
+GHCR_TOKEN=YOUR_GITHUB_PAT
+```
+`DOMINO_DEFAULT_PIECES_REPOSITORY_TOKEN` is passed to the `domino_rest` service so it can access the GitHub API for piece metadata. If it is empty, Domino UI will show pieces but may fail to authenticate with GHCR.
+
+**After editing `.env`**, restart the REST service to apply:
+```bash
+docker compose up -d --no-deps domino_rest
+```
+
+**To verify images are accessible after a CI run:**
+```bash
+docker pull ghcr.io/patrikborzik2426/borzikpieces:VERSION-group0
+docker pull ghcr.io/patrikborzik2426/borzikpieces:VERSION-group1
+```
+If pull fails with "not found" even after `docker login`, the CI push itself failed — check the "Publish images" step in the Actions log for "denied" errors.
+
+---
+
 ## Known Bugs Fixed (2026-04-28)
 
 | Piece | Bug | Fix Applied |
@@ -149,26 +182,51 @@ bash setup_gpu.sh
 # What it does: installs nvidia-container-toolkit, sets Docker default runtime to nvidia,
 # restarts Docker, then brings the stack down/up.
 
-# 1. Prepare shared data storage
+# 1. ONE-TIME GHCR login on the host (persists in ~/.docker/config.json)
+echo "YOUR_GITHUB_PAT" | docker login ghcr.io -u patrikborzik2426 --password-stdin
+
+# 2. Prepare shared data storage
 mkdir -p domino_data/medical_data/images domino_data/medical_data/masks
 cp data/paired/images/*.nii.gz domino_data/medical_data/images/
 cp data/paired/masks/*.nii.gz  domino_data/medical_data/masks/
 
-# 2. Start the full stack
-echo -e "AIRFLOW_UID=$(id -u)" > .env   # only needed first time
+# 3. Create .env (only needed first time — AIRFLOW_UID must be set)
+cat > .env <<'EOF'
+AIRFLOW_UID=1000
+DOMINO_COMPOSE_DEV=
+DOMINO_DEFAULT_PIECES_REPOSITORY_TOKEN=YOUR_GITHUB_PAT
+DOMINO_CREATE_DEFAULT_USER=true
+GHCR_USERNAME=patrikborzik2426
+GHCR_TOKEN=YOUR_GITHUB_PAT
+EOF
+
+# 4. Start the full stack
 docker compose up -d
 
-# 3. Open Domino UI
+# 5. Open Domino UI
 # Frontend:  http://localhost:3000  (admin@email.com / admin)
 # REST API:  http://localhost:8000/docs
 # Airflow:   http://localhost:8080  (airflow / airflow)
 
-# 4. Install the piece repository in the UI (first time only):
-# Settings → Piece Repositories → paste GitHub URL → select version 0.3.8 → Add
+# 6. Add piece repository via API (first time only — UI also works):
+TOKEN=$(curl -s -X POST http://localhost:8000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@email.com","password":"admin"}' \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
+curl -s -X POST "http://localhost:8000/pieces-repositories" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "workspace_id": 1,
+    "source": "github",
+    "path": "PatrikBorzik2426/BorzikPieces",
+    "url": "https://github.com/PatrikBorzik2426/BorzikPieces",
+    "version": "LATEST_VERSION_HERE"
+  }'
 
-# 5. Import the radiology workflow (first time, or after a full reset):
+# 7. Import the radiology workflow:
 bash import_workflow.sh
-# or manually via curl — see "Workflow Import" section below
+# or manually — see "Workflow Import" section below
 ```
 
 **GPU stack:**
@@ -199,11 +257,14 @@ curl -s -X POST http://localhost:8000/workspaces/1/workflows \
 
 **When to re-import:**
 - After `docker compose down -v` (full reset wipes the database)
-- When piece configs change significantly
-- After bumping the piece repo version and updating the workflow
+- After bumping the piece repo version (delete old repo + workflows, re-add repo, update `radiology_workflow.json` image tags, then re-import)
+- After changing `REGISTRY_NAME` in `config.toml`
 
 **When NOT to re-import:**
-- Normal restarts (`docker compose down` / `up`) preserve the database — the workflow persists
+- Normal restarts (`docker compose down` / `up`) preserve the Domino postgres database — the workflow persists
+
+**Import fails with "Some pieces were not found"?**
+The piece repo must be registered in Domino (with the correct version) *before* importing the workflow. The `source_image` fields in the JSON must also match what Domino has indexed. Use the python snippet in "Workflow JSON — Keeping It Current" to update them.
 
 ---
 
@@ -214,24 +275,79 @@ When you fix a piece and want to deploy the update:
 ```bash
 # 1. Edit pieces/<PieceName>/piece.py or models.py
 
-# 2. Bump version in config.toml
-#    version = "0.3.9"   (or whatever next version)
+# 2. Do NOT manually bump config.toml version — CI auto-bumps the patch version on every push
 
 # 3. Commit and push to GitHub
-git add pieces/ config.toml dependencies/
+git add pieces/ dependencies/
 git commit -m "fix: <description>"
 git push
+# NOTE: the CI will push its own auto-bump commit back; always pull --rebase before your next push
 
-# 4. GitHub Actions will build and push new Docker images automatically
-#    (images tagged: ghcr.io/borzikpieces/borzikpieces:<version>-group0  /group1 etc.)
+# 4. GitHub Actions builds and pushes new Docker images to:
+#    ghcr.io/patrikborzik2426/borzikpieces:VERSION-group0
+#    ghcr.io/patrikborzik2426/borzikpieces:VERSION-group1
+#    Verify with: docker pull ghcr.io/patrikborzik2426/borzikpieces:VERSION-group0
 
-# 5. In Domino UI → Settings → Piece Repositories → borzikpieces → update version
-#    Domino will pull the new images on the next workflow run
+# 5. Re-register the piece repository with the new version (API — Domino UI also works):
+TOKEN=$(curl -s -X POST http://localhost:8000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@email.com","password":"admin"}' \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
+
+# First delete any workflows using the repo, then delete the repo itself:
+curl -s -X DELETE "http://localhost:8000/workspaces/1/workflows/WORKFLOW_ID" -H "Authorization: Bearer $TOKEN"
+curl -s -X DELETE "http://localhost:8000/pieces-repositories/REPO_ID?workspace_id=1" -H "Authorization: Bearer $TOKEN"
+
+# Re-add with new version:
+curl -s -X POST "http://localhost:8000/pieces-repositories" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"workspace_id":1,"source":"github","path":"PatrikBorzik2426/BorzikPieces","url":"https://github.com/PatrikBorzik2426/BorzikPieces","version":"NEW_VERSION"}'
+
+# 6. Update radiology_workflow.json source_image fields to match new version, then re-import:
+#    (see "Workflow JSON — Keeping It Current" below)
+bash import_workflow.sh
 ```
 
-**Image groups:**
-- `group0`: `Dockerfile_base` — NiftiDataLoaderPiece, DataSplitPiece, NiftiPreprocessingPiece, PituitaryDatasetPiece, NiftiEDAPiece, NiftiVisualizationPiece
-- `group1`: `Dockerfile_torch` — ModelTrainingPiece, ModelInferencePiece
+**Image groups (as assigned by Domino's organize step):**
+- `group0` = `Dockerfile_torch` → **ModelTrainingPiece, ModelInferencePiece**
+- `group1` = `Dockerfile_base` → NiftiDataLoaderPiece, DataSplitPiece, NiftiPreprocessingPiece, PituitaryDatasetPiece, NiftiEDAPiece, NiftiVisualizationPiece, HelloWorldPiece, GenerativeShapesPiece
+
+> **Warning:** The group numbering is the opposite of what you might expect — the *heavier* torch image is group0. The `.domino/compiled_metadata.json` (auto-generated by CI) is the source of truth.
+
+---
+
+## Workflow JSON — Keeping It Current
+
+`radiology_workflow.json` contains hardcoded `source_image` fields. After a version bump or registry change, update them before re-importing:
+
+```python
+import json
+
+IMAGE_MAP = {
+    'ModelInferencePiece': 'ghcr.io/patrikborzik2426/borzikpieces:VERSION-group0',
+    'ModelTrainingPiece':  'ghcr.io/patrikborzik2426/borzikpieces:VERSION-group0',
+}
+DEFAULT_IMAGE = 'ghcr.io/patrikborzik2426/borzikpieces:VERSION-group1'
+
+d = json.load(open('radiology_workflow.json'))
+for task in d['tasks'].values():
+    piece_name = task['piece']['name']
+    task['piece']['source_image'] = IMAGE_MAP.get(piece_name, DEFAULT_IMAGE)
+json.dump(d, open('radiology_workflow.json', 'w'), indent=2)
+```
+
+The Domino REST API does **not** have a PATCH endpoint for piece repositories — the only way to update the version is delete + re-create. You must also delete all workflows that reference the repository before deleting it:
+
+```bash
+# Check which repo ID to delete
+curl -s -H "Authorization: Bearer $TOKEN" "http://localhost:8000/pieces-repositories?workspace_id=1" \
+  | python3 -c "import sys,json; [print(r['id'], r['name'], r['version']) for r in json.load(sys.stdin)['data']]"
+
+# Check which workflow IDs are active
+curl -s -H "Authorization: Bearer $TOKEN" "http://localhost:8000/workspaces/1/workflows" \
+  | python3 -c "import sys,json; [print(w['id'], w['name']) for w in json.load(sys.stdin).get('data',[])]"
+```
 
 ---
 
