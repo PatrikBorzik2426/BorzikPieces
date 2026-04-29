@@ -131,7 +131,51 @@ else
   warn "nvidia-smi not available inside worker — GPU pieces will run on CPU."
 fi
 
-# ── 9. Summary ───────────────────────────────────────────────────────────────
+# ── 9. Dump container logs to files ──────────────────────────────────────────
+
+LOG_DIR="logs/containers"
+mkdir -p "$LOG_DIR"
+
+CONTAINERS=(
+  airflow-domino-worker
+  airflow-domino-scheduler
+  airflow-webserver
+  domino-rest
+  domino-frontend
+)
+
+info "Dumping container logs to $LOG_DIR/ ..."
+for name in "${CONTAINERS[@]}"; do
+  out="$LOG_DIR/${name}.txt"
+  # --no-log-prefix keeps lines clean; tail last 2000 lines so files stay manageable
+  if docker logs "$name" --tail 2000 2>&1 > "$out"; then
+    lines=$(wc -l < "$out")
+    info "  $name → $out ($lines lines)"
+  else
+    warn "  $name — container not running, skipping."
+    rm -f "$out"
+  fi
+done
+
+# Also snapshot the most recent Airflow task logs (last 5 unique tasks)
+TASK_LOG_DIR="$LOG_DIR/airflow_tasks"
+mkdir -p "$TASK_LOG_DIR"
+mapfile -t RECENT_TASK_LOGS < <(
+  find airflow/logs -name "attempt=1.log" \
+    ! -path "*/dag_processor_manager/*" \
+    ! -path "*/scheduler/*" \
+    2>/dev/null \
+    | xargs ls -t 2>/dev/null \
+    | head -5
+)
+for src in "${RECENT_TASK_LOGS[@]}"; do
+  # Build a flat filename from the path components
+  flat=$(echo "$src" | sed 's|airflow/logs/||; s|/|__|g')
+  cp "$src" "$TASK_LOG_DIR/$flat"
+  info "  task log → $TASK_LOG_DIR/$flat"
+done
+
+# ── 10. Summary ───────────────────────────────────────────────────────────────
 
 echo ""
 echo -e "${GREEN}════════════════════════════════════════${NC}"
@@ -145,6 +189,7 @@ echo "  Shared storage: domino_data/medical_data/"
 echo "    images: $(find "$IMG_DEST" -name '*.nii.gz' 2>/dev/null | wc -l) files"
 echo "    masks : $(find "$MSK_DEST" -name '*.nii.gz' 2>/dev/null | wc -l) files"
 echo ""
+echo "  Container logs: $LOG_DIR/"
 echo "  If this is a fresh DB (after 'docker compose down -v'), import the workflow:"
 echo "    bash import_workflow.sh"
 echo ""
