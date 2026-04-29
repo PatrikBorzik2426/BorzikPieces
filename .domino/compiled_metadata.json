@@ -1,6 +1,339 @@
 {
-    "NiftiPreprocessingPiece": {
-        "name": "NiftiPreprocessingPiece",
+    "ModelInferencePiece": {
+        "name": "ModelInferencePiece",
+        "dependency": {
+            "dockerfile": "Dockerfile_torch",
+            "requirements_file": null
+        },
+        "tags": [
+            "Medical Imaging",
+            "Deep Learning",
+            "Inference",
+            "Segmentation",
+            "PyTorch",
+            "Visualization",
+            "Confidence"
+        ],
+        "style": {
+            "node_label": "Model Inference",
+            "node_type": "default",
+            "node_style": {
+                "backgroundColor": "#ffcc99"
+            },
+            "useIcon": true,
+            "icon_class_name": "fa-solid:search",
+            "iconStyle": {
+                "cursor": "pointer"
+            }
+        },
+        "description": "Loads trained segmentation models and performs inference on samples with confidence visualization and detailed metrics",
+        "input_schema": {
+            "$defs": {
+                "ModelArchitecture": {
+                    "description": "Supported model architectures",
+                    "enum": [
+                        "unet",
+                        "swin_unetr"
+                    ],
+                    "title": "ModelArchitecture",
+                    "type": "string"
+                },
+                "SubjectInfo": {
+                    "description": "Information about a single subject for inference",
+                    "properties": {
+                        "subject_id": {
+                            "title": "Subject Id",
+                            "type": "string"
+                        },
+                        "image_path": {
+                            "title": "Image Path",
+                            "type": "string"
+                        },
+                        "mask_path": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "default": null,
+                            "title": "Mask Path"
+                        }
+                    },
+                    "required": [
+                        "subject_id",
+                        "image_path"
+                    ],
+                    "title": "SubjectInfo",
+                    "type": "object"
+                }
+            },
+            "description": "Model Inference Piece Input Model",
+            "properties": {
+                "model_path": {
+                    "description": "Path to the trained model (.pth file)",
+                    "title": "Model Path",
+                    "type": "string"
+                },
+                "model_architecture": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ModelArchitecture"
+                        }
+                    ],
+                    "default": "unet",
+                    "description": "Model architecture used during training"
+                },
+                "num_classes": {
+                    "default": 6,
+                    "description": "Number of segmentation classes (including background)",
+                    "minimum": 2,
+                    "title": "Num Classes",
+                    "type": "integer"
+                },
+                "patch_size": {
+                    "default": 64,
+                    "description": "Size of 3D patches used during training",
+                    "maximum": 128,
+                    "minimum": 32,
+                    "title": "Patch Size",
+                    "type": "integer"
+                },
+                "subjects": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/SubjectInfo"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "List of subjects from upstream piece. If provided, image_paths and mask_paths are ignored.",
+                    "title": "Subjects"
+                },
+                "image_paths": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "List of paths to NIfTI image files for inference",
+                    "title": "Image Paths"
+                },
+                "mask_paths": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Optional list of paths to ground truth masks for metric calculation",
+                    "title": "Mask Paths"
+                },
+                "num_samples": {
+                    "default": 5,
+                    "description": "Number of samples to run inference on (0 = all)",
+                    "maximum": 100,
+                    "minimum": 0,
+                    "title": "Num Samples",
+                    "type": "integer"
+                },
+                "samples_per_volume": {
+                    "default": 5,
+                    "description": "Number of patches to extract per volume",
+                    "maximum": 50,
+                    "minimum": 1,
+                    "title": "Samples Per Volume",
+                    "type": "integer"
+                },
+                "output_dir": {
+                    "default": "/home/shared_storage/inference_results",
+                    "description": "Directory to save inference results and visualizations",
+                    "title": "Output Dir",
+                    "type": "string"
+                },
+                "save_predictions": {
+                    "default": false,
+                    "description": "Whether to save prediction masks as NIfTI files",
+                    "title": "Save Predictions",
+                    "type": "boolean"
+                },
+                "save_visualizations": {
+                    "default": true,
+                    "description": "Whether to save visualization images",
+                    "title": "Save Visualizations",
+                    "type": "boolean"
+                },
+                "use_gpu": {
+                    "default": true,
+                    "description": "Whether to use GPU if available",
+                    "title": "Use Gpu",
+                    "type": "boolean"
+                },
+                "batch_size": {
+                    "default": 4,
+                    "description": "Batch size for inference",
+                    "maximum": 32,
+                    "minimum": 1,
+                    "title": "Batch Size",
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "model_path"
+            ],
+            "title": "InputModel",
+            "type": "object"
+        },
+        "output_schema": {
+            "$defs": {
+                "InferenceMetrics": {
+                    "description": "Metrics for a single inference sample",
+                    "properties": {
+                        "subject_id": {
+                            "title": "Subject Id",
+                            "type": "string"
+                        },
+                        "dice_score": {
+                            "title": "Dice Score",
+                            "type": "number"
+                        },
+                        "mean_confidence": {
+                            "title": "Mean Confidence",
+                            "type": "number"
+                        },
+                        "max_confidence": {
+                            "title": "Max Confidence",
+                            "type": "number"
+                        },
+                        "min_confidence": {
+                            "title": "Min Confidence",
+                            "type": "number"
+                        },
+                        "class_confidences": {
+                            "additionalProperties": {
+                                "type": "number"
+                            },
+                            "title": "Class Confidences",
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "subject_id",
+                        "dice_score",
+                        "mean_confidence",
+                        "max_confidence",
+                        "min_confidence",
+                        "class_confidences"
+                    ],
+                    "title": "InferenceMetrics",
+                    "type": "object"
+                }
+            },
+            "description": "Model Inference Piece Output Model",
+            "properties": {
+                "output_dir": {
+                    "description": "Directory containing all inference results",
+                    "title": "Output Dir",
+                    "type": "string"
+                },
+                "num_samples_processed": {
+                    "description": "Total number of samples processed",
+                    "title": "Num Samples Processed",
+                    "type": "integer"
+                },
+                "mean_dice_score": {
+                    "anyOf": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Average Dice score across all samples (if masks provided)",
+                    "title": "Mean Dice Score"
+                },
+                "mean_confidence": {
+                    "description": "Average confidence score across all samples",
+                    "title": "Mean Confidence",
+                    "type": "number"
+                },
+                "inference_metrics": {
+                    "description": "Detailed metrics for each sample",
+                    "items": {
+                        "$ref": "#/$defs/InferenceMetrics"
+                    },
+                    "title": "Inference Metrics",
+                    "type": "array"
+                },
+                "visualization_dir": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Directory containing visualization images",
+                    "title": "Visualization Dir"
+                },
+                "predictions_dir": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Directory containing saved prediction masks",
+                    "title": "Predictions Dir"
+                },
+                "summary_report": {
+                    "description": "Text summary of inference results",
+                    "title": "Summary Report",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "output_dir",
+                "num_samples_processed",
+                "mean_confidence",
+                "inference_metrics",
+                "summary_report"
+            ],
+            "title": "OutputModel",
+            "type": "object"
+        },
+        "secrets_schema": null,
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/ModelInferencePiece"
+    },
+    "NiftiDataLoaderPiece": {
+        "name": "NiftiDataLoaderPiece",
         "dependency": {
             "dockerfile": "Dockerfile_base",
             "requirements_file": null
@@ -8,41 +341,62 @@
         "tags": [
             "medical-imaging",
             "nifti",
-            "preprocessing",
-            "normalization",
-            "radiology"
+            "data-loading",
+            "radiology",
+            "preprocessing"
         ],
         "style": {
-            "node_label": "Preprocess NIfTI",
+            "node_label": "NIfTI Loader",
             "node_type": "default",
             "node_style": {
                 "backgroundColor": "#ebebeb"
             },
             "useIcon": true,
-            "icon_class_name": "fa-solid:filter",
+            "icon_class_name": "fa-solid:file-medical",
             "iconStyle": {
                 "cursor": "pointer"
             }
         },
-        "title": "NIfTI Preprocessing",
-        "description": "Preprocesses NIfTI medical imaging data with normalization (z-score, min-max, percentile), optional resizing, and conversion to NumPy format for efficient ML training.",
+        "title": "NIfTI Data Loader",
+        "description": "Discovers and loads NIfTI medical imaging data (.nii.gz files). Pairs images with corresponding segmentation masks based on filename matching.",
         "container_resources": {
-            "cpu": 500,
-            "memory": "2Gi"
+            "cpu": 100,
+            "memory": "256Mi"
         },
         "input_schema": {
-            "$defs": {
-                "NormalizationMethod": {
-                    "description": "Normalization methods for medical images",
-                    "enum": [
-                        "zscore",
-                        "minmax",
-                        "percentile",
-                        "none"
-                    ],
-                    "title": "NormalizationMethod",
+            "description": "NIfTI Data Loader Piece Input Model",
+            "properties": {
+                "images_path": {
+                    "default": "/home/shared_storage/medical_data/images",
+                    "description": "Path to the directory containing NIfTI image files (.nii.gz)",
+                    "title": "Images Path",
                     "type": "string"
                 },
+                "masks_path": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": "/home/shared_storage/medical_data/masks",
+                    "description": "Path to the directory containing NIfTI mask/segmentation files (.nii.gz). Optional for inference-only mode.",
+                    "title": "Masks Path"
+                },
+                "file_pattern": {
+                    "default": "*.nii.gz",
+                    "description": "Glob pattern to match NIfTI files (e.g., 'sub-*.nii.gz')",
+                    "title": "File Pattern",
+                    "type": "string"
+                }
+            },
+            "title": "InputModel",
+            "type": "object"
+        },
+        "output_schema": {
+            "$defs": {
                 "SubjectInfo": {
                     "description": "Information about a single subject/scan",
                     "properties": {
@@ -75,179 +429,205 @@
                     "type": "object"
                 }
             },
-            "description": "NIfTI Preprocessing Piece Input Model",
+            "description": "NIfTI Data Loader Piece Output Model",
             "properties": {
                 "subjects": {
-                    "description": "List of subjects to preprocess",
+                    "description": "List of discovered subjects with their image and mask paths",
                     "items": {
                         "$ref": "#/$defs/SubjectInfo"
                     },
                     "title": "Subjects",
                     "type": "array"
                 },
-                "output_dir": {
-                    "default": "/home/shared_storage/medical_data/preprocessed",
-                    "description": "Directory to save preprocessed data",
-                    "title": "Output Dir",
+                "num_subjects": {
+                    "description": "Total number of subjects found",
+                    "title": "Num Subjects",
+                    "type": "integer"
+                },
+                "images_dir": {
+                    "description": "Path to images directory",
+                    "title": "Images Dir",
                     "type": "string"
                 },
-                "normalization": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/NormalizationMethod"
-                        }
-                    ],
-                    "default": "zscore",
-                    "description": "Normalization method to apply"
-                },
-                "lower_percentile": {
-                    "default": 1.0,
-                    "description": "Lower percentile for clipping (used with 'percentile' normalization)",
-                    "maximum": 50.0,
-                    "minimum": 0.0,
-                    "title": "Lower Percentile",
-                    "type": "number"
-                },
-                "upper_percentile": {
-                    "default": 99.0,
-                    "description": "Upper percentile for clipping (used with 'percentile' normalization)",
-                    "maximum": 100.0,
-                    "minimum": 50.0,
-                    "title": "Upper Percentile",
-                    "type": "number"
-                },
-                "save_as_numpy": {
-                    "default": true,
-                    "description": "Save preprocessed data as NumPy arrays (.npy) for faster loading",
-                    "title": "Save As Numpy",
-                    "type": "boolean"
-                },
-                "target_shape": {
+                "masks_dir": {
                     "anyOf": [
                         {
-                            "items": {
-                                "type": "integer"
-                            },
-                            "type": "array"
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "Path to masks directory (if provided)",
+                    "title": "Masks Dir"
+                }
+            },
+            "required": [
+                "subjects",
+                "num_subjects",
+                "images_dir",
+                "masks_dir"
+            ],
+            "title": "OutputModel",
+            "type": "object"
+        },
+        "secrets_schema": null,
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/NiftiDataLoaderPiece"
+    },
+    "NiftiVisualizationPiece": {
+        "name": "NiftiVisualizationPiece",
+        "dependency": {
+            "dockerfile": "Dockerfile_base",
+            "requirements_file": null
+        },
+        "tags": [
+            "Medical Imaging",
+            "Visualization",
+            "NIfTI",
+            "MRI",
+            "Segmentation"
+        ],
+        "style": {
+            "node_label": "NIfTI Visualization",
+            "node_type": "default",
+            "node_style": {
+                "backgroundColor": "#b3e0ff"
+            },
+            "useIcon": true,
+            "icon_class_name": "fa-solid:image",
+            "iconStyle": {
+                "cursor": "pointer"
+            }
+        },
+        "description": "Visualizes NIfTI medical imaging data with optional mask overlay in axial, sagittal, or coronal planes",
+        "input_schema": {
+            "description": "NIfTI Visualization Piece Input Model\n\nStandalone piece that loads NIfTI files directly from directories\nand creates a grid visualization. No upstream connection required.",
+            "properties": {
+                "images_path": {
+                    "default": "/home/shared_storage/medical_data/images",
+                    "description": "Path to directory containing NIfTI image files (.nii.gz)",
+                    "title": "Images Path",
+                    "type": "string"
+                },
+                "masks_path": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": "/home/shared_storage/medical_data/masks",
+                    "description": "Path to directory containing NIfTI mask files (.nii.gz). Optional.",
+                    "title": "Masks Path"
+                },
+                "file_pattern": {
+                    "default": "*.nii.gz",
+                    "description": "Glob pattern to match NIfTI files (e.g., '*.nii.gz')",
+                    "title": "File Pattern",
+                    "type": "string"
+                },
+                "max_subjects": {
+                    "default": 50,
+                    "description": "Maximum number of subjects to visualize",
+                    "maximum": 100,
+                    "minimum": 1,
+                    "title": "Max Subjects",
+                    "type": "integer"
+                },
+                "slice_index": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
                         },
                         {
                             "type": "null"
                         }
                     ],
                     "default": null,
-                    "description": "Target shape for resizing (e.g., [128, 128, 64]). None = keep original.",
-                    "title": "Target Shape"
+                    "description": "Slice index to visualize. If None, uses middle slice.",
+                    "title": "Slice Index"
+                },
+                "view_plane": {
+                    "default": "axial",
+                    "description": "Anatomical plane to visualize",
+                    "enum": [
+                        "axial",
+                        "sagittal",
+                        "coronal"
+                    ],
+                    "title": "View Plane",
+                    "type": "string"
+                },
+                "show_mask_overlay": {
+                    "default": true,
+                    "description": "Whether to overlay mask on image",
+                    "title": "Show Mask Overlay",
+                    "type": "boolean"
+                },
+                "mask_alpha": {
+                    "default": 0.5,
+                    "description": "Transparency of mask overlay (0.0 = transparent, 1.0 = opaque)",
+                    "maximum": 1.0,
+                    "minimum": 0.0,
+                    "title": "Mask Alpha",
+                    "type": "number"
+                },
+                "color_map": {
+                    "default": "gray",
+                    "description": "Matplotlib colormap for image (e.g., 'gray', 'viridis', 'bone')",
+                    "title": "Color Map",
+                    "type": "string"
                 }
             },
-            "required": [
-                "subjects"
-            ],
             "title": "InputModel",
             "type": "object"
         },
         "output_schema": {
-            "$defs": {
-                "PreprocessedSubject": {
-                    "description": "Information about a preprocessed subject",
-                    "properties": {
-                        "subject_id": {
-                            "title": "Subject Id",
-                            "type": "string"
-                        },
-                        "original_image_path": {
-                            "title": "Original Image Path",
-                            "type": "string"
-                        },
-                        "preprocessed_image_path": {
-                            "title": "Preprocessed Image Path",
-                            "type": "string"
-                        },
-                        "preprocessed_mask_path": {
-                            "anyOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "default": null,
-                            "title": "Preprocessed Mask Path"
-                        },
-                        "original_shape": {
-                            "items": {
-                                "type": "integer"
-                            },
-                            "title": "Original Shape",
-                            "type": "array"
-                        },
-                        "preprocessed_shape": {
-                            "items": {
-                                "type": "integer"
-                            },
-                            "title": "Preprocessed Shape",
-                            "type": "array"
-                        },
-                        "image_stats": {
-                            "title": "Image Stats",
-                            "type": "object"
-                        }
-                    },
-                    "required": [
-                        "subject_id",
-                        "original_image_path",
-                        "preprocessed_image_path",
-                        "original_shape",
-                        "preprocessed_shape",
-                        "image_stats"
-                    ],
-                    "title": "PreprocessedSubject",
-                    "type": "object"
-                }
-            },
-            "description": "NIfTI Preprocessing Piece Output Model",
+            "description": "NIfTI Visualization Piece Output Model",
             "properties": {
-                "preprocessed_subjects": {
-                    "description": "List of preprocessed subjects with paths and statistics",
+                "num_subjects": {
+                    "description": "Number of subjects visualized",
+                    "title": "Num Subjects",
+                    "type": "integer"
+                },
+                "subject_ids": {
+                    "description": "List of subject IDs that were visualized",
                     "items": {
-                        "$ref": "#/$defs/PreprocessedSubject"
+                        "type": "string"
                     },
-                    "title": "Preprocessed Subjects",
+                    "title": "Subject Ids",
                     "type": "array"
                 },
-                "output_dir": {
-                    "description": "Directory containing preprocessed data",
-                    "title": "Output Dir",
+                "view_plane": {
+                    "description": "Anatomical plane that was visualized",
+                    "title": "View Plane",
                     "type": "string"
                 },
-                "num_processed": {
-                    "description": "Number of successfully preprocessed subjects",
-                    "title": "Num Processed",
-                    "type": "integer"
+                "grid_size": {
+                    "description": "Grid size (rows x columns)",
+                    "title": "Grid Size",
+                    "type": "string"
                 },
-                "num_failed": {
-                    "description": "Number of subjects that failed preprocessing",
-                    "title": "Num Failed",
-                    "type": "integer"
-                },
-                "preprocessing_config": {
-                    "description": "Configuration used for preprocessing",
-                    "title": "Preprocessing Config",
-                    "type": "object"
+                "visualization_summary": {
+                    "description": "Summary of visualization",
+                    "title": "Visualization Summary",
+                    "type": "string"
                 }
             },
             "required": [
-                "preprocessed_subjects",
-                "output_dir",
-                "num_processed",
-                "num_failed",
-                "preprocessing_config"
+                "num_subjects",
+                "subject_ids",
+                "view_plane",
+                "grid_size",
+                "visualization_summary"
             ],
             "title": "OutputModel",
             "type": "object"
         },
-        "secrets_schema": null,
-        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/NiftiPreprocessingPiece"
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/NiftiVisualizationPiece",
+        "secrets_schema": null
     },
     "DataSplitPiece": {
         "name": "DataSplitPiece",
@@ -486,6 +866,546 @@
         },
         "secrets_schema": null,
         "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/DataSplitPiece"
+    },
+    "NiftiPreprocessingPiece": {
+        "name": "NiftiPreprocessingPiece",
+        "dependency": {
+            "dockerfile": "Dockerfile_base",
+            "requirements_file": null
+        },
+        "tags": [
+            "medical-imaging",
+            "nifti",
+            "preprocessing",
+            "normalization",
+            "radiology"
+        ],
+        "style": {
+            "node_label": "Preprocess NIfTI",
+            "node_type": "default",
+            "node_style": {
+                "backgroundColor": "#ebebeb"
+            },
+            "useIcon": true,
+            "icon_class_name": "fa-solid:filter",
+            "iconStyle": {
+                "cursor": "pointer"
+            }
+        },
+        "title": "NIfTI Preprocessing",
+        "description": "Preprocesses NIfTI medical imaging data with normalization (z-score, min-max, percentile), optional resizing, and conversion to NumPy format for efficient ML training.",
+        "container_resources": {
+            "cpu": 500,
+            "memory": "2Gi"
+        },
+        "input_schema": {
+            "$defs": {
+                "NormalizationMethod": {
+                    "description": "Normalization methods for medical images",
+                    "enum": [
+                        "zscore",
+                        "minmax",
+                        "percentile",
+                        "none"
+                    ],
+                    "title": "NormalizationMethod",
+                    "type": "string"
+                },
+                "SubjectInfo": {
+                    "description": "Information about a single subject/scan",
+                    "properties": {
+                        "subject_id": {
+                            "title": "Subject Id",
+                            "type": "string"
+                        },
+                        "image_path": {
+                            "title": "Image Path",
+                            "type": "string"
+                        },
+                        "mask_path": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "default": null,
+                            "title": "Mask Path"
+                        }
+                    },
+                    "required": [
+                        "subject_id",
+                        "image_path"
+                    ],
+                    "title": "SubjectInfo",
+                    "type": "object"
+                }
+            },
+            "description": "NIfTI Preprocessing Piece Input Model",
+            "properties": {
+                "subjects": {
+                    "description": "List of subjects to preprocess",
+                    "items": {
+                        "$ref": "#/$defs/SubjectInfo"
+                    },
+                    "title": "Subjects",
+                    "type": "array"
+                },
+                "output_dir": {
+                    "default": "/home/shared_storage/medical_data/preprocessed/train",
+                    "description": "Directory to save preprocessed data. IMPORTANT: use a unique path per split (e.g. .../preprocessed/train, .../preprocessed/val, .../preprocessed/test) to avoid overwriting between parallel preprocessing nodes.",
+                    "title": "Output Dir",
+                    "type": "string"
+                },
+                "normalization": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/NormalizationMethod"
+                        }
+                    ],
+                    "default": "zscore",
+                    "description": "Normalization method to apply"
+                },
+                "lower_percentile": {
+                    "default": 1.0,
+                    "description": "Lower percentile for clipping (used with 'percentile' normalization)",
+                    "maximum": 50.0,
+                    "minimum": 0.0,
+                    "title": "Lower Percentile",
+                    "type": "number"
+                },
+                "upper_percentile": {
+                    "default": 99.0,
+                    "description": "Upper percentile for clipping (used with 'percentile' normalization)",
+                    "maximum": 100.0,
+                    "minimum": 50.0,
+                    "title": "Upper Percentile",
+                    "type": "number"
+                },
+                "save_as_numpy": {
+                    "default": true,
+                    "description": "Save preprocessed data as NumPy arrays (.npy) for faster loading",
+                    "title": "Save As Numpy",
+                    "type": "boolean"
+                },
+                "target_shape": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "integer"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Target shape for resizing (e.g., [128, 128, 64]). None = keep original.",
+                    "title": "Target Shape"
+                }
+            },
+            "required": [
+                "subjects"
+            ],
+            "title": "InputModel",
+            "type": "object"
+        },
+        "output_schema": {
+            "$defs": {
+                "PreprocessedSubject": {
+                    "description": "Information about a preprocessed subject",
+                    "properties": {
+                        "subject_id": {
+                            "title": "Subject Id",
+                            "type": "string"
+                        },
+                        "original_image_path": {
+                            "title": "Original Image Path",
+                            "type": "string"
+                        },
+                        "preprocessed_image_path": {
+                            "title": "Preprocessed Image Path",
+                            "type": "string"
+                        },
+                        "preprocessed_mask_path": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "default": null,
+                            "title": "Preprocessed Mask Path"
+                        },
+                        "original_shape": {
+                            "items": {
+                                "type": "integer"
+                            },
+                            "title": "Original Shape",
+                            "type": "array"
+                        },
+                        "preprocessed_shape": {
+                            "items": {
+                                "type": "integer"
+                            },
+                            "title": "Preprocessed Shape",
+                            "type": "array"
+                        },
+                        "image_stats": {
+                            "title": "Image Stats",
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "subject_id",
+                        "original_image_path",
+                        "preprocessed_image_path",
+                        "original_shape",
+                        "preprocessed_shape",
+                        "image_stats"
+                    ],
+                    "title": "PreprocessedSubject",
+                    "type": "object"
+                }
+            },
+            "description": "NIfTI Preprocessing Piece Output Model",
+            "properties": {
+                "preprocessed_subjects": {
+                    "description": "List of preprocessed subjects with paths and statistics",
+                    "items": {
+                        "$ref": "#/$defs/PreprocessedSubject"
+                    },
+                    "title": "Preprocessed Subjects",
+                    "type": "array"
+                },
+                "output_dir": {
+                    "description": "Directory containing preprocessed data",
+                    "title": "Output Dir",
+                    "type": "string"
+                },
+                "num_processed": {
+                    "description": "Number of successfully preprocessed subjects",
+                    "title": "Num Processed",
+                    "type": "integer"
+                },
+                "num_failed": {
+                    "description": "Number of subjects that failed preprocessing",
+                    "title": "Num Failed",
+                    "type": "integer"
+                },
+                "preprocessing_config": {
+                    "description": "Configuration used for preprocessing",
+                    "title": "Preprocessing Config",
+                    "type": "object"
+                }
+            },
+            "required": [
+                "preprocessed_subjects",
+                "output_dir",
+                "num_processed",
+                "num_failed",
+                "preprocessing_config"
+            ],
+            "title": "OutputModel",
+            "type": "object"
+        },
+        "secrets_schema": null,
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/NiftiPreprocessingPiece"
+    },
+    "HelloWorldPiece": {
+        "name": "HelloWorldPiece",
+        "dependency": {
+            "dockerfile": "Dockerfile_base",
+            "requirements_file": null
+        },
+        "tags": [
+            "example",
+            "text",
+            "hello-world"
+        ],
+        "style": {
+            "node_label": "Hello World",
+            "node_type": "default",
+            "node_style": {
+                "backgroundColor": "#ebebeb"
+            },
+            "useIcon": true,
+            "icon_class_name": "fa-solid:hand-wave",
+            "iconStyle": {
+                "cursor": "pointer"
+            }
+        },
+        "title": "Hello World Piece",
+        "description": "A simple piece that generates greeting messages.",
+        "container_resources": {
+            "cpu": 100,
+            "memory": "128Mi"
+        },
+        "input_schema": {
+            "description": "Hello World Piece Input Model",
+            "properties": {
+                "name": {
+                    "default": "World",
+                    "description": "Name to greet",
+                    "title": "Name",
+                    "type": "string"
+                }
+            },
+            "title": "InputModel",
+            "type": "object"
+        },
+        "output_schema": {
+            "description": "Hello World Piece Output Model",
+            "properties": {
+                "message": {
+                    "description": "Greeting message",
+                    "title": "Message",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "message"
+            ],
+            "title": "OutputModel",
+            "type": "object"
+        },
+        "secrets_schema": null,
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/HelloWorldPiece"
+    },
+    "NiftiEDAPiece": {
+        "name": "NiftiEDAPiece",
+        "dependency": {
+            "dockerfile": "Dockerfile_base",
+            "requirements_file": null
+        },
+        "tags": [
+            "Medical Imaging",
+            "EDA",
+            "Visualization",
+            "NIfTI",
+            "Analytics",
+            "Statistics"
+        ],
+        "style": {
+            "node_label": "NIfTI EDA",
+            "node_type": "default",
+            "node_style": {
+                "backgroundColor": "#ffcc99"
+            },
+            "useIcon": true,
+            "icon_class_name": "fa-solid:chart-bar",
+            "iconStyle": {
+                "cursor": "pointer"
+            }
+        },
+        "description": "Performs comprehensive Exploratory Data Analysis (EDA) on NIfTI medical imaging datasets with visual graphs and statistics",
+        "input_schema": {
+            "$defs": {
+                "SubjectInfo": {
+                    "description": "Information about a single subject/scan",
+                    "properties": {
+                        "subject_id": {
+                            "title": "Subject Id",
+                            "type": "string"
+                        },
+                        "image_path": {
+                            "title": "Image Path",
+                            "type": "string"
+                        },
+                        "mask_path": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "default": null,
+                            "title": "Mask Path"
+                        }
+                    },
+                    "required": [
+                        "subject_id",
+                        "image_path"
+                    ],
+                    "title": "SubjectInfo",
+                    "type": "object"
+                }
+            },
+            "description": "NIfTI EDA Piece Input Model",
+            "properties": {
+                "subjects": {
+                    "default": [],
+                    "description": "List of subjects to analyze",
+                    "items": {
+                        "$ref": "#/$defs/SubjectInfo"
+                    },
+                    "title": "Subjects",
+                    "type": "array"
+                },
+                "output_dir": {
+                    "default": "/home/shared_storage/eda_results",
+                    "description": "[DEPRECATED - ignored] Directory to save EDA visualizations and reports. Files are now automatically saved to Domino's tracked storage.",
+                    "title": "Output Dir",
+                    "type": "string"
+                },
+                "max_subjects": {
+                    "default": 50,
+                    "description": "Maximum number of subjects to analyze (for performance)",
+                    "maximum": 200,
+                    "minimum": 1,
+                    "title": "Max Subjects",
+                    "type": "integer"
+                },
+                "generate_3d_plots": {
+                    "default": false,
+                    "description": "Whether to generate 3D volume visualizations (computationally expensive)",
+                    "title": "Generate 3D Plots",
+                    "type": "boolean"
+                },
+                "num_sample_slices": {
+                    "default": 10,
+                    "description": "Number of random slices to sample for intensity distribution analysis",
+                    "maximum": 50,
+                    "minimum": 1,
+                    "title": "Num Sample Slices",
+                    "type": "integer"
+                }
+            },
+            "title": "InputModel",
+            "type": "object"
+        },
+        "output_schema": {
+            "$defs": {
+                "EDAStatistics": {
+                    "description": "Summary statistics from comprehensive EDA",
+                    "properties": {
+                        "total_subjects": {
+                            "title": "Total Subjects",
+                            "type": "integer"
+                        },
+                        "analyzed_subjects": {
+                            "title": "Analyzed Subjects",
+                            "type": "integer"
+                        },
+                        "unique_shapes": {
+                            "description": "Number of unique volume shapes found",
+                            "title": "Unique Shapes",
+                            "type": "integer"
+                        },
+                        "unique_spacings": {
+                            "description": "Number of unique voxel spacing protocols",
+                            "title": "Unique Spacings",
+                            "type": "integer"
+                        },
+                        "num_classes": {
+                            "description": "Number of unique classes in masks",
+                            "title": "Num Classes",
+                            "type": "integer"
+                        },
+                        "class_distribution": {
+                            "additionalProperties": {
+                                "type": "integer"
+                            },
+                            "description": "Voxel count per class",
+                            "title": "Class Distribution",
+                            "type": "object"
+                        },
+                        "mean_lesion_coverage": {
+                            "description": "Mean ratio of lesion voxels to total voxels",
+                            "title": "Mean Lesion Coverage",
+                            "type": "number"
+                        },
+                        "slice_lesion_ratio": {
+                            "description": "Ratio of slices containing lesions",
+                            "title": "Slice Lesion Ratio",
+                            "type": "number"
+                        },
+                        "mean_intensity": {
+                            "description": "Mean intensity across all volumes",
+                            "title": "Mean Intensity",
+                            "type": "number"
+                        },
+                        "std_intensity": {
+                            "description": "Mean standard deviation across all volumes",
+                            "title": "Std Intensity",
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "total_subjects",
+                        "analyzed_subjects",
+                        "unique_shapes",
+                        "unique_spacings",
+                        "num_classes",
+                        "class_distribution",
+                        "mean_lesion_coverage",
+                        "slice_lesion_ratio",
+                        "mean_intensity",
+                        "std_intensity"
+                    ],
+                    "title": "EDAStatistics",
+                    "type": "object"
+                }
+            },
+            "description": "NIfTI EDA Piece Output Model",
+            "properties": {
+                "statistics": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/EDAStatistics"
+                        }
+                    ],
+                    "description": "Summary statistics from the comprehensive analysis"
+                },
+                "report_path": {
+                    "description": "Path to the generated EDA text report",
+                    "title": "Report Path",
+                    "type": "string"
+                },
+                "visualization_dir": {
+                    "description": "Directory containing all generated visualizations",
+                    "title": "Visualization Dir",
+                    "type": "string"
+                },
+                "num_visualizations": {
+                    "description": "Number of visualization files created",
+                    "title": "Num Visualizations",
+                    "type": "integer"
+                },
+                "analysis_summary": {
+                    "description": "Text summary of key findings",
+                    "title": "Analysis Summary",
+                    "type": "string"
+                },
+                "analysis_texts": {
+                    "default": [],
+                    "description": "Detailed Slovak text descriptions for each analysis section",
+                    "items": {
+                        "type": "object"
+                    },
+                    "title": "Analysis Texts",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "statistics",
+                "report_path",
+                "visualization_dir",
+                "num_visualizations",
+                "analysis_summary"
+            ],
+            "title": "OutputModel",
+            "type": "object"
+        },
+        "secrets_schema": null,
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/NiftiEDAPiece"
     },
     "PituitaryDatasetPiece": {
         "name": "PituitaryDatasetPiece",
@@ -811,124 +1731,109 @@
         "secrets_schema": null,
         "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/PituitaryDatasetPiece"
     },
-    "NiftiDataLoaderPiece": {
-        "name": "NiftiDataLoaderPiece",
+    "GenerativeShapesPiece": {
+        "name": "GenerativeShapesPiece",
         "dependency": {
             "dockerfile": "Dockerfile_base",
             "requirements_file": null
         },
         "tags": [
-            "medical-imaging",
-            "nifti",
-            "data-loading",
-            "radiology",
-            "preprocessing"
+            "generation",
+            "image",
+            "shapes"
         ],
         "style": {
-            "node_label": "NIfTI Loader",
+            "node_label": "Example Shapes Piece",
             "node_type": "default",
             "node_style": {
                 "backgroundColor": "#ebebeb"
             },
             "useIcon": true,
-            "icon_class_name": "fa-solid:file-medical",
+            "icon_class_name": "fa-solid:paint-brush",
             "iconStyle": {
                 "cursor": "pointer"
             }
         },
-        "title": "NIfTI Data Loader",
-        "description": "Discovers and loads NIfTI medical imaging data (.nii.gz files). Pairs images with corresponding segmentation masks based on filename matching.",
+        "title": "Generative Shapes Piece",
+        "description": "Generates a PNG image containing simple geometric shapes (circles, squares, triangles).",
         "container_resources": {
-            "cpu": 100,
-            "memory": "256Mi"
+            "cpu": 500,
+            "memory": "512Mi"
         },
         "input_schema": {
-            "description": "NIfTI Data Loader Piece Input Model",
             "properties": {
-                "images_path": {
-                    "default": "/home/shared_storage/medical_data/images",
-                    "description": "Path to the directory containing NIfTI image files (.nii.gz)",
-                    "title": "Images Path",
+                "width": {
+                    "default": 256,
+                    "minimum": 1,
+                    "title": "Width",
+                    "type": "integer"
+                },
+                "height": {
+                    "default": 256,
+                    "minimum": 1,
+                    "title": "Height",
+                    "type": "integer"
+                },
+                "background_color": {
+                    "default": "#FFFFFF",
+                    "title": "Background Color",
                     "type": "string"
                 },
-                "masks_path": {
+                "shape": {
+                    "default": "circle",
+                    "enum": [
+                        "circle",
+                        "square",
+                        "triangle"
+                    ],
+                    "title": "Shape",
+                    "type": "string"
+                },
+                "count": {
+                    "default": 5,
+                    "maximum": 200,
+                    "minimum": 1,
+                    "title": "Count",
+                    "type": "integer"
+                },
+                "shape_size": {
+                    "default": 30,
+                    "minimum": 1,
+                    "title": "Shape Size",
+                    "type": "integer"
+                },
+                "color": {
+                    "default": "#FF0000",
+                    "title": "Color",
+                    "type": "string"
+                },
+                "seed": {
                     "anyOf": [
                         {
-                            "type": "string"
+                            "type": "integer"
                         },
                         {
                             "type": "null"
                         }
                     ],
-                    "default": "/home/shared_storage/medical_data/masks",
-                    "description": "Path to the directory containing NIfTI mask/segmentation files (.nii.gz). Optional for inference-only mode.",
-                    "title": "Masks Path"
-                },
-                "file_pattern": {
-                    "default": "*.nii.gz",
-                    "description": "Glob pattern to match NIfTI files (e.g., 'sub-*.nii.gz')",
-                    "title": "File Pattern",
-                    "type": "string"
+                    "default": 42,
+                    "title": "Seed"
                 }
             },
             "title": "InputModel",
             "type": "object"
         },
         "output_schema": {
-            "$defs": {
-                "SubjectInfo": {
-                    "description": "Information about a single subject/scan",
-                    "properties": {
-                        "subject_id": {
-                            "title": "Subject Id",
-                            "type": "string"
-                        },
-                        "image_path": {
-                            "title": "Image Path",
-                            "type": "string"
-                        },
-                        "mask_path": {
-                            "anyOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "default": null,
-                            "title": "Mask Path"
-                        }
-                    },
-                    "required": [
-                        "subject_id",
-                        "image_path"
-                    ],
-                    "title": "SubjectInfo",
-                    "type": "object"
-                }
-            },
-            "description": "NIfTI Data Loader Piece Output Model",
             "properties": {
-                "subjects": {
-                    "description": "List of discovered subjects with their image and mask paths",
-                    "items": {
-                        "$ref": "#/$defs/SubjectInfo"
-                    },
-                    "title": "Subjects",
-                    "type": "array"
-                },
-                "num_subjects": {
-                    "description": "Total number of subjects found",
-                    "title": "Num Subjects",
-                    "type": "integer"
-                },
-                "images_dir": {
-                    "description": "Path to images directory",
-                    "title": "Images Dir",
+                "message": {
+                    "title": "Message",
                     "type": "string"
                 },
-                "masks_dir": {
+                "file_path": {
+                    "title": "File Path",
+                    "type": "string"
+                },
+                "image_base64": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -937,21 +1842,19 @@
                             "type": "null"
                         }
                     ],
-                    "description": "Path to masks directory (if provided)",
-                    "title": "Masks Dir"
+                    "default": null,
+                    "title": "Image Base64"
                 }
             },
             "required": [
-                "subjects",
-                "num_subjects",
-                "images_dir",
-                "masks_dir"
+                "message",
+                "file_path"
             ],
             "title": "OutputModel",
             "type": "object"
         },
         "secrets_schema": null,
-        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/NiftiDataLoaderPiece"
+        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/GenerativeShapesPiece"
     },
     "ModelTrainingPiece": {
         "name": "ModelTrainingPiece",
@@ -1418,908 +2321,5 @@
         },
         "secrets_schema": null,
         "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/ModelTrainingPiece"
-    },
-    "NiftiVisualizationPiece": {
-        "name": "NiftiVisualizationPiece",
-        "dependency": {
-            "dockerfile": "Dockerfile_base",
-            "requirements_file": null
-        },
-        "tags": [
-            "Medical Imaging",
-            "Visualization",
-            "NIfTI",
-            "MRI",
-            "Segmentation"
-        ],
-        "style": {
-            "node_label": "NIfTI Visualization",
-            "node_type": "default",
-            "node_style": {
-                "backgroundColor": "#b3e0ff"
-            },
-            "useIcon": true,
-            "icon_class_name": "fa-solid:image",
-            "iconStyle": {
-                "cursor": "pointer"
-            }
-        },
-        "description": "Visualizes NIfTI medical imaging data with optional mask overlay in axial, sagittal, or coronal planes",
-        "input_schema": {
-            "description": "NIfTI Visualization Piece Input Model\n\nStandalone piece that loads NIfTI files directly from directories\nand creates a grid visualization. No upstream connection required.",
-            "properties": {
-                "images_path": {
-                    "default": "/home/shared_storage/medical_data/images",
-                    "description": "Path to directory containing NIfTI image files (.nii.gz)",
-                    "title": "Images Path",
-                    "type": "string"
-                },
-                "masks_path": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": "/home/shared_storage/medical_data/masks",
-                    "description": "Path to directory containing NIfTI mask files (.nii.gz). Optional.",
-                    "title": "Masks Path"
-                },
-                "file_pattern": {
-                    "default": "*.nii.gz",
-                    "description": "Glob pattern to match NIfTI files (e.g., '*.nii.gz')",
-                    "title": "File Pattern",
-                    "type": "string"
-                },
-                "max_subjects": {
-                    "default": 50,
-                    "description": "Maximum number of subjects to visualize",
-                    "maximum": 100,
-                    "minimum": 1,
-                    "title": "Max Subjects",
-                    "type": "integer"
-                },
-                "slice_index": {
-                    "anyOf": [
-                        {
-                            "type": "integer"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Slice index to visualize. If None, uses middle slice.",
-                    "title": "Slice Index"
-                },
-                "view_plane": {
-                    "default": "axial",
-                    "description": "Anatomical plane to visualize",
-                    "enum": [
-                        "axial",
-                        "sagittal",
-                        "coronal"
-                    ],
-                    "title": "View Plane",
-                    "type": "string"
-                },
-                "show_mask_overlay": {
-                    "default": true,
-                    "description": "Whether to overlay mask on image",
-                    "title": "Show Mask Overlay",
-                    "type": "boolean"
-                },
-                "mask_alpha": {
-                    "default": 0.5,
-                    "description": "Transparency of mask overlay (0.0 = transparent, 1.0 = opaque)",
-                    "maximum": 1.0,
-                    "minimum": 0.0,
-                    "title": "Mask Alpha",
-                    "type": "number"
-                },
-                "color_map": {
-                    "default": "gray",
-                    "description": "Matplotlib colormap for image (e.g., 'gray', 'viridis', 'bone')",
-                    "title": "Color Map",
-                    "type": "string"
-                }
-            },
-            "title": "InputModel",
-            "type": "object"
-        },
-        "output_schema": {
-            "description": "NIfTI Visualization Piece Output Model",
-            "properties": {
-                "num_subjects": {
-                    "description": "Number of subjects visualized",
-                    "title": "Num Subjects",
-                    "type": "integer"
-                },
-                "subject_ids": {
-                    "description": "List of subject IDs that were visualized",
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Subject Ids",
-                    "type": "array"
-                },
-                "view_plane": {
-                    "description": "Anatomical plane that was visualized",
-                    "title": "View Plane",
-                    "type": "string"
-                },
-                "grid_size": {
-                    "description": "Grid size (rows x columns)",
-                    "title": "Grid Size",
-                    "type": "string"
-                },
-                "visualization_summary": {
-                    "description": "Summary of visualization",
-                    "title": "Visualization Summary",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "num_subjects",
-                "subject_ids",
-                "view_plane",
-                "grid_size",
-                "visualization_summary"
-            ],
-            "title": "OutputModel",
-            "type": "object"
-        },
-        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/NiftiVisualizationPiece",
-        "secrets_schema": null
-    },
-    "GenerativeShapesPiece": {
-        "name": "GenerativeShapesPiece",
-        "dependency": {
-            "dockerfile": "Dockerfile_base",
-            "requirements_file": null
-        },
-        "tags": [
-            "generation",
-            "image",
-            "shapes"
-        ],
-        "style": {
-            "node_label": "Example Shapes Piece",
-            "node_type": "default",
-            "node_style": {
-                "backgroundColor": "#ebebeb"
-            },
-            "useIcon": true,
-            "icon_class_name": "fa-solid:paint-brush",
-            "iconStyle": {
-                "cursor": "pointer"
-            }
-        },
-        "title": "Generative Shapes Piece",
-        "description": "Generates a PNG image containing simple geometric shapes (circles, squares, triangles).",
-        "container_resources": {
-            "cpu": 500,
-            "memory": "512Mi"
-        },
-        "input_schema": {
-            "properties": {
-                "width": {
-                    "default": 256,
-                    "minimum": 1,
-                    "title": "Width",
-                    "type": "integer"
-                },
-                "height": {
-                    "default": 256,
-                    "minimum": 1,
-                    "title": "Height",
-                    "type": "integer"
-                },
-                "background_color": {
-                    "default": "#FFFFFF",
-                    "title": "Background Color",
-                    "type": "string"
-                },
-                "shape": {
-                    "default": "circle",
-                    "enum": [
-                        "circle",
-                        "square",
-                        "triangle"
-                    ],
-                    "title": "Shape",
-                    "type": "string"
-                },
-                "count": {
-                    "default": 5,
-                    "maximum": 200,
-                    "minimum": 1,
-                    "title": "Count",
-                    "type": "integer"
-                },
-                "shape_size": {
-                    "default": 30,
-                    "minimum": 1,
-                    "title": "Shape Size",
-                    "type": "integer"
-                },
-                "color": {
-                    "default": "#FF0000",
-                    "title": "Color",
-                    "type": "string"
-                },
-                "seed": {
-                    "anyOf": [
-                        {
-                            "type": "integer"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": 42,
-                    "title": "Seed"
-                }
-            },
-            "title": "InputModel",
-            "type": "object"
-        },
-        "output_schema": {
-            "properties": {
-                "message": {
-                    "title": "Message",
-                    "type": "string"
-                },
-                "file_path": {
-                    "title": "File Path",
-                    "type": "string"
-                },
-                "image_base64": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Image Base64"
-                }
-            },
-            "required": [
-                "message",
-                "file_path"
-            ],
-            "title": "OutputModel",
-            "type": "object"
-        },
-        "secrets_schema": null,
-        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/GenerativeShapesPiece"
-    },
-    "HelloWorldPiece": {
-        "name": "HelloWorldPiece",
-        "dependency": {
-            "dockerfile": "Dockerfile_base",
-            "requirements_file": null
-        },
-        "tags": [
-            "example",
-            "text",
-            "hello-world"
-        ],
-        "style": {
-            "node_label": "Hello World",
-            "node_type": "default",
-            "node_style": {
-                "backgroundColor": "#ebebeb"
-            },
-            "useIcon": true,
-            "icon_class_name": "fa-solid:hand-wave",
-            "iconStyle": {
-                "cursor": "pointer"
-            }
-        },
-        "title": "Hello World Piece",
-        "description": "A simple piece that generates greeting messages.",
-        "container_resources": {
-            "cpu": 100,
-            "memory": "128Mi"
-        },
-        "input_schema": {
-            "description": "Hello World Piece Input Model",
-            "properties": {
-                "name": {
-                    "default": "World",
-                    "description": "Name to greet",
-                    "title": "Name",
-                    "type": "string"
-                }
-            },
-            "title": "InputModel",
-            "type": "object"
-        },
-        "output_schema": {
-            "description": "Hello World Piece Output Model",
-            "properties": {
-                "message": {
-                    "description": "Greeting message",
-                    "title": "Message",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "message"
-            ],
-            "title": "OutputModel",
-            "type": "object"
-        },
-        "secrets_schema": null,
-        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/HelloWorldPiece"
-    },
-    "ModelInferencePiece": {
-        "name": "ModelInferencePiece",
-        "dependency": {
-            "dockerfile": "Dockerfile_torch",
-            "requirements_file": null
-        },
-        "tags": [
-            "Medical Imaging",
-            "Deep Learning",
-            "Inference",
-            "Segmentation",
-            "PyTorch",
-            "Visualization",
-            "Confidence"
-        ],
-        "style": {
-            "node_label": "Model Inference",
-            "node_type": "default",
-            "node_style": {
-                "backgroundColor": "#ffcc99"
-            },
-            "useIcon": true,
-            "icon_class_name": "fa-solid:search",
-            "iconStyle": {
-                "cursor": "pointer"
-            }
-        },
-        "description": "Loads trained segmentation models and performs inference on samples with confidence visualization and detailed metrics",
-        "input_schema": {
-            "$defs": {
-                "ModelArchitecture": {
-                    "description": "Supported model architectures",
-                    "enum": [
-                        "unet",
-                        "swin_unetr"
-                    ],
-                    "title": "ModelArchitecture",
-                    "type": "string"
-                },
-                "SubjectInfo": {
-                    "description": "Information about a single subject for inference",
-                    "properties": {
-                        "subject_id": {
-                            "title": "Subject Id",
-                            "type": "string"
-                        },
-                        "image_path": {
-                            "title": "Image Path",
-                            "type": "string"
-                        },
-                        "mask_path": {
-                            "anyOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "default": null,
-                            "title": "Mask Path"
-                        }
-                    },
-                    "required": [
-                        "subject_id",
-                        "image_path"
-                    ],
-                    "title": "SubjectInfo",
-                    "type": "object"
-                }
-            },
-            "description": "Model Inference Piece Input Model",
-            "properties": {
-                "model_path": {
-                    "description": "Path to the trained model (.pth file)",
-                    "title": "Model Path",
-                    "type": "string"
-                },
-                "model_architecture": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ModelArchitecture"
-                        }
-                    ],
-                    "default": "unet",
-                    "description": "Model architecture used during training"
-                },
-                "num_classes": {
-                    "default": 6,
-                    "description": "Number of segmentation classes (including background)",
-                    "minimum": 2,
-                    "title": "Num Classes",
-                    "type": "integer"
-                },
-                "patch_size": {
-                    "default": 64,
-                    "description": "Size of 3D patches used during training",
-                    "maximum": 128,
-                    "minimum": 32,
-                    "title": "Patch Size",
-                    "type": "integer"
-                },
-                "subjects": {
-                    "anyOf": [
-                        {
-                            "items": {
-                                "$ref": "#/$defs/SubjectInfo"
-                            },
-                            "type": "array"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "List of subjects from upstream piece. If provided, image_paths and mask_paths are ignored.",
-                    "title": "Subjects"
-                },
-                "image_paths": {
-                    "anyOf": [
-                        {
-                            "items": {
-                                "type": "string"
-                            },
-                            "type": "array"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "List of paths to NIfTI image files for inference",
-                    "title": "Image Paths"
-                },
-                "mask_paths": {
-                    "anyOf": [
-                        {
-                            "items": {
-                                "type": "string"
-                            },
-                            "type": "array"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Optional list of paths to ground truth masks for metric calculation",
-                    "title": "Mask Paths"
-                },
-                "num_samples": {
-                    "default": 5,
-                    "description": "Number of samples to run inference on (0 = all)",
-                    "maximum": 100,
-                    "minimum": 0,
-                    "title": "Num Samples",
-                    "type": "integer"
-                },
-                "samples_per_volume": {
-                    "default": 5,
-                    "description": "Number of patches to extract per volume",
-                    "maximum": 50,
-                    "minimum": 1,
-                    "title": "Samples Per Volume",
-                    "type": "integer"
-                },
-                "output_dir": {
-                    "default": "/home/shared_storage/inference_results",
-                    "description": "Directory to save inference results and visualizations",
-                    "title": "Output Dir",
-                    "type": "string"
-                },
-                "save_predictions": {
-                    "default": false,
-                    "description": "Whether to save prediction masks as NIfTI files",
-                    "title": "Save Predictions",
-                    "type": "boolean"
-                },
-                "save_visualizations": {
-                    "default": true,
-                    "description": "Whether to save visualization images",
-                    "title": "Save Visualizations",
-                    "type": "boolean"
-                },
-                "use_gpu": {
-                    "default": true,
-                    "description": "Whether to use GPU if available",
-                    "title": "Use Gpu",
-                    "type": "boolean"
-                },
-                "batch_size": {
-                    "default": 4,
-                    "description": "Batch size for inference",
-                    "maximum": 32,
-                    "minimum": 1,
-                    "title": "Batch Size",
-                    "type": "integer"
-                }
-            },
-            "required": [
-                "model_path"
-            ],
-            "title": "InputModel",
-            "type": "object"
-        },
-        "output_schema": {
-            "$defs": {
-                "InferenceMetrics": {
-                    "description": "Metrics for a single inference sample",
-                    "properties": {
-                        "subject_id": {
-                            "title": "Subject Id",
-                            "type": "string"
-                        },
-                        "dice_score": {
-                            "title": "Dice Score",
-                            "type": "number"
-                        },
-                        "mean_confidence": {
-                            "title": "Mean Confidence",
-                            "type": "number"
-                        },
-                        "max_confidence": {
-                            "title": "Max Confidence",
-                            "type": "number"
-                        },
-                        "min_confidence": {
-                            "title": "Min Confidence",
-                            "type": "number"
-                        },
-                        "class_confidences": {
-                            "additionalProperties": {
-                                "type": "number"
-                            },
-                            "title": "Class Confidences",
-                            "type": "object"
-                        }
-                    },
-                    "required": [
-                        "subject_id",
-                        "dice_score",
-                        "mean_confidence",
-                        "max_confidence",
-                        "min_confidence",
-                        "class_confidences"
-                    ],
-                    "title": "InferenceMetrics",
-                    "type": "object"
-                }
-            },
-            "description": "Model Inference Piece Output Model",
-            "properties": {
-                "output_dir": {
-                    "description": "Directory containing all inference results",
-                    "title": "Output Dir",
-                    "type": "string"
-                },
-                "num_samples_processed": {
-                    "description": "Total number of samples processed",
-                    "title": "Num Samples Processed",
-                    "type": "integer"
-                },
-                "mean_dice_score": {
-                    "anyOf": [
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Average Dice score across all samples (if masks provided)",
-                    "title": "Mean Dice Score"
-                },
-                "mean_confidence": {
-                    "description": "Average confidence score across all samples",
-                    "title": "Mean Confidence",
-                    "type": "number"
-                },
-                "inference_metrics": {
-                    "description": "Detailed metrics for each sample",
-                    "items": {
-                        "$ref": "#/$defs/InferenceMetrics"
-                    },
-                    "title": "Inference Metrics",
-                    "type": "array"
-                },
-                "visualization_dir": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Directory containing visualization images",
-                    "title": "Visualization Dir"
-                },
-                "predictions_dir": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Directory containing saved prediction masks",
-                    "title": "Predictions Dir"
-                },
-                "summary_report": {
-                    "description": "Text summary of inference results",
-                    "title": "Summary Report",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "output_dir",
-                "num_samples_processed",
-                "mean_confidence",
-                "inference_metrics",
-                "summary_report"
-            ],
-            "title": "OutputModel",
-            "type": "object"
-        },
-        "secrets_schema": null,
-        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/ModelInferencePiece"
-    },
-    "NiftiEDAPiece": {
-        "name": "NiftiEDAPiece",
-        "dependency": {
-            "dockerfile": "Dockerfile_base",
-            "requirements_file": null
-        },
-        "tags": [
-            "Medical Imaging",
-            "EDA",
-            "Visualization",
-            "NIfTI",
-            "Analytics",
-            "Statistics"
-        ],
-        "style": {
-            "node_label": "NIfTI EDA",
-            "node_type": "default",
-            "node_style": {
-                "backgroundColor": "#ffcc99"
-            },
-            "useIcon": true,
-            "icon_class_name": "fa-solid:chart-bar",
-            "iconStyle": {
-                "cursor": "pointer"
-            }
-        },
-        "description": "Performs comprehensive Exploratory Data Analysis (EDA) on NIfTI medical imaging datasets with visual graphs and statistics",
-        "input_schema": {
-            "$defs": {
-                "SubjectInfo": {
-                    "description": "Information about a single subject/scan",
-                    "properties": {
-                        "subject_id": {
-                            "title": "Subject Id",
-                            "type": "string"
-                        },
-                        "image_path": {
-                            "title": "Image Path",
-                            "type": "string"
-                        },
-                        "mask_path": {
-                            "anyOf": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "null"
-                                }
-                            ],
-                            "default": null,
-                            "title": "Mask Path"
-                        }
-                    },
-                    "required": [
-                        "subject_id",
-                        "image_path"
-                    ],
-                    "title": "SubjectInfo",
-                    "type": "object"
-                }
-            },
-            "description": "NIfTI EDA Piece Input Model",
-            "properties": {
-                "subjects": {
-                    "default": [],
-                    "description": "List of subjects to analyze",
-                    "items": {
-                        "$ref": "#/$defs/SubjectInfo"
-                    },
-                    "title": "Subjects",
-                    "type": "array"
-                },
-                "output_dir": {
-                    "default": "/home/shared_storage/eda_results",
-                    "description": "[DEPRECATED - ignored] Directory to save EDA visualizations and reports. Files are now automatically saved to Domino's tracked storage.",
-                    "title": "Output Dir",
-                    "type": "string"
-                },
-                "max_subjects": {
-                    "default": 50,
-                    "description": "Maximum number of subjects to analyze (for performance)",
-                    "maximum": 200,
-                    "minimum": 1,
-                    "title": "Max Subjects",
-                    "type": "integer"
-                },
-                "generate_3d_plots": {
-                    "default": false,
-                    "description": "Whether to generate 3D volume visualizations (computationally expensive)",
-                    "title": "Generate 3D Plots",
-                    "type": "boolean"
-                },
-                "num_sample_slices": {
-                    "default": 10,
-                    "description": "Number of random slices to sample for intensity distribution analysis",
-                    "maximum": 50,
-                    "minimum": 1,
-                    "title": "Num Sample Slices",
-                    "type": "integer"
-                }
-            },
-            "title": "InputModel",
-            "type": "object"
-        },
-        "output_schema": {
-            "$defs": {
-                "EDAStatistics": {
-                    "description": "Summary statistics from comprehensive EDA",
-                    "properties": {
-                        "total_subjects": {
-                            "title": "Total Subjects",
-                            "type": "integer"
-                        },
-                        "analyzed_subjects": {
-                            "title": "Analyzed Subjects",
-                            "type": "integer"
-                        },
-                        "unique_shapes": {
-                            "description": "Number of unique volume shapes found",
-                            "title": "Unique Shapes",
-                            "type": "integer"
-                        },
-                        "unique_spacings": {
-                            "description": "Number of unique voxel spacing protocols",
-                            "title": "Unique Spacings",
-                            "type": "integer"
-                        },
-                        "num_classes": {
-                            "description": "Number of unique classes in masks",
-                            "title": "Num Classes",
-                            "type": "integer"
-                        },
-                        "class_distribution": {
-                            "additionalProperties": {
-                                "type": "integer"
-                            },
-                            "description": "Voxel count per class",
-                            "title": "Class Distribution",
-                            "type": "object"
-                        },
-                        "mean_lesion_coverage": {
-                            "description": "Mean ratio of lesion voxels to total voxels",
-                            "title": "Mean Lesion Coverage",
-                            "type": "number"
-                        },
-                        "slice_lesion_ratio": {
-                            "description": "Ratio of slices containing lesions",
-                            "title": "Slice Lesion Ratio",
-                            "type": "number"
-                        },
-                        "mean_intensity": {
-                            "description": "Mean intensity across all volumes",
-                            "title": "Mean Intensity",
-                            "type": "number"
-                        },
-                        "std_intensity": {
-                            "description": "Mean standard deviation across all volumes",
-                            "title": "Std Intensity",
-                            "type": "number"
-                        }
-                    },
-                    "required": [
-                        "total_subjects",
-                        "analyzed_subjects",
-                        "unique_shapes",
-                        "unique_spacings",
-                        "num_classes",
-                        "class_distribution",
-                        "mean_lesion_coverage",
-                        "slice_lesion_ratio",
-                        "mean_intensity",
-                        "std_intensity"
-                    ],
-                    "title": "EDAStatistics",
-                    "type": "object"
-                }
-            },
-            "description": "NIfTI EDA Piece Output Model",
-            "properties": {
-                "statistics": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/EDAStatistics"
-                        }
-                    ],
-                    "description": "Summary statistics from the comprehensive analysis"
-                },
-                "report_path": {
-                    "description": "Path to the generated EDA text report",
-                    "title": "Report Path",
-                    "type": "string"
-                },
-                "visualization_dir": {
-                    "description": "Directory containing all generated visualizations",
-                    "title": "Visualization Dir",
-                    "type": "string"
-                },
-                "num_visualizations": {
-                    "description": "Number of visualization files created",
-                    "title": "Num Visualizations",
-                    "type": "integer"
-                },
-                "analysis_summary": {
-                    "description": "Text summary of key findings",
-                    "title": "Analysis Summary",
-                    "type": "string"
-                },
-                "analysis_texts": {
-                    "default": [],
-                    "description": "Detailed Slovak text descriptions for each analysis section",
-                    "items": {
-                        "type": "object"
-                    },
-                    "title": "Analysis Texts",
-                    "type": "array"
-                }
-            },
-            "required": [
-                "statistics",
-                "report_path",
-                "visualization_dir",
-                "num_visualizations",
-                "analysis_summary"
-            ],
-            "title": "OutputModel",
-            "type": "object"
-        },
-        "secrets_schema": null,
-        "source_url": "https://github.com/PatrikBorzik2426/BorzikPieces/tree/main/pieces/NiftiEDAPiece"
     }
 }

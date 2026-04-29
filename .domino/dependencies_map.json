@@ -1,30 +1,30 @@
 {
     "group0": {
         "dependency": {
-            "dockerfile": "Dockerfile_base",
+            "dockerfile": "Dockerfile_torch",
             "requirements_file": null
         },
         "pieces": [
-            "NiftiPreprocessingPiece",
-            "DataSplitPiece",
-            "PituitaryDatasetPiece",
-            "NiftiDataLoaderPiece",
-            "NiftiVisualizationPiece",
-            "GenerativeShapesPiece",
-            "HelloWorldPiece",
-            "NiftiEDAPiece"
+            "ModelInferencePiece",
+            "ModelTrainingPiece"
         ],
         "secrets": [],
         "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0"
     },
     "group1": {
         "dependency": {
-            "dockerfile": "Dockerfile_torch",
+            "dockerfile": "Dockerfile_base",
             "requirements_file": null
         },
         "pieces": [
-            "ModelTrainingPiece",
-            "ModelInferencePiece"
+            "NiftiDataLoaderPiece",
+            "NiftiVisualizationPiece",
+            "DataSplitPiece",
+            "NiftiPreprocessingPiece",
+            "HelloWorldPiece",
+            "NiftiEDAPiece",
+            "PituitaryDatasetPiece",
+            "GenerativeShapesPiece"
         ],
         "secrets": [],
         "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group1"
