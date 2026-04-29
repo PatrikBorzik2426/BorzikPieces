@@ -77,9 +77,17 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Publish images
-        env:
-          GHCR_USERNAME: ${{ github.actor }}
-        run: domino piece publish-images --registry-token ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=$(python3 -c "import re,pathlib; m=re.search(r'VERSION = \"([\d.]+)\"', pathlib.Path('config.toml').read_text()); print(m.group(1))")
+          for group in group0 group1; do
+            image="ghcr.io/${{ github.repository_owner }}/borzikpieces:${VERSION}-${group}"
+            echo "Pushing $image ..."
+            for attempt in 1 2 3; do
+              docker push "$image" && break
+              echo "Attempt $attempt failed, retrying in 15s..."
+              sleep 15
+            done
+          done
 
       - name: Commit files
         run: |
