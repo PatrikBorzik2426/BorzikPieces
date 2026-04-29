@@ -158,6 +158,10 @@ class InputModel(BaseModel):
         description="Whether to use GPU if available",
         default=True
     )
+    dry_run: bool = Field(
+        description="Quick smoke-test: forces 1 epoch and 1 batch so the full pipeline can be validated without waiting for real training",
+        default=False
+    )
 
 
 class TrainingMetrics(BaseModel):

@@ -273,6 +273,13 @@ class ModelTrainingPiece(BasePiece):
                 device = torch.device("cpu")
                 self.logger.info("Using CPU")
             
+            # Dry-run override: 1 epoch, 1 batch, 1 sample per volume
+            if input_data.dry_run:
+                self.logger.info("DRY RUN enabled — overriding epochs=1, batch_size=1, samples_per_volume=1")
+                input_data.epochs = 1
+                input_data.batch_size = 1
+                input_data.samples_per_volume = 1
+
             # Create output directories
             os.makedirs(input_data.output_dir, exist_ok=True)
             checkpoint_dir = os.path.join(input_data.output_dir, "checkpoints")
