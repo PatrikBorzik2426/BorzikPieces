@@ -26,8 +26,8 @@ class InputModel(BaseModel):
         description="List of subjects to preprocess"
     )
     output_dir: str = Field(
-        description="Directory to save preprocessed data",
-        default="/home/shared_storage/medical_data/preprocessed"
+        description="Directory to save preprocessed data. IMPORTANT: use a unique path per split (e.g. .../preprocessed/train, .../preprocessed/val, .../preprocessed/test) to avoid overwriting between parallel preprocessing nodes.",
+        default="/home/shared_storage/medical_data/preprocessed/train"
     )
     normalization: NormalizationMethod = Field(
         description="Normalization method to apply",

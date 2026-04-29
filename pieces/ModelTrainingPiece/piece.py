@@ -70,8 +70,8 @@ class PituitaryPatchDataset(Dataset):
                 msk_path = self.subject_paths[sub]['mask']
             else:
                 msk_path = os.path.join(self.msk_dir, f"{sub}.nii.gz")
-            
-            if not os.path.exists(msk_path):
+
+            if msk_path is None or not os.path.exists(msk_path):
                 fg_locs[sub] = None
                 continue
                 
@@ -210,7 +210,10 @@ class PituitaryPatchDataset(Dataset):
         
         # Load volumes
         img = self._load_volume(img_path).astype(np.float32)
-        msk = self._load_volume(msk_path).astype(np.int64)
+        if msk_path and os.path.exists(msk_path):
+            msk = self._load_volume(msk_path).astype(np.int64)
+        else:
+            msk = np.zeros(img.shape, dtype=np.int64)
         
         # Normalize image
         p1, p99 = np.percentile(img, [1, 99])

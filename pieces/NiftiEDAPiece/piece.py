@@ -418,11 +418,6 @@ class NiftiEDAPiece(BasePiece):
         return '\n'.join(html_parts)
 
     def _generate_html_gallery(self, output_dir: str, viz_count: int, analysis_summary: str) -> str:
-        """Legacy method for backward compatibility - redirects to comprehensive HTML"""
-        # This method is kept for compatibility but just calls the new method
-        return self._generate_comprehensive_html(output_dir, EDAStatistics(), [])
-
-    def _generate_html_gallery(self, output_dir: str, viz_count: int, analysis_summary: str) -> str:
         """Generate an HTML gallery showing all visualizations"""
         
         # List of expected visualization files

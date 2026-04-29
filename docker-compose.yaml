@@ -273,8 +273,16 @@ services:
       DUMB_INIT_SETSID: "0"
       DOMINO_DEPLOY_MODE: local-compose
       LOCAL_DOMINO_SHARED_DATA_PATH: ${PWD}/domino_data
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
     restart: always
-
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     volumes:
       - ${AIRFLOW_PROJ_DIR:-./airflow}/dags:/opt/airflow/dags
       - ${AIRFLOW_PROJ_DIR:-./airflow}/logs:/opt/airflow/logs

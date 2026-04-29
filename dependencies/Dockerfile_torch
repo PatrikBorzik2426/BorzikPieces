@@ -1,8 +1,16 @@
 FROM ghcr.io/tauffer-consulting/domino-base-piece:latest
 
-# Dependencies for deep learning pieces (PyTorch + MONAI)
+# Dependencies for deep learning pieces (PyTorch + MONAI with CUDA 12.1 GPU support)
 # Used by: ModelTrainingPiece, ModelInferencePiece
+# GPU: requires NVIDIA Container Toolkit on host + GPU resource in docker-compose
 
+# Install CUDA-enabled PyTorch first (bundled CUDA libs, no system CUDA needed)
+RUN pip install --no-cache-dir \
+    torch==2.1.2+cu121 \
+    torchvision==0.16.2+cu121 \
+    --index-url https://download.pytorch.org/whl/cu121
+
+# Install remaining dependencies (separate pip call to avoid index-url conflict)
 RUN pip install --no-cache-dir \
     "numpy>=1.24.0,<2.0.0" \
     scipy==1.11.4 \
@@ -13,8 +21,8 @@ RUN pip install --no-cache-dir \
     matplotlib==3.7.5 \
     seaborn==0.12.2 \
     einops==0.7.0 \
-    torch \
-    monai
+    scikit-learn==1.3.2 \
+    "monai[all]==1.3.0"
 
 # Copy the piece source code and config
 COPY config.toml domino/pieces_repository/

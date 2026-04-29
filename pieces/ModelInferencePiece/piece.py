@@ -79,8 +79,10 @@ class InferenceDataset(Dataset):
         img_patch = torch.tensor(img_patch, dtype=torch.float32).unsqueeze(0)
         
         # Load mask if available
-        if self.mask_paths and vol_idx < len(self.mask_paths):
-            msk_path = self.mask_paths[vol_idx]
+        msk_path = (self.mask_paths[vol_idx]
+                    if self.mask_paths and vol_idx < len(self.mask_paths)
+                    else None)
+        if msk_path and os.path.exists(msk_path):
             msk = self._load_volume(msk_path).astype(np.int64)
             msk_patch = self._extract_center_patch(msk, self.patch_size)
             msk_patch = torch.tensor(msk_patch, dtype=torch.int64).unsqueeze(0)
@@ -134,7 +136,7 @@ class ModelInferencePiece(BasePiece):
             if input_data.subjects:
                 self.logger.info(f"Using {len(input_data.subjects)} subjects from upstream piece")
                 image_paths = [s.image_path for s in input_data.subjects]
-                mask_paths = [s.mask_path for s in input_data.subjects if s.mask_path]
+                mask_paths = [s.mask_path for s in input_data.subjects]
             elif input_data.image_paths:
                 self.logger.info(f"Using {len(input_data.image_paths)} image paths")
                 image_paths = input_data.image_paths
@@ -148,7 +150,7 @@ class ModelInferencePiece(BasePiece):
                 if mask_paths:
                     mask_paths = mask_paths[:input_data.num_samples]
             
-            has_ground_truth = len(mask_paths) > 0
+            has_ground_truth = any(p is not None for p in mask_paths)
             self.logger.info(f"Processing {len(image_paths)} images")
             self.logger.info(f"Ground truth available: {has_ground_truth}")
             
