@@ -15,7 +15,7 @@
       "task_id": "NiftiDL_aaaaaaaa0001",
       "piece": {
         "name": "NiftiDataLoaderPiece",
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0"
+        "source_image": "ghcr.io/patrikborzik2426/borzikpieces:0.3.11-group1"
       },
       "workflow_shared_storage": {
         "source": "Local",
@@ -59,7 +59,7 @@
       "task_id": "DataSplit_aaaaaaaa0002",
       "piece": {
         "name": "DataSplitPiece",
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0"
+        "source_image": "ghcr.io/patrikborzik2426/borzikpieces:0.3.11-group1"
       },
       "workflow_shared_storage": {
         "source": "Local",
@@ -123,7 +123,7 @@
       "task_id": "NiftiPP_aaaaaaaa0003",
       "piece": {
         "name": "NiftiPreprocessingPiece",
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0"
+        "source_image": "ghcr.io/patrikborzik2426/borzikpieces:0.3.11-group1"
       },
       "workflow_shared_storage": {
         "source": "Local",
@@ -193,7 +193,7 @@
       "task_id": "NiftiPP_aaaaaaaa0004",
       "piece": {
         "name": "NiftiPreprocessingPiece",
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0"
+        "source_image": "ghcr.io/patrikborzik2426/borzikpieces:0.3.11-group1"
       },
       "workflow_shared_storage": {
         "source": "Local",
@@ -263,7 +263,7 @@
       "task_id": "NiftiPP_aaaaaaaa0005",
       "piece": {
         "name": "NiftiPreprocessingPiece",
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0"
+        "source_image": "ghcr.io/patrikborzik2426/borzikpieces:0.3.11-group1"
       },
       "workflow_shared_storage": {
         "source": "Local",
@@ -333,7 +333,7 @@
       "task_id": "PituitDS_aaaaaaaa0006",
       "piece": {
         "name": "PituitaryDatasetPiece",
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0"
+        "source_image": "ghcr.io/patrikborzik2426/borzikpieces:0.3.11-group1"
       },
       "workflow_shared_storage": {
         "source": "Local",
@@ -399,7 +399,7 @@
       "task_id": "ModelTR_aaaaaaaa0007",
       "piece": {
         "name": "ModelTrainingPiece",
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group1"
+        "source_image": "ghcr.io/patrikborzik2426/borzikpieces:0.3.11-group0"
       },
       "workflow_shared_storage": {
         "source": "Local",
@@ -571,7 +571,7 @@
       "task_id": "ModelINF_aaaaaaaa0008",
       "piece": {
         "name": "ModelInferencePiece",
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group1"
+        "source_image": "ghcr.io/patrikborzik2426/borzikpieces:0.3.11-group0"
       },
       "workflow_shared_storage": {
         "source": "Local",
@@ -683,7 +683,7 @@
       "task_id": "NiftiEDA_aaaaaaaa0009",
       "piece": {
         "name": "NiftiEDAPiece",
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0"
+        "source_image": "ghcr.io/patrikborzik2426/borzikpieces:0.3.11-group1"
       },
       "workflow_shared_storage": {
         "source": "Local",
@@ -723,7 +723,7 @@
       "task_id": "NiftiVIZ_aaaaaaaa0010",
       "piece": {
         "name": "NiftiVisualizationPiece",
-        "source_image": "ghcr.io/borzikpieces/borzikpieces:0.3.8-group0"
+        "source_image": "ghcr.io/patrikborzik2426/borzikpieces:0.3.11-group1"
       },
       "workflow_shared_storage": {
         "source": "Local",
