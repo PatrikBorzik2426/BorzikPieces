@@ -255,7 +255,7 @@ class ModelTrainingPiece(BasePiece):
     def piece_function(self, input_data: InputModel) -> OutputModel:
         try:
             self.logger.info("=" * 80)
-            self.logger.info("Starting ModelTrainingPiece execution")
+            self.logger.info(f"Starting ModelTrainingPiece execution (dry_run={input_data.dry_run})")
             self.logger.info("=" * 80)
             
             # Set random seeds
