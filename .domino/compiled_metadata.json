@@ -2127,6 +2127,12 @@
                     "description": "Whether to use GPU if available",
                     "title": "Use Gpu",
                     "type": "boolean"
+                },
+                "dry_run": {
+                    "default": false,
+                    "description": "Quick smoke-test: forces 1 epoch and 1 batch so the full pipeline can be validated without waiting for real training",
+                    "title": "Dry Run",
+                    "type": "boolean"
                 }
             },
             "title": "InputModel",
