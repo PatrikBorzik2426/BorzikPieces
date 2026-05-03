@@ -1,0 +1,25 @@
+{
+  "name": "HistoTrainingPiece",
+  "description": "Trains a 2D semantic segmentation model (UNet / UNet++ / FPN / DeepLabV3+) on histopathology images. Uses segmentation-models-pytorch with albumentations augmentation, AdamW optimizer, and Dice/CE loss. Supports dry_run for fast pipeline validation.",
+  "dependency": {
+    "dockerfile": "Dockerfile_torch"
+  },
+  "tags": [
+    "Histopathology",
+    "Deep Learning",
+    "Training",
+    "Segmentation",
+    "UNet",
+    "PyTorch",
+    "SMP"
+  ],
+  "style": {
+    "node_label": "Histo Training",
+    "node_type": "default",
+    "node_style": {
+      "backgroundColor": "#bbdefb"
+    },
+    "useIcon": true,
+    "icon_class_name": "fa-solid:microscope"
+  }
+}

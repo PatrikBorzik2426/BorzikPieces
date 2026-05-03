@@ -1,0 +1,23 @@
+{
+  "name": "HistoEDAPiece",
+  "description": "Exploratory data analysis for histopathology segmentation datasets. Computes per-class pixel distributions, image dimension statistics, and generates a sample gallery HTML report.",
+  "dependency": {
+    "dockerfile": "Dockerfile_base"
+  },
+  "tags": [
+    "Histopathology",
+    "EDA",
+    "Segmentation",
+    "Visualization",
+    "Statistics"
+  ],
+  "style": {
+    "node_label": "Histo EDA",
+    "node_type": "default",
+    "node_style": {
+      "backgroundColor": "#e8f5e9"
+    },
+    "useIcon": true,
+    "icon_class_name": "fa-solid:chart-bar"
+  }
+}

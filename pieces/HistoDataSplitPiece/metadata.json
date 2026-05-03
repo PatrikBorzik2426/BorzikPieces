@@ -1,0 +1,22 @@
+{
+  "name": "HistoDataSplitPiece",
+  "description": "Splits a histopathology SampleInfo list into train / val / test subsets. Supports random or sequential splitting with a configurable seed. Outputs three SampleInfo lists that connect directly to HistoTrainingPiece, HistoValidationPiece, and HistoInferencePiece.",
+  "dependency": {
+    "dockerfile": "Dockerfile_base"
+  },
+  "tags": [
+    "Histopathology",
+    "Data Split",
+    "Train/Val/Test",
+    "Preprocessing"
+  ],
+  "style": {
+    "node_label": "Histo Data Split",
+    "node_type": "default",
+    "node_style": {
+      "backgroundColor": "#f3e5f5"
+    },
+    "useIcon": true,
+    "icon_class_name": "fa-solid:random"
+  }
+}

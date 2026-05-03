@@ -11,3 +11,5 @@ seaborn==0.12.2
 einops==0.7.0
 torch
 monai
+albumentations==1.3.1
+segmentation-models-pytorch==0.3.3

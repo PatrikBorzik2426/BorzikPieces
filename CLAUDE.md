@@ -8,9 +8,9 @@ Project context for Claude Code. Auto-loaded at session start.
 
 An **MLOps pipeline** using [Domino Workflow](https://github.com/Tauffer-Consulting/domino) (Airflow-based DAG UI) that wraps a radiology MRI brain lesion segmentation project into reusable, containerized "Pieces". The pipeline orchestrates data loading → EDA → preprocessing → model training → inference entirely through a drag-and-drop web interface.
 
-**Two pipelines planned:**
+**Two pipelines:**
 - **Radiology** (active): Pituitary/brain lesion segmentation from NIfTI MRI scans
-- **Histopathology** (pending): No data provided yet
+- **Histopathology** (active): 2D semantic segmentation of H&E stained tissue images (beetle/pituitary dataset, 5 classes)
 
 **Domino repo (GitHub):** https://github.com/Tauffer-Consulting/domino  
 **Piece repo owner:** `patrikborzik2426` (GitHub user, see `config.toml`)  
@@ -22,30 +22,53 @@ An **MLOps pipeline** using [Domino Workflow](https://github.com/Tauffer-Consult
 
 ```
 BorzikPieces/
-├── pieces/                         # All Domino pieces
-│   ├── NiftiDataLoaderPiece/       # Discovers NIfTI image+mask pairs
-│   ├── DataSplitPiece/             # Train/val/test split
-│   ├── NiftiPreprocessingPiece/    # Normalize, resize, save as .npy
-│   ├── PituitaryDatasetPiece/      # Merges preprocessed splits, creates dataset config
-│   ├── ModelTrainingPiece/         # 3D MONAI UNet/SwinUNETR training
-│   ├── ModelInferencePiece/        # Inference + confidence visualization
-│   ├── NiftiEDAPiece/              # Comprehensive 8-phase EDA (SK text)
-│   ├── NiftiVisualizationPiece/    # Standalone NIfTI grid visualizer
-│   ├── GenerativeShapesPiece/      # Example piece (shapes generator)
-│   └── HelloWorldPiece/            # Example piece (hello world)
+├── pieces/                           # All Domino pieces
+│   │
+│   │  ── Radiology pipeline ──────────────────────────────────────────
+│   ├── NiftiDataLoaderPiece/         # Discovers NIfTI image+mask pairs
+│   ├── DataSplitPiece/               # Train/val/test split (SubjectInfo list)
+│   ├── NiftiPreprocessingPiece/      # Normalize, resize, save as .npy
+│   ├── PituitaryDatasetPiece/        # Merges preprocessed splits, creates dataset config
+│   ├── ModelTrainingPiece/           # 3D MONAI UNet/SwinUNETR training
+│   ├── ModelInferencePiece/          # Inference + confidence visualization
+│   ├── NiftiEDAPiece/                # Comprehensive 8-phase EDA (SK text)
+│   ├── NiftiVisualizationPiece/      # Standalone NIfTI grid visualizer
+│   │
+│   │  ── Histopathology pipeline ────────────────────────────────────
+│   ├── HistoDataLoaderPiece/         # Scans image/mask dirs → SampleInfo list
+│   ├── HistoEDAPiece/                # Class pixel dist, gallery, HTML report
+│   ├── HistoPatchExtractorPiece/     # Sliding-window patch extraction with fg filter
+│   ├── HistoDataSplitPiece/          # Train/val/test split (SampleInfo list)
+│   ├── HistoTrainingPiece/           # 2D SMP UNet/UNet++/FPN/DeepLabV3+, albumentations
+│   ├── HistoValidationPiece/         # Dice, IoU, pixel acc, confusion matrix, HTML report
+│   ├── HistoInferencePiece/          # Predictions + comparison figures, optional Dice
+│   │
+│   │  ── Examples ───────────────────────────────────────────────────
+│   ├── GenerativeShapesPiece/        # Example piece (shapes generator)
+│   └── HelloWorldPiece/              # Example piece (hello world)
+│
 ├── dependencies/
-│   ├── Dockerfile_base             # Light image: nibabel, matplotlib, scipy, pandas, tqdm
-│   ├── Dockerfile_torch            # Heavy image: + torch==2.1.2, monai[all]==1.3.0
-│   ├── requirements.txt            # Base requirements (matches Dockerfile_base)
-│   └── requirements_torch.txt      # Torch requirements
-├── tp-radiology-adonema/           # Original radiology project (reference, not a piece)
-│   └── tp_radiology_adonema/       # Source code + checkpoints + configs
-├── data/paired/{images,masks}/     # Sample NIfTI data (sub-001 to sub-050)
-├── airflow/                        # Airflow dags/logs/plugins (auto-created by docker-compose)
-├── docker-compose.yaml             # Full Domino stack (Airflow + REST API + Frontend)
-├── config.toml                     # Piece repository metadata
-├── .domino/compiled_metadata.json  # Auto-generated — DO NOT edit manually
-└── current_status.md               # Task tracker
+│   ├── Dockerfile_base               # Light: nibabel, matplotlib, scipy, pandas, tqdm
+│   ├── Dockerfile_torch              # Heavy: + torch==2.1.2, monai==1.3.0,
+│   │                                 #          albumentations==1.3.1, smp==0.3.3
+│   ├── requirements.txt              # Base requirements
+│   └── requirements_torch.txt        # Torch + MONAI + albumentations + SMP
+├── Histo/                            # Original histopathology reference code (not a piece)
+│   ├── config.py                     # Config class (class mapping, paths, hyperparams)
+│   ├── beetle_dataset.py             # BeetleDataset (RGB mask → class index)
+│   ├── data.py                       # setup_dataloaders (train/val split)
+│   ├── trainer.py                    # Trainer class (train/validate loop)
+│   ├── metrics.py                    # DiceAccumulator
+│   ├── helpers.py                    # setup_device, prepare_batch, save_rgb_masks
+│   └── main.py                       # Entry point
+├── tp-radiology-adonema/             # Original radiology project (reference, not a piece)
+│   └── tp_radiology_adonema/         # Source code + checkpoints + configs
+├── data/paired/{images,masks}/       # Sample NIfTI data (sub-001 to sub-050)
+├── airflow/                          # Airflow dags/logs/plugins (auto-created by docker-compose)
+├── docker-compose.yaml               # Full Domino stack (Airflow + REST API + Frontend)
+├── config.toml                       # Piece repository metadata
+├── .domino/compiled_metadata.json    # Auto-generated — DO NOT edit manually
+└── current_status.md                 # Task tracker
 ```
 
 ---
@@ -71,7 +94,86 @@ NiftiDataLoaderPiece          ← images_path, masks_path from shared storage
 
 ---
 
+## Workflow Architecture (Histopathology)
+
+```
+HistoDataLoaderPiece          ← images_path, masks_path
+│  outputs: samples (List[SampleInfo]), images_path, masks_path
+│
+├─► HistoEDAPiece             ← parallel branch, analysis + HTML report only
+│     inputs: images_path, masks_path, class_mapping_json, class_names
+│
+└─► HistoPatchExtractorPiece  ← OPTIONAL: tile large slides into patches
+│     inputs: samples, patch_size, stride, min_foreground_ratio
+│     outputs: samples (one SampleInfo per patch)
+│     skip this piece and connect DataLoader → DataSplit directly
+│     if images are already patch-sized (e.g. beetle dataset)
+│
+└─► HistoDataSplitPiece       ← train / val / test split
+      inputs: samples, train_ratio=0.70, val_ratio=0.15, test_ratio=0.15
+      outputs: train_samples, val_samples, test_samples
+      │
+      ├─► HistoTrainingPiece  ← inputs: train_samples, val_samples
+      │     SMP architecture, albumentations augmentation, AdamW + ReduceLROnPlateau
+      │     outputs: model_path, best_model_path + arch pass-through fields
+      │
+      │     └─► HistoValidationPiece
+      │           inputs: val_samples (from DataSplit)
+      │                   model_path / arch fields (from Training)
+      │           outputs: Dice, IoU, pixel_accuracy, confusion matrix, HTML report
+      │
+      └─► HistoInferencePiece ← inputs: test_samples (from DataSplit)
+                                         model_path / arch fields (from Training)
+            outputs: RGB prediction masks, comparison figures, optional Dice
+```
+
+### SampleInfo — shared data contract across the histopathology pipeline
+Every histo piece that passes data uses `SampleInfo`:
+```python
+class SampleInfo(BaseModel):
+    name: str           # filename with extension, e.g. "image_001.png"
+    image_path: str     # absolute path to image file
+    mask_path: Optional[str] = None  # absolute path to RGB mask
+```
+Each piece defines its own copy (Domino serialises via JSON so the field names just need to match).
+
+### HistoTrainingPiece — pass-through outputs
+After training, these fields are emitted so downstream pieces can auto-wire without re-entering values:
+
+| Output field | Connects to |
+|---|---|
+| `model_path` / `best_model_path` | `HistoValidationPiece.model_path`, `HistoInferencePiece.model_path` |
+| `class_mapping_json` | Validation + Inference |
+| `model_architecture` | Validation + Inference |
+| `encoder_name` | Validation + Inference |
+| `num_classes` | Validation + Inference |
+| `image_height` / `image_width` | Validation + Inference |
+
+### HistoTrainingPiece — `dry_run` checkbox
+Works identically to the radiology `ModelTrainingPiece.dry_run`:
+- `dry_run=True` → `epochs=1`, `batch_size=4`, first 8 train samples only
+- Use it to verify full pipeline wiring before a real training run.
+
+### HistoPatchExtractorPiece — foreground filter
+Large WSI images contain mostly background. Set `min_foreground_ratio=0.05` to discard patches where less than 5% of mask pixels are non-background. Background is detected by matching `background_rgb` (default `[0,0,0]`) against the mask. Set `min_foreground_ratio=0.0` to keep all patches.
+
+### Class mapping (default — 5-class beetle/pituitary dataset)
+```json
+{"0": [0,0,0], "1": [128,128,128], "2": [0,255,0], "3": [255,0,0], "4": [0,0,255]}
+```
+| ID | Name | RGB |
+|----|------|-----|
+| 0 | unannotated | (0, 0, 0) black |
+| 1 | other | (128,128,128) grey |
+| 2 | non-invasive epithelium | (0,255,0) green |
+| 3 | invasive epithelium | (255,0,0) red |
+| 4 | necrosis | (0,0,255) blue |
+
+---
+
 ## Data
+
+### Radiology
 
 | Location | Description |
 |----------|-------------|
@@ -80,6 +182,23 @@ NiftiDataLoaderPiece          ← images_path, masks_path from shared storage
 | `./tp-radiology-adonema/tp_radiology_adonema/` | Full reference project (trainers, configs, notebooks) |
 
 The radiology reference project uses a **2D/2.5D slice-based SMP UNet++** approach (ResNet34 encoder, pretrained on ImageNet, albumentations). The current pieces use a **3D MONAI UNet/SwinUNETR** patch-based approach. Both are scientifically valid for this data.
+
+### Histopathology
+
+| Location | Description |
+|----------|-------------|
+| `./Histo/` | Original reference code (not a piece — used as implementation blueprint) |
+| Shared storage | Copy images to `/home/shared_storage/histo_data/images/` and masks to `/home/shared_storage/histo_data/masks/` |
+
+The `Histo/` reference code uses CrossEntropyLoss + AdamW with a custom UNET and BeetleDataset (RGB-mask → class-index conversion). The histo pieces port this logic using **segmentation-models-pytorch** (SMP) for flexible architecture choice and **albumentations** for augmentation. The `filtered_dataset/` directory from the reference config maps to `histo_data/` in shared storage.
+
+**To copy data into shared storage:**
+```bash
+mkdir -p domino_data/histo_data/images domino_data/histo_data/masks
+# Copy your histopathology PNG images and their RGB masks
+cp path/to/images/*.png domino_data/histo_data/images/
+cp path/to/masks/*.png  domino_data/histo_data/masks/
+```
 
 ---
 
@@ -123,7 +242,7 @@ class OutputModel(BaseModel):
 }
 ```
 
-Use `Dockerfile_base` for pieces without PyTorch. Use `Dockerfile_torch` for ModelTrainingPiece and ModelInferencePiece.
+Use `Dockerfile_base` for pieces without PyTorch. Use `Dockerfile_torch` for ModelTrainingPiece, ModelInferencePiece, HistoTrainingPiece, HistoValidationPiece, and HistoInferencePiece.
 
 ---
 
@@ -169,6 +288,7 @@ If pull fails with "not found" even after `docker login`, the CI push itself fai
 | 2026-04-28 | `NiftiPreprocessingPiece` | Three parallel instances defaulted to same output_dir | Updated default + warning in field description |
 | 2026-04-28 | `Dockerfile_torch` | Unpinned `torch`/`monai` versions | Pinned `torch==2.1.2`, `monai[all]==1.3.0`, added `scikit-learn==1.3.2` |
 | 2026-04-29 | CI (`validate-and-organize.yml`) | `domino piece publish-images` Python SDK has a hard read timeout — the multi-GB group0 (torch) image consistently timed out mid-upload | Replaced with `docker push` CLI calls in a shell loop with 3 retries and 15 s backoff. The Docker CLI has no read timeout. |
+| 2026-05-03 | `Dockerfile_torch` / `requirements_torch.txt` | Missing `albumentations` and `segmentation-models-pytorch` for histo pieces | Added `albumentations==1.3.1` and `segmentation-models-pytorch==0.3.3` to both files |
 
 ---
 
@@ -181,6 +301,26 @@ If pull fails with "not found" even after `docker login`, the CI push itself fai
 - `samples_per_volume = 1`
 
 This lets the full pipeline be validated end-to-end in minutes without waiting for real training. Use it whenever you want to confirm the piece wiring is correct before a real run.
+
+### Histopathology pipeline — 7-piece implementation (2026-05-03)
+
+Full 2D semantic segmentation pipeline built from the `Histo/` reference code:
+
+| Piece | Docker image | Key role |
+|-------|-------------|----------|
+| `HistoDataLoaderPiece` | base | Scan dirs → `List[SampleInfo]` |
+| `HistoEDAPiece` | base | Class pixel distribution, gallery, HTML report |
+| `HistoPatchExtractorPiece` | base | Sliding-window tiling with foreground filter |
+| `HistoDataSplitPiece` | base | Train/val/test split of `SampleInfo` list |
+| `HistoTrainingPiece` | torch | SMP model training, dry_run support |
+| `HistoValidationPiece` | torch | Dice + IoU + pixel acc + confusion matrix |
+| `HistoInferencePiece` | torch | Predictions + comparison figures |
+
+**SampleInfo** (`name`, `image_path`, `mask_path`) is the data contract passed between every histo piece — same pattern as radiology's `SubjectInfo`.
+
+**HistoTrainingPiece** emits arch pass-through fields (`model_architecture`, `encoder_name`, `num_classes`, `image_height`, `image_width`, `class_mapping_json`) so HistoValidationPiece and HistoInferencePiece can auto-wire without re-entering values.
+
+**HistoPatchExtractorPiece** is optional — skip it and wire DataLoader → DataSplit directly when images are already patch-sized (e.g. the beetle dataset where each file is already a tile).
 
 ### startup.sh — automatic container log dump
 Every time `bash startup.sh` runs it dumps logs into `logs/containers/` (gitignored):
@@ -334,8 +474,8 @@ bash import_workflow.sh
 ```
 
 **Image groups (as assigned by Domino's organize step):**
-- `group0` = `Dockerfile_torch` → **ModelTrainingPiece, ModelInferencePiece**
-- `group1` = `Dockerfile_base` → NiftiDataLoaderPiece, DataSplitPiece, NiftiPreprocessingPiece, PituitaryDatasetPiece, NiftiEDAPiece, NiftiVisualizationPiece, HelloWorldPiece, GenerativeShapesPiece
+- `group0` = `Dockerfile_torch` → **ModelTrainingPiece, ModelInferencePiece, HistoTrainingPiece, HistoValidationPiece, HistoInferencePiece**
+- `group1` = `Dockerfile_base` → NiftiDataLoaderPiece, DataSplitPiece, NiftiPreprocessingPiece, PituitaryDatasetPiece, NiftiEDAPiece, NiftiVisualizationPiece, HistoDataLoaderPiece, HistoEDAPiece, HistoPatchExtractorPiece, HistoDataSplitPiece, HelloWorldPiece, GenerativeShapesPiece
 
 > **Warning:** The group numbering is the opposite of what you might expect — the *heavier* torch image is group0. The `.domino/compiled_metadata.json` (auto-generated by CI) is the source of truth.
 
@@ -348,17 +488,23 @@ bash import_workflow.sh
 ```python
 import json
 
-IMAGE_MAP = {
-    'ModelInferencePiece': 'ghcr.io/patrikborzik2426/borzikpieces:VERSION-group0',
-    'ModelTrainingPiece':  'ghcr.io/patrikborzik2426/borzikpieces:VERSION-group0',
+TORCH_PIECES = {
+    'ModelTrainingPiece', 'ModelInferencePiece',
+    'HistoTrainingPiece', 'HistoValidationPiece', 'HistoInferencePiece',
 }
-DEFAULT_IMAGE = 'ghcr.io/patrikborzik2426/borzikpieces:VERSION-group1'
+GROUP0 = 'ghcr.io/patrikborzik2426/borzikpieces:VERSION-group0'
+GROUP1 = 'ghcr.io/patrikborzik2426/borzikpieces:VERSION-group1'
 
-d = json.load(open('radiology_workflow.json'))
-for task in d['tasks'].values():
-    piece_name = task['piece']['name']
-    task['piece']['source_image'] = IMAGE_MAP.get(piece_name, DEFAULT_IMAGE)
-json.dump(d, open('radiology_workflow.json', 'w'), indent=2)
+for wf_file in ['radiology_workflow.json', 'histo_workflow.json']:
+    try:
+        d = json.load(open(wf_file))
+        for task in d['tasks'].values():
+            piece_name = task['piece']['name']
+            task['piece']['source_image'] = GROUP0 if piece_name in TORCH_PIECES else GROUP1
+        json.dump(d, open(wf_file, 'w'), indent=2)
+        print(f'Updated {wf_file}')
+    except FileNotFoundError:
+        print(f'Skipped {wf_file} (not found)')
 ```
 
 The Domino REST API does **not** have a PATCH endpoint for piece repositories — the only way to update the version is delete + re-create. You must also delete all workflows that reference the repository before deleting it:

@@ -1,0 +1,24 @@
+{
+  "name": "HistoValidationPiece",
+  "description": "Evaluates a trained histopathology segmentation model on a labelled validation set. Computes per-class Dice, IoU, pixel accuracy, and a confusion matrix. Saves an HTML report with metric tables and comparison images.",
+  "dependency": {
+    "dockerfile": "Dockerfile_torch"
+  },
+  "tags": [
+    "Histopathology",
+    "Validation",
+    "Metrics",
+    "Segmentation",
+    "PyTorch",
+    "SMP"
+  ],
+  "style": {
+    "node_label": "Histo Validation",
+    "node_type": "default",
+    "node_style": {
+      "backgroundColor": "#e8f5e9"
+    },
+    "useIcon": true,
+    "icon_class_name": "fa-solid:clipboard-check"
+  }
+}

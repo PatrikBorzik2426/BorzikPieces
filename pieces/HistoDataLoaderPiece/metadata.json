@@ -1,0 +1,22 @@
+{
+  "name": "HistoDataLoaderPiece",
+  "description": "Discovers and validates paired histopathology image/mask files. Scans two directories and returns the list of matched pairs ready for downstream EDA, training, and inference pieces.",
+  "dependency": {
+    "dockerfile": "Dockerfile_base"
+  },
+  "tags": [
+    "Histopathology",
+    "Data Loading",
+    "Segmentation",
+    "Validation"
+  ],
+  "style": {
+    "node_label": "Histo Data Loader",
+    "node_type": "default",
+    "node_style": {
+      "backgroundColor": "#ffe0b2"
+    },
+    "useIcon": true,
+    "icon_class_name": "fa-solid:folder-open"
+  }
+}

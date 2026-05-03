@@ -1,0 +1,23 @@
+{
+  "name": "HistoPatchExtractorPiece",
+  "description": "Tiles histopathology images into fixed-size patches using a sliding window. Discards mostly-background patches via a configurable foreground ratio threshold. Outputs a SampleInfo list of patches for HistoDataSplitPiece.",
+  "dependency": {
+    "dockerfile": "Dockerfile_base"
+  },
+  "tags": [
+    "Histopathology",
+    "Preprocessing",
+    "Patch Extraction",
+    "Tiling",
+    "Segmentation"
+  ],
+  "style": {
+    "node_label": "Patch Extractor",
+    "node_type": "default",
+    "node_style": {
+      "backgroundColor": "#fff9c4"
+    },
+    "useIcon": true,
+    "icon_class_name": "fa-solid:th"
+  }
+}

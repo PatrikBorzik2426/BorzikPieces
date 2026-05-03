@@ -1,0 +1,24 @@
+{
+  "name": "HistoInferencePiece",
+  "description": "Runs inference with a trained HistoTrainingPiece model on histopathology images. Saves RGB prediction masks, optional comparison figures, and computes Dice scores if ground-truth masks are provided.",
+  "dependency": {
+    "dockerfile": "Dockerfile_torch"
+  },
+  "tags": [
+    "Histopathology",
+    "Inference",
+    "Segmentation",
+    "Visualization",
+    "PyTorch",
+    "SMP"
+  ],
+  "style": {
+    "node_label": "Histo Inference",
+    "node_type": "default",
+    "node_style": {
+      "backgroundColor": "#e1bee7"
+    },
+    "useIcon": true,
+    "icon_class_name": "fa-solid:eye"
+  }
+}
