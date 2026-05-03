@@ -2,8 +2,11 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 
 
-DEFAULT_CLASS_MAPPING = '{"0": [0,0,0], "1": [128,128,128], "2": [0,255,0], "3": [255,0,0], "4": [0,0,255]}'
-DEFAULT_CLASS_NAMES = ["unannotated", "other", "non-invasive", "invasive", "necrosis"]
+# MoNuSeg 2-class mapping (default — matches the bundled dataset in domino_data/histo_data/)
+# For the 5-class beetle/pituitary dataset use:
+#   {"0":[0,0,0],"1":[128,128,128],"2":[0,255,0],"3":[255,0,0],"4":[0,0,255]}
+DEFAULT_CLASS_MAPPING = '{"0": [0,0,0], "1": [0,255,0]}'
+DEFAULT_CLASS_NAMES = ["background", "nucleus"]
 
 
 class SampleInfo(BaseModel):
@@ -47,13 +50,13 @@ class InputModel(BaseModel):
     )
     image_height: int = Field(
         description="Connect image_height from HistoTrainingPiece",
-        default=512,
+        default=256,
         ge=64,
         le=2048
     )
     image_width: int = Field(
         description="Connect image_width from HistoTrainingPiece",
-        default=512,
+        default=256,
         ge=64,
         le=2048
     )

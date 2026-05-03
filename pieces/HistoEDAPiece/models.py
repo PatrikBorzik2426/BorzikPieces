@@ -2,8 +2,11 @@ from pydantic import BaseModel, Field
 from typing import List
 
 
-DEFAULT_CLASS_MAPPING = '{"0": [0,0,0], "1": [128,128,128], "2": [0,255,0], "3": [255,0,0], "4": [0,0,255]}'
-DEFAULT_CLASS_NAMES = ["unannotated", "other", "non-invasive", "invasive", "necrosis"]
+# MoNuSeg 2-class mapping (default — matches the bundled dataset in domino_data/histo_data/)
+# For the 5-class beetle/pituitary dataset use:
+#   {"0":[0,0,0],"1":[128,128,128],"2":[0,255,0],"3":[255,0,0],"4":[0,0,255]}
+DEFAULT_CLASS_MAPPING = '{"0": [0,0,0], "1": [0,255,0]}'
+DEFAULT_CLASS_NAMES = ["background", "nucleus"]
 
 
 class InputModel(BaseModel):
@@ -18,7 +21,8 @@ class InputModel(BaseModel):
     class_mapping_json: str = Field(
         description=(
             'JSON string mapping class_id (str) to RGB list. '
-            'Default 5-class beetle: {"0":[0,0,0],"1":[128,128,128],"2":[0,255,0],"3":[255,0,0],"4":[0,0,255]}'
+            'MoNuSeg 2-class: {"0":[0,0,0],"1":[0,255,0]} | '
+            '5-class beetle: {"0":[0,0,0],"1":[128,128,128],"2":[0,255,0],"3":[255,0,0],"4":[0,0,255]}'
         ),
         default=DEFAULT_CLASS_MAPPING
     )

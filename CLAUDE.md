@@ -192,12 +192,46 @@ The radiology reference project uses a **2D/2.5D slice-based SMP UNet++** approa
 
 The `Histo/` reference code uses CrossEntropyLoss + AdamW with a custom UNET and BeetleDataset (RGB-mask → class-index conversion). The histo pieces port this logic using **segmentation-models-pytorch** (SMP) for flexible architecture choice and **albumentations** for augmentation. The `filtered_dataset/` directory from the reference config maps to `histo_data/` in shared storage.
 
-**To copy data into shared storage:**
+### Bundled test dataset — MoNuSeg (downloaded 2026-05-03)
+
+`domino_data/histo_data/` already contains the **MoNuSeg** (Multi-organ Nucleus Segmentation) dataset, ready to use.
+
+| Property | Value |
+|----------|-------|
+| Source | HuggingFace `RationAI/MoNuSeg` (CC BY-NC-SA 4.0) |
+| Images | 51 H&E tiles, 1000×1000 px, TCGA archive (7 organ types) |
+| Masks | 2-class RGB: background `[0,0,0]`, nucleus `[0,255,0]` |
+| Setup script | `python3 setup_histo_data.py` (re-downloads if needed) |
+
+**Piece configuration for MoNuSeg:**
+```
+class_mapping_json  = {"0": [0,0,0], "1": [0,255,0]}
+class_names         = ["background", "nucleus"]
+num_classes         = 2
+```
+
+**Pipeline wiring for MoNuSeg** (images are 1000×1000 → patch extraction required):
+```
+HistoDataLoaderPiece  → images_path=/home/shared_storage/histo_data/images
+                        masks_path=/home/shared_storage/histo_data/masks
+HistoPatchExtractorPiece → patch_size=256, stride=128, min_foreground_ratio=0.05
+HistoDataSplitPiece
+HistoTrainingPiece    → image_height=256, image_width=256, num_classes=2
+```
+
+**Expected patch count:** ~49 patches per image × 51 images ≈ 2 500 patches (after 5% foreground filter).
+
+**To re-download the dataset:**
 ```bash
-mkdir -p domino_data/histo_data/images domino_data/histo_data/masks
-# Copy your histopathology PNG images and their RGB masks
-cp path/to/images/*.png domino_data/histo_data/images/
-cp path/to/masks/*.png  domino_data/histo_data/masks/
+python3 setup_histo_data.py
+```
+
+**For the 5-class beetle/pituitary dataset** (your original data), update these fields:
+```
+class_mapping_json = {"0":[0,0,0],"1":[128,128,128],"2":[0,255,0],"3":[255,0,0],"4":[0,0,255]}
+class_names        = ["unannotated","other","non-invasive","invasive","necrosis"]
+image_height/width = 512 (or match your tile size)
+Skip HistoPatchExtractorPiece if tiles are already patch-sized
 ```
 
 ---
@@ -321,6 +355,12 @@ Full 2D semantic segmentation pipeline built from the `Histo/` reference code:
 **HistoTrainingPiece** emits arch pass-through fields (`model_architecture`, `encoder_name`, `num_classes`, `image_height`, `image_width`, `class_mapping_json`) so HistoValidationPiece and HistoInferencePiece can auto-wire without re-entering values.
 
 **HistoPatchExtractorPiece** is optional — skip it and wire DataLoader → DataSplit directly when images are already patch-sized (e.g. the beetle dataset where each file is already a tile).
+
+### MoNuSeg bundled dataset + setup_histo_data.py (2026-05-03)
+
+`setup_histo_data.py` downloads the **MoNuSeg** dataset from HuggingFace (`RationAI/MoNuSeg`) and converts instance-level nucleus masks to 2-class RGB semantic masks expected by the pipeline. Running it once populates `domino_data/histo_data/` so the stack can be used immediately without sourcing private data.
+
+All 4 pieces that accept `class_mapping_json` (`HistoEDAPiece`, `HistoTrainingPiece`, `HistoValidationPiece`, `HistoInferencePiece`) now default to the MoNuSeg 2-class mapping. `HistoPatchExtractorPiece` now defaults to `patch_size=256`, `stride=128` (appropriate for 1000×1000 MoNuSeg tiles). `HistoTrainingPiece` `image_height`/`image_width` default updated to `256` to match.
 
 ### startup.sh — automatic container log dump
 Every time `bash startup.sh` runs it dumps logs into `logs/containers/` (gitignored):

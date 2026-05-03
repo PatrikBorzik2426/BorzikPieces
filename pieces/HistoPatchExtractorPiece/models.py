@@ -17,14 +17,14 @@ class InputModel(BaseModel):
         default="/home/shared_storage/histo_patches"
     )
     patch_size: int = Field(
-        description="Side length (pixels) of each square patch extracted from the image",
-        default=512,
+        description="Side length (pixels) of each square patch. Default 256 suits MoNuSeg 1000×1000 tiles — yields ~49 patches/image with stride=128.",
+        default=256,
         ge=64,
         le=2048
     )
     stride: int = Field(
         description="Step size (pixels) between adjacent patches. Use stride < patch_size for overlap. If 0, defaults to patch_size (no overlap).",
-        default=0,
+        default=128,
         ge=0
     )
     min_foreground_ratio: float = Field(

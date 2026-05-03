@@ -3,8 +3,11 @@ from typing import List, Optional
 from enum import Enum
 
 
-DEFAULT_CLASS_MAPPING = '{"0": [0,0,0], "1": [128,128,128], "2": [0,255,0], "3": [255,0,0], "4": [0,0,255]}'
-DEFAULT_CLASS_NAMES = ["unannotated", "other", "non-invasive", "invasive", "necrosis"]
+# MoNuSeg 2-class mapping (default — matches the bundled dataset in domino_data/histo_data/)
+# For the 5-class beetle/pituitary dataset use:
+#   {"0":[0,0,0],"1":[128,128,128],"2":[0,255,0],"3":[255,0,0],"4":[0,0,255]}
+DEFAULT_CLASS_MAPPING = '{"0": [0,0,0], "1": [0,255,0]}'
+DEFAULT_CLASS_NAMES = ["background", "nucleus"]
 
 
 class ModelArchitecture(str, Enum):
@@ -34,7 +37,8 @@ class InputModel(BaseModel):
     class_mapping_json: str = Field(
         description=(
             'JSON mapping class_id (str) to RGB list. '
-            'Default 5-class beetle: {"0":[0,0,0],"1":[128,128,128],"2":[0,255,0],"3":[255,0,0],"4":[0,0,255]}'
+            'MoNuSeg 2-class: {"0":[0,0,0],"1":[0,255,0]} | '
+            '5-class beetle: {"0":[0,0,0],"1":[128,128,128],"2":[0,255,0],"3":[255,0,0],"4":[0,0,255]}'
         ),
         default=DEFAULT_CLASS_MAPPING
     )
@@ -55,14 +59,14 @@ class InputModel(BaseModel):
         default="imagenet"
     )
     image_height: int = Field(
-        description="Height to resize images/masks before training",
-        default=512,
+        description="Height to resize images/masks before training. Match your patch_size — default 256 for MoNuSeg patches, 512 for beetle/pituitary.",
+        default=256,
         ge=64,
         le=2048
     )
     image_width: int = Field(
-        description="Width to resize images/masks before training",
-        default=512,
+        description="Width to resize images/masks before training. Match your patch_size — default 256 for MoNuSeg patches, 512 for beetle/pituitary.",
+        default=256,
         ge=64,
         le=2048
     )
