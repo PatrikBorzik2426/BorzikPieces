@@ -930,7 +930,7 @@
                     "type": "array"
                 },
                 "model_path": {
-                    "default": "/home/shared_storage/histo_models/best_model.pth",
+                    "default": "/home/shared_storage/histo_models/checkpoints/best_model.pth",
                     "description": "Path to best_model_path or model_path from HistoTrainingPiece",
                     "title": "Model Path",
                     "type": "string"
@@ -1270,7 +1270,7 @@
                     "type": "array"
                 },
                 "model_path": {
-                    "default": "/home/shared_storage/histo_models/best_model.pth",
+                    "default": "/home/shared_storage/histo_models/checkpoints/best_model.pth",
                     "description": "Connect best_model_path from HistoTrainingPiece",
                     "title": "Model Path",
                     "type": "string"

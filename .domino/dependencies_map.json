@@ -12,7 +12,7 @@
             "ModelTrainingPiece"
         ],
         "secrets": [],
-        "source_image": "ghcr.io/patrikborzik2426/borzikpieces:0.3.18-group0"
+        "source_image": "ghcr.io/patrikborzik2426/borzikpieces:0.3.19-group0"
     },
     "group1": {
         "dependency": {
@@ -34,6 +34,6 @@
             "GenerativeShapesPiece"
         ],
         "secrets": [],
-        "source_image": "ghcr.io/patrikborzik2426/borzikpieces:0.3.18-group1"
+        "source_image": "ghcr.io/patrikborzik2426/borzikpieces:0.3.19-group1"
     }
 }
