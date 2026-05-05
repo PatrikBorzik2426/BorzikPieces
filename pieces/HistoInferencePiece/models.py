@@ -21,7 +21,7 @@ class InputModel(BaseModel):
     )
     model_path: str = Field(
         description="Connect best_model_path from HistoTrainingPiece",
-        default="/home/shared_storage/histo_models/best_model.pth"
+        default="/home/shared_storage/histo_models/checkpoints/best_model.pth"
     )
     output_dir: str = Field(
         description="Directory to save prediction masks and comparison visualizations",

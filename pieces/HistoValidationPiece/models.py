@@ -21,7 +21,7 @@ class InputModel(BaseModel):
     )
     model_path: str = Field(
         description="Path to best_model_path or model_path from HistoTrainingPiece",
-        default="/home/shared_storage/histo_models/best_model.pth"
+        default="/home/shared_storage/histo_models/checkpoints/best_model.pth"
     )
     output_dir: str = Field(
         description="Directory to save validation report and visualizations",
