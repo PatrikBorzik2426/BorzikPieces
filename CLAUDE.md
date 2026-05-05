@@ -564,6 +564,66 @@ curl -s -H "Authorization: Bearer $TOKEN" "http://localhost:8000/workspaces/1/wo
 
 ---
 
+## Local Testing (run_local.py)
+
+Test pieces without Docker, Airflow, or a CI push. The runner imports pieces directly, topologically sorts the DAG, wires outputs to inputs via `{"from": "node.field"}` references, and injects file-system paths so pieces that write files work without `/home/shared_storage` being mounted.
+
+**Full guide:** `LOCAL_TESTING.md`
+
+```bash
+# Histo — base pieces only (no torch, ~10 s) — VERIFIED PASSING 2026-05-05
+python3 run_local.py local_workflows/histo_monuseg_base_only.json
+
+# Radiology — non-GPU chain (~30 s) — VERIFIED PASSING 2026-05-05
+python3 run_local.py local_workflows/radiology_smoke.json
+
+# Full histo pipeline incl. training (torch required)
+python3 run_local.py local_workflows/histo_monuseg.json
+
+# Verbose: prints every resolved input and every serialised output per piece
+python3 run_local.py local_workflows/histo_monuseg_base_only.json --verbose
+
+# Custom output directory
+python3 run_local.py local_workflows/histo_monuseg_base_only.json --results-dir /tmp/mytest
+```
+
+**Workflow JSON format (minimal example):**
+```json
+{
+  "name": "my_workflow",
+  "results_dir": "/tmp/my_results",
+  "pieces": {
+    "loader": {
+      "piece": "HistoDataLoaderPiece",
+      "inputs": { "images_path": "/path/to/images", "masks_path": "/path/to/masks" }
+    },
+    "split": {
+      "piece": "HistoDataSplitPiece",
+      "inputs": {
+        "samples":     {"from": "loader.samples"},
+        "train_ratio": 0.7
+      }
+    }
+  }
+}
+```
+
+**Key rules:**
+- `{"from": "node_id.field"}` — `field` must match exactly the OutputModel field name of the upstream piece. Run with `--verbose` to discover field names.
+- Pieces that write to a path defaulting to `/home/shared_storage/...` need that path overridden in the JSON to a writable local path (e.g. `HistoPatchExtractorPiece.output_dir`).
+- Failures are non-fatal — other non-dependent pieces still run; summary at the end lists all failures.
+- torch pieces (`HistoTrainingPiece`, `HistoValidationPiece`, `HistoInferencePiece`, `ModelTrainingPiece`, `ModelInferencePiece`) will fail locally with `No module named 'torch'` — they only run inside the Docker image.
+
+**Available workflow files:**
+
+| File | Pieces | Torch | Runtime |
+|------|--------|-------|---------|
+| `local_workflows/histo_monuseg_base_only.json` | DataLoader → EDA → Patches → Split | No | ~10 s |
+| `local_workflows/histo_monuseg.json` | Full histo pipeline | Yes | minutes |
+| `local_workflows/radiology_smoke.json` | DataLoader → EDA → Split → 3×Preprocess → Dataset | No | ~30 s |
+
+---
+
 ## Useful Commands
 
 ```bash
