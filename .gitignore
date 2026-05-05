@@ -7,3 +7,10 @@ logs/containers/
 tp-radiology-adonema/
 .env
 setup_gpu.sh
+# Claude Code and internal docs
+.claude/
+CLAUDE.md
+current_status.md
+LOCAL_TESTING.md
+NEW_PIECES_SUMMARY.md
+PIPELINE_DOCUMENTATION.md
