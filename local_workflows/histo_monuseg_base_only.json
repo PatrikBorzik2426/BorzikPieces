@@ -1,0 +1,44 @@
+{
+  "name": "Histopathology — MoNuSeg base pieces only (no torch)",
+  "description": "Tests DataLoader → EDA → PatchExtractor → DataSplit locally without Docker. Stops before training. Use this to verify data loading, patch extraction and splitting logic without needing the torch image.",
+  "results_dir": "/tmp/local_histo_monuseg",
+  "pieces": {
+    "loader": {
+      "piece": "HistoDataLoaderPiece",
+      "inputs": {
+        "images_path": "/home/borzito/code/BorzikPieces/domino_data/histo_data/images",
+        "masks_path":  "/home/borzito/code/BorzikPieces/domino_data/histo_data/masks"
+      }
+    },
+    "eda": {
+      "piece": "HistoEDAPiece",
+      "inputs": {
+        "images_path":        {"from": "loader.images_path"},
+        "masks_path":         {"from": "loader.masks_path"},
+        "class_mapping_json": "{\"0\": [0,0,0], \"1\": [0,255,0]}",
+        "class_names":        ["background", "nucleus"],
+        "max_gallery_images": 8
+      }
+    },
+    "patches": {
+      "piece": "HistoPatchExtractorPiece",
+      "inputs": {
+        "samples":              {"from": "loader.samples"},
+        "output_dir":           "/tmp/local_histo_monuseg/patches",
+        "patch_size":           256,
+        "stride":               256,
+        "min_foreground_ratio": 0.05
+      }
+    },
+    "split": {
+      "piece": "HistoDataSplitPiece",
+      "inputs": {
+        "samples":     {"from": "patches.samples"},
+        "train_ratio": 0.70,
+        "val_ratio":   0.15,
+        "test_ratio":  0.15,
+        "random_seed": 42
+      }
+    }
+  }
+}

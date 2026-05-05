@@ -1,0 +1,93 @@
+{
+  "name": "Histopathology — MoNuSeg smoke test",
+  "description": "Full histo pipeline on the bundled MoNuSeg dataset (51 images, 2-class nucleus segmentation). Patch extraction required since images are 1000x1000.",
+  "results_dir": "/tmp/local_histo_monuseg",
+  "pieces": {
+    "loader": {
+      "piece": "HistoDataLoaderPiece",
+      "inputs": {
+        "images_path": "/home/borzito/code/BorzikPieces/domino_data/histo_data/images",
+        "masks_path":  "/home/borzito/code/BorzikPieces/domino_data/histo_data/masks"
+      }
+    },
+    "eda": {
+      "piece": "HistoEDAPiece",
+      "inputs": {
+        "images_path":        {"from": "loader.images_path"},
+        "masks_path":         {"from": "loader.masks_path"},
+        "class_mapping_json": "{\"0\": [0,0,0], \"1\": [0,255,0]}",
+        "class_names":        ["background", "nucleus"],
+        "max_gallery_images": 8
+      }
+    },
+    "patches": {
+      "piece": "HistoPatchExtractorPiece",
+      "inputs": {
+        "samples":              {"from": "loader.samples"},
+        "output_dir":           "/tmp/local_histo_monuseg/patches",
+        "patch_size":           256,
+        "stride":               256,
+        "min_foreground_ratio": 0.05
+      }
+    },
+    "split": {
+      "piece": "HistoDataSplitPiece",
+      "inputs": {
+        "samples":     {"from": "patches.samples"},
+        "train_ratio": 0.70,
+        "val_ratio":   0.15,
+        "test_ratio":  0.15,
+        "random_seed": 42
+      }
+    },
+    "training": {
+      "piece": "HistoTrainingPiece",
+      "inputs": {
+        "train_samples":      {"from": "split.train_samples"},
+        "val_samples":        {"from": "split.val_samples"},
+        "class_mapping_json": "{\"0\": [0,0,0], \"1\": [0,255,0]}",
+        "class_names":        ["background", "nucleus"],
+        "num_classes":        2,
+        "image_height":       256,
+        "image_width":        256,
+        "model_architecture": "unet",
+        "encoder_name":       "resnet34",
+        "epochs":             1,
+        "batch_size":         4,
+        "dry_run":            true,
+        "output_dir":         "/tmp/local_histo_monuseg/models"
+      }
+    },
+    "validation": {
+      "piece": "HistoValidationPiece",
+      "inputs": {
+        "val_samples":        {"from": "split.val_samples"},
+        "model_path":         {"from": "training.best_model_path"},
+        "class_mapping_json": {"from": "training.class_mapping_json"},
+        "class_names":        {"from": "training.class_names"},
+        "model_architecture": {"from": "training.model_architecture"},
+        "encoder_name":       {"from": "training.encoder_name"},
+        "num_classes":        {"from": "training.num_classes"},
+        "image_height":       {"from": "training.image_height"},
+        "image_width":        {"from": "training.image_width"},
+        "output_dir":         "/tmp/local_histo_monuseg/validation"
+      }
+    },
+    "inference": {
+      "piece": "HistoInferencePiece",
+      "inputs": {
+        "test_samples":       {"from": "split.test_samples"},
+        "model_path":         {"from": "training.best_model_path"},
+        "class_mapping_json": {"from": "training.class_mapping_json"},
+        "class_names":        {"from": "training.class_names"},
+        "model_architecture": {"from": "training.model_architecture"},
+        "encoder_name":       {"from": "training.encoder_name"},
+        "num_classes":        {"from": "training.num_classes"},
+        "image_height":       {"from": "training.image_height"},
+        "image_width":        {"from": "training.image_width"},
+        "output_dir":         "/tmp/local_histo_monuseg/inference",
+        "max_comparison_images": 10
+      }
+    }
+  }
+}

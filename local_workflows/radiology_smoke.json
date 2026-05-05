@@ -1,0 +1,76 @@
+{
+  "name": "Radiology — smoke test (no GPU)",
+  "description": "Non-GPU chain: DataLoader → EDA → DataSplit → Preprocessing (train/val/test) → PituitaryDataset. ModelTraining and ModelInference are omitted — add them back with dry_run=true if torch is available.",
+  "results_dir": "/tmp/local_radiology",
+  "pieces": {
+    "loader": {
+      "piece": "NiftiDataLoaderPiece",
+      "inputs": {
+        "images_path": "/home/borzito/code/BorzikPieces/data/paired/images",
+        "masks_path":  "/home/borzito/code/BorzikPieces/data/paired/masks",
+        "file_pattern": "*.nii.gz"
+      }
+    },
+    "eda": {
+      "piece": "NiftiEDAPiece",
+      "inputs": {
+        "subjects":     {"from": "loader.subjects"},
+        "max_subjects": 10
+      }
+    },
+    "split": {
+      "piece": "DataSplitPiece",
+      "inputs": {
+        "subjects":    {"from": "loader.subjects"},
+        "train_ratio": 0.7,
+        "val_ratio":   0.15,
+        "test_ratio":  0.15,
+        "random_seed": 42
+      }
+    },
+    "preprocess_train": {
+      "piece": "NiftiPreprocessingPiece",
+      "inputs": {
+        "subjects":            {"from": "split.train_subjects"},
+        "output_dir":          "/tmp/local_radiology/preprocessed/train",
+        "normalization":       "percentile",
+        "lower_percentile":    1.0,
+        "upper_percentile":    99.0,
+        "save_as_numpy":       true
+      }
+    },
+    "preprocess_val": {
+      "piece": "NiftiPreprocessingPiece",
+      "inputs": {
+        "subjects":            {"from": "split.val_subjects"},
+        "output_dir":          "/tmp/local_radiology/preprocessed/val",
+        "normalization":       "percentile",
+        "lower_percentile":    1.0,
+        "upper_percentile":    99.0,
+        "save_as_numpy":       true
+      }
+    },
+    "preprocess_test": {
+      "piece": "NiftiPreprocessingPiece",
+      "inputs": {
+        "subjects":            {"from": "split.test_subjects"},
+        "output_dir":          "/tmp/local_radiology/preprocessed/test",
+        "normalization":       "percentile",
+        "lower_percentile":    1.0,
+        "upper_percentile":    99.0,
+        "save_as_numpy":       true
+      }
+    },
+    "dataset": {
+      "piece": "PituitaryDatasetPiece",
+      "inputs": {
+        "train_subjects": {"from": "preprocess_train.preprocessed_subjects"},
+        "val_subjects":   {"from": "preprocess_val.preprocessed_subjects"},
+        "test_subjects":  {"from": "preprocess_test.preprocessed_subjects"},
+        "batch_size":     2,
+        "num_workers":    0,
+        "shuffle_train":  true
+      }
+    }
+  }
+}
