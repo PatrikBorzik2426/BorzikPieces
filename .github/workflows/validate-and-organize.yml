@@ -79,8 +79,9 @@ jobs:
       - name: Publish images
         run: |
           VERSION=$(python3 -c "import re,pathlib; m=re.search(r'VERSION = \"([\d.]+)\"', pathlib.Path('config.toml').read_text()); print(m.group(1))")
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           for group in group0 group1; do
-            image="ghcr.io/${{ github.repository_owner }}/borzikpieces:${VERSION}-${group}"
+            image="ghcr.io/${OWNER}/borzikpieces:${VERSION}-${group}"
             echo "Pushing $image ..."
             for attempt in 1 2 3; do
               docker push "$image" && break
