@@ -6,7 +6,17 @@ airflow/logs/
 logs/containers/
 tp-radiology-adonema/
 .env
-setup_gpu.sh
+# Shell scripts
+*.sh
+# Root-level Python scripts and local test runners
+run_local.py
+revert.py
+setup_histo_data.py
+test_workflow_local.py
+# Test files within pieces
+pieces/**/test_*.py
+# Histo research scripts
+Histo/
 # Claude Code and internal docs
 .claude/
 CLAUDE.md
@@ -14,3 +24,4 @@ current_status.md
 LOCAL_TESTING.md
 NEW_PIECES_SUMMARY.md
 PIPELINE_DOCUMENTATION.md
+DP_Borzik/
