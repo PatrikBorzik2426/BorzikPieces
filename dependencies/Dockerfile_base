@@ -14,7 +14,8 @@ RUN pip install --no-cache-dir \
     nibabel==5.2.0 \
     matplotlib==3.7.5 \
     seaborn==0.12.2 \
-    tqdm==4.66.1
+    tqdm==4.66.1 \
+    onedatarestfsspec>=25.1.0
 
 # Copy the piece source code and config
 COPY config.toml domino/pieces_repository/
