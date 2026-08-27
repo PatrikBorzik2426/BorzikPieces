@@ -1,0 +1,22 @@
+{
+  "name": "OnedataLoaderPiece",
+  "description": "Transfers datasets between OneData federated storage and local workflow storage. Supports download (OneData → local) and upload (local → OneData) modes.",
+  "dependency": {
+    "dockerfile": "Dockerfile_base"
+  },
+  "tags": [
+    "OneData",
+    "Data Loading",
+    "Storage",
+    "Transfer"
+  ],
+  "style": {
+    "node_label": "OneData Loader",
+    "node_type": "default",
+    "node_style": {
+      "backgroundColor": "#e3f2fd"
+    },
+    "useIcon": true,
+    "icon_class_name": "fa-solid:cloud-download-alt"
+  }
+}

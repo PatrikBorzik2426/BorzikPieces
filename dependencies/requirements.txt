@@ -11,3 +11,4 @@ seaborn==0.12.2
 tqdm==4.66.1
 
 einops==0.7.0
+onedatarestfsspec>=25.1.0
