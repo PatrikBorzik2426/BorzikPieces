@@ -5,14 +5,14 @@
             "requirements_file": null
         },
         "pieces": [
-            "HistoTrainingPiece",
             "ModelInferencePiece",
+            "ModelTrainingPiece",
             "HistoValidationPiece",
-            "HistoInferencePiece",
-            "ModelTrainingPiece"
+            "HistoTrainingPiece",
+            "HistoInferencePiece"
         ],
         "secrets": [],
-        "source_image": "ghcr.io/patrikborzik2426/borzikpieces:0.3.21-group0"
+        "source_image": "ghcr.io/patrikborzik2426/borzikpieces:0.3.22-group0"
     },
     "group1": {
         "dependency": {
@@ -20,20 +20,21 @@
             "requirements_file": null
         },
         "pieces": [
-            "HistoPatchExtractorPiece",
-            "HistoDataLoaderPiece",
-            "NiftiDataLoaderPiece",
-            "NiftiVisualizationPiece",
-            "DataSplitPiece",
             "NiftiPreprocessingPiece",
+            "OnedataLoaderPiece",
             "HistoDataSplitPiece",
+            "HistoEDAPiece",
             "HelloWorldPiece",
+            "NiftiDataLoaderPiece",
             "NiftiEDAPiece",
             "PituitaryDatasetPiece",
-            "HistoEDAPiece",
-            "GenerativeShapesPiece"
+            "HistoDataLoaderPiece",
+            "NiftiVisualizationPiece",
+            "GenerativeShapesPiece",
+            "HistoPatchExtractorPiece",
+            "DataSplitPiece"
         ],
         "secrets": [],
-        "source_image": "ghcr.io/patrikborzik2426/borzikpieces:0.3.21-group1"
+        "source_image": "ghcr.io/patrikborzik2426/borzikpieces:0.3.22-group1"
     }
 }
